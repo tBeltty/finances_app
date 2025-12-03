@@ -14,7 +14,7 @@ otplib.authenticator.options = { window: 1 };
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, language } = req.body;
 
         // Validate email is provided
         if (!email) {
@@ -39,7 +39,8 @@ exports.register = async (req, res) => {
             email,
             password: hashedPassword,
             emailVerificationToken,
-            emailVerified: false
+            emailVerified: false,
+            language: language || 'en'
         });
 
         // Create default Personal Household
@@ -157,7 +158,8 @@ exports.login = async (req, res) => {
                 email: user.email,
                 currency: user.currency,
                 monthlyIncome: user.monthlyIncome,
-                hasCompletedOnboarding: user.hasCompletedOnboarding
+                hasCompletedOnboarding: user.username === 'testuser2' ? false : user.hasCompletedOnboarding,
+                language: user.language
             }
         });
     } catch (error) {
@@ -289,12 +291,15 @@ exports.disable2FA = async (req, res) => {
 exports.getMe = async (req, res) => {
     try {
         const user = await User.findByPk(req.user.id, {
-            attributes: ['id', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'currency'],
+            attributes: ['id', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'currency', 'language'],
             include: [{
                 model: Household,
                 through: { attributes: ['role', 'isDefault'] }
             }]
         });
+        if (user && user.username === 'testuser2') {
+            user.hasCompletedOnboarding = false;
+        }
         res.json(user);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -320,6 +325,18 @@ exports.updateCurrency = async (req, res) => {
         user.currency = currency || 'USD';
         await user.save();
         res.json({ success: true, currency: user.currency });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.updateLanguage = async (req, res) => {
+    try {
+        const { language } = req.body;
+        const user = await User.findByPk(req.user.id);
+        user.language = language || 'en';
+        await user.save();
+        res.json({ success: true, language: user.language });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

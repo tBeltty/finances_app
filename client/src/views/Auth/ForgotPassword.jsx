@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowRight, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function ForgotPassword() {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [message, setMessage] = useState('');
@@ -26,11 +28,11 @@ export default function ForgotPassword() {
                 setMessage(data.message);
             } else {
                 setStatus('error');
-                setMessage(data.message || 'Error al solicitar restablecimiento');
+                setMessage(data.message || t('auth.resetRequestError'));
             }
         } catch (error) {
             setStatus('error');
-            setMessage('Error de conexión. Intenta nuevamente.');
+            setMessage(t('auth.connectionError'));
         }
     };
 
@@ -38,8 +40,8 @@ export default function ForgotPassword() {
         <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
             <div className="max-w-md w-full bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl border border-slate-800 shadow-2xl">
                 <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-white mb-2">Recuperar Contraseña</h2>
-                    <p className="text-slate-400 text-sm">Ingresa tu email para recibir instrucciones</p>
+                    <h2 className="text-2xl font-bold text-white mb-2">{t('auth.recoverPassword')}</h2>
+                    <p className="text-slate-400 text-sm">{t('auth.recoverPasswordDesc')}</p>
                 </div>
 
                 {status === 'success' ? (
@@ -47,7 +49,7 @@ export default function ForgotPassword() {
                         <div className="bg-emerald-500/10 p-4 rounded-full mb-6 inline-block">
                             <CheckCircle2 className="h-12 w-12 text-emerald-500" />
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">¡Email Enviado!</h3>
+                        <h3 className="text-xl font-semibold text-white mb-2">{t('auth.emailSent')}</h3>
                         <p className="text-slate-400 mb-8">{message}</p>
 
                         <Link
@@ -55,7 +57,7 @@ export default function ForgotPassword() {
                             className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
                         >
                             <ArrowLeft className="h-5 w-5" />
-                            Volver al Login
+                            {t('auth.backToLoginShort')}
                         </Link>
                     </div>
                 ) : (
@@ -67,7 +69,7 @@ export default function ForgotPassword() {
                         )}
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-300 ml-1">Email</label>
+                            <label className="text-sm font-medium text-slate-300 ml-1">{t('auth.email')}</label>
                             <div className="relative">
                                 <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
                                 <input
@@ -90,7 +92,7 @@ export default function ForgotPassword() {
                                 <Loader2 className="h-5 w-5 animate-spin" />
                             ) : (
                                 <>
-                                    Enviar Instrucciones
+                                    {t('auth.sendInstructions')}
                                     <ArrowRight className="h-5 w-5" />
                                 </>
                             )}
@@ -99,7 +101,7 @@ export default function ForgotPassword() {
                         <div className="text-center">
                             <Link to="/login" className="text-slate-400 hover:text-white text-sm transition-colors flex items-center justify-center gap-2">
                                 <ArrowLeft className="h-4 w-4" />
-                                Volver al inicio de sesión
+                                {t('auth.backToLogin')}
                             </Link>
                         </div>
                     </form>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import useFinances from '../../hooks/useFinances';
 import KPIs from './KPIs';
 import ExpenseList from '../Expenses/ExpenseList';
@@ -6,6 +7,7 @@ import ExpenseForm from '../Expenses/ExpenseForm';
 import SavingsWidget from '../../components/Dashboard/SavingsWidget';
 import Controls from '../../components/Dashboard/Controls';
 import SettingsModal from '../../components/Settings/SettingsModal';
+import PendingExpensesModal from '../../components/Expenses/PendingExpensesModal';
 import { useAuth } from '../../context/AuthContext';
 import { Users, Settings as SettingsIcon, LogOut, Plus, Menu, X } from 'lucide-react';
 import QuickAddModal from '../../components/Dashboard/QuickAddModal';
@@ -16,16 +18,15 @@ import AnalyticsView from '../Analytics/AnalyticsView';
 import { PieChart as PieChartIcon, LayoutDashboard } from 'lucide-react';
 
 export default function Dashboard() {
-    console.log("Dashboard: Rendering...");
     const { user, refreshUser, logout } = useAuth();
+    const { t } = useTranslation();
     const { settingsOpen, closeSettings } = useUI();
     const [showQuickAdd, setShowQuickAdd] = useState(false);
     const [activeView, setActiveView] = useState('overview'); // 'overview' | 'analytics'
 
-    console.log("Dashboard: User:", user);
+
 
     const finances = useFinances();
-    console.log("Dashboard: useFinances hook result:", finances);
 
     const {
         income, setIncome, saveIncome,
@@ -65,13 +66,13 @@ export default function Dashboard() {
         loading
     } = finances;
 
+    const [showPendingModal, setShowPendingModal] = useState(false);
+    const pendingExpenses = expenses.filter(e => (e.paid || 0) < e.amount);
+
     useEffect(() => {
-        console.log("Dashboard: Mounted");
-        return () => console.log("Dashboard: Unmounted");
     }, []);
 
     if (!user) {
-        console.log("Dashboard: No user, returning null");
         return null;
     }
 
@@ -112,7 +113,7 @@ export default function Dashboard() {
                                 }`}
                         >
                             <LayoutDashboard className="w-4 h-4" />
-                            Resumen
+                            {t('dashboard.tabs.overview')}
                         </button>
                         <button
                             onClick={() => setActiveView('analytics')}
@@ -122,7 +123,7 @@ export default function Dashboard() {
                                 }`}
                         >
                             <PieChartIcon className="w-4 h-4" />
-                            Analíticas
+                            {t('dashboard.tabs.analytics')}
                         </button>
                     </div>
 
@@ -139,6 +140,7 @@ export default function Dashboard() {
                                 saveIncome={saveIncome}
                                 household={household}
                                 updateSavings={updateSavings}
+                                onPendingClick={() => setShowPendingModal(true)}
                                 expenses={expenses}
                             />
                             <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -151,7 +153,7 @@ export default function Dashboard() {
                                             handleAddExpense={handleAddExpense}
                                             handleAddCategory={handleAddCategory}
                                             loading={loading}
-                                            currency={household?.currency || 'COP'}
+                                            currency={currency}
                                         />
                                     </div>
                                     <ExpenseList
@@ -167,6 +169,7 @@ export default function Dashboard() {
                                         handleEditCategory={handleEditCategory}
                                         formatCurrency={formatCurrency}
                                         currency={currency}
+                                        categories={categories}
                                     />
                                 </div>
                                 <div className="space-y-6">
@@ -210,6 +213,15 @@ export default function Dashboard() {
                     setNewExpense={setNewExpense}
                     categories={categories}
                     handleAddExpense={handleAddExpense}
+                    currency={currency}
+                />
+
+                <PendingExpensesModal
+                    isOpen={showPendingModal}
+                    onClose={() => setShowPendingModal(false)}
+                    expenses={pendingExpenses}
+                    formatCurrency={formatCurrency}
+                    onPay={handlePayFull}
                 />
 
                 {/* Mobile FAB for Quick Add */}
@@ -222,7 +234,7 @@ export default function Dashboard() {
 
                 {/* Debug Version Indicator */}
                 <div className="fixed bottom-2 left-2 text-xs text-slate-600 font-mono pointer-events-none z-50">
-                    v1.1.0
+                    v1.2.3
                 </div>
             </div>
         </ErrorBoundary>

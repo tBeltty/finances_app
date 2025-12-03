@@ -13,7 +13,7 @@ import Onboarding from './views/Onboarding/Onboarding';
 function App() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const CURRENT_VERSION = '1.1.0';
+  const APP_VERSION = '1.2.4';
 
   React.useEffect(() => {
     const checkVersion = async () => {
@@ -21,7 +21,7 @@ function App() {
         const res = await fetch(`/version.json?t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
-          if (data.version !== CURRENT_VERSION) {
+          if (data.version !== APP_VERSION) {
             console.log(`New version found: ${data.version}. Updating...`);
             if ('serviceWorker' in navigator) {
               const registrations = await navigator.serviceWorker.getRegistrations();

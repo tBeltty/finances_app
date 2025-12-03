@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Wallet, UserPlus, Loader2 } from 'lucide-react';
 
@@ -11,6 +12,7 @@ export default function Register({ onSwitchToLogin }) {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const { register } = useAuth();
+    const { t } = useTranslation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,14 +20,14 @@ export default function Register({ onSwitchToLogin }) {
         setSuccess('');
 
         if (password !== confirmPassword) {
-            setError('Las contraseñas no coinciden');
+            setError(t('auth.passwordsDoNotMatch'));
             return;
         }
 
         setLoading(true);
         const result = await register(username, password, email);
         if (result.success) {
-            setSuccess(result.message || 'Cuenta creada. Revisa tu email para verificarla.');
+            setSuccess(result.message || t('auth.accountCreated'));
             setTimeout(() => {
                 onSwitchToLogin();
             }, 3000);
@@ -42,8 +44,8 @@ export default function Register({ onSwitchToLogin }) {
                     <div className="bg-emerald-500/10 p-3 rounded-xl mb-4">
                         <Wallet className="w-10 h-10 text-emerald-400" />
                     </div>
-                    <h1 className="text-2xl font-bold text-slate-200">Crear Cuenta</h1>
-                    <p className="text-slate-400 text-sm mt-1">Empieza a controlar tus gastos hoy</p>
+                    <h1 className="text-2xl font-bold text-slate-200">{t('auth.createAccount')}</h1>
+                    <p className="text-slate-400 text-sm mt-1">{t('auth.registerSubtitle')}</p>
                 </div>
 
                 {error && (
@@ -60,19 +62,19 @@ export default function Register({ onSwitchToLogin }) {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Usuario</label>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('auth.username')}</label>
                         <input
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
-                            placeholder="Elige un nombre de usuario"
+                            placeholder={t('auth.chooseUsername')}
                             required
                         />
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email</label>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('auth.email')}</label>
                         <input
                             type="email"
                             value={email}
@@ -84,7 +86,7 @@ export default function Register({ onSwitchToLogin }) {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Contraseña</label>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('auth.password')}</label>
                         <input
                             type="password"
                             value={password}
@@ -96,7 +98,7 @@ export default function Register({ onSwitchToLogin }) {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Confirmar Contraseña</label>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('auth.confirmPassword')}</label>
                         <input
                             type="password"
                             value={confirmPassword}
@@ -112,15 +114,15 @@ export default function Register({ onSwitchToLogin }) {
                         disabled={loading}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                     >
-                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Registrarse <UserPlus className="w-5 h-5" /></>}
+                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('auth.register')} <UserPlus className="w-5 h-5" /></>}
                     </button>
                 </form>
 
                 <div className="mt-6 text-center">
                     <p className="text-slate-400 text-sm">
-                        ¿Ya tienes cuenta?{' '}
+                        {t('auth.haveAccount')}{' '}
                         <button onClick={onSwitchToLogin} className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors">
-                            Inicia sesión
+                            {t('auth.login')}
                         </button>
                     </p>
                 </div>

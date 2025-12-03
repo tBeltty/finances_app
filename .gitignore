@@ -33,3 +33,10 @@ yarn-error.log*
 postgres_data/
 *.sql
 *.dump
+
+# Scripts
+deploy_prod.sh
+explore_prod.sh
+inspect_prod.sh
+inspect_vite.sh
+*.log

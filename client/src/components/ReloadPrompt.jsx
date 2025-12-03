@@ -1,18 +1,18 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { RefreshCw, X } from 'lucide-react'
 
 function ReloadPrompt() {
+    const { t } = useTranslation();
     const {
         offlineReady: [offlineReady, setOfflineReady],
         needRefresh: [needRefresh, setNeedRefresh],
         updateServiceWorker,
     } = useRegisterSW({
         onRegistered(r) {
-            console.log('SW Registered: ' + r)
         },
         onRegisterError(error) {
-            console.log('SW registration error', error)
         },
     })
 
@@ -31,12 +31,12 @@ function ReloadPrompt() {
             <div className="bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-4 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm">
                 <div className="flex-1">
                     <h3 className="text-sm font-bold text-slate-200 mb-1">
-                        {offlineReady ? 'App lista para usar offline' : 'Nueva versión disponible'}
+                        {offlineReady ? t('pwa.offlineReady') : t('pwa.newVersion')}
                     </h3>
                     <p className="text-xs text-slate-400">
                         {offlineReady
-                            ? 'La aplicación funcionará sin conexión.'
-                            : 'Haz clic en actualizar para ver los cambios.'}
+                            ? t('pwa.offlineDesc')
+                            : t('pwa.updateDesc')}
                     </p>
                 </div>
 

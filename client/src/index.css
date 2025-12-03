@@ -32,3 +32,53 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background-color: #475569;
 }
+
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Custom Range Slider */
+input[type=range] {
+    @apply appearance-none bg-transparent cursor-pointer;
+}
+
+/* Webkit (Chrome, Safari, Edge) */
+input[type=range]::-webkit-slider-runnable-track {
+    @apply h-2 bg-slate-700 rounded-full;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    @apply appearance-none w-5 h-5 bg-indigo-500 rounded-full -mt-1.5 border-2 border-slate-900 transition-transform hover:scale-110 focus:scale-110;
+}
+
+/* Firefox */
+input[type=range]::-moz-range-track {
+    @apply h-2 bg-slate-700 rounded-full;
+}
+
+input[type=range]::-moz-range-thumb {
+    @apply w-5 h-5 bg-indigo-500 rounded-full border-none transition-transform hover:scale-110 focus:scale-110;
+}
+
+@keyframes stretch-right {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(6px);
+    }
+}
+
+.animate-stretch-right {
+    animation: stretch-right 1.5s ease-in-out infinite;
+}

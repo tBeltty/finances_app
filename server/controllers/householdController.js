@@ -9,7 +9,8 @@ exports.createInvite = async (req, res) => {
     try {
         const userId = req.user.id;
         // Find user's default household (or the one they are admin of)
-        // For now, assume the default household
+        // Find user's default household (or the one they are admin of)
+        // Assume the default household
         const member = await HouseholdMember.findOne({
             where: { userId, isDefault: true }
         });
@@ -72,11 +73,8 @@ exports.joinHousehold = async (req, res) => {
             isDefault: false // User keeps their current default unless they change it
         });
 
-        // Mark invite as used (optional, or keep it reusable until expiry?)
-        // Let's keep it reusable for multiple family members for now, or maybe not?
-        // User asked "How do you invite someone", implying singular or plural.
-        // Let's NOT mark it used so multiple people can join with one code in that 24h window.
-        // But for security, maybe we should? Let's leave it reusable for now for UX simplicity.
+        // Mark invite as used (optional)
+        // Keeping it reusable allows multiple family members to join with one code in the 24h window.
 
         res.json({ success: true, message: 'Te has unido al hogar exitosamente.' });
     } catch (error) {

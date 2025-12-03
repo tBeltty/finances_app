@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Download, RefreshCw, Settings, ArrowDownUp } from 'lucide-react';
 import DatePicker from '../../components/UI/DatePicker';
 
@@ -15,6 +16,7 @@ export default function Controls({
     sortMode,
     setSortMode
 }) {
+    const { t, i18n } = useTranslation();
     const [sortOpen, setSortOpen] = React.useState(false);
     const timeoutRef = React.useRef(null);
 
@@ -46,7 +48,7 @@ export default function Controls({
     // Construct display text
     const [m, y] = selectedMonth.split('-');
     const monthDate = new Date(y, m - 1, 1);
-    const monthName = monthDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+    const monthName = monthDate.toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US', { month: 'long', year: 'numeric' });
     const monthNameCapitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
     return (
@@ -91,7 +93,7 @@ export default function Controls({
                                 : 'text-slate-400 hover:text-white'
                                 }`}
                         >
-                            Mes
+                            {t('dashboard.month')}
                         </button>
                         <button
                             onClick={() => setFilterMode('day')}
@@ -100,12 +102,9 @@ export default function Controls({
                                 : 'text-slate-400 hover:text-white'
                                 }`}
                         >
-                            Día
+                            {t('dashboard.day')}
                         </button>
                     </div>
-
-                    {/* Action Buttons */}
-
 
                     {/* Sort Dropdown */}
                     <div
@@ -117,7 +116,7 @@ export default function Controls({
                             className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm font-medium"
                         >
                             <ArrowDownUp className="w-4 h-4" />
-                            {sortMode === 'date' ? 'Fecha' : sortMode === 'amount_desc' ? 'Mayor Valor' : 'Menor Valor'}
+                            {sortMode === 'date' ? t('dashboard.sort.date') : sortMode === 'amount_desc' ? t('dashboard.sort.amountDesc') : t('dashboard.sort.amountAsc')}
                         </button>
 
                         {sortOpen && (
@@ -126,13 +125,13 @@ export default function Controls({
                                 onMouseEnter={handleMouseEnter}
                             >
                                 <button onClick={() => { setSortMode('date'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-700 ${sortMode === 'date' ? 'text-indigo-400 font-medium' : 'text-slate-300'}`}>
-                                    Por Fecha (Defecto)
+                                    {t('dashboard.sort.default')}
                                 </button>
                                 <button onClick={() => { setSortMode('amount_desc'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-700 ${sortMode === 'amount_desc' ? 'text-indigo-400 font-medium' : 'text-slate-300'}`}>
-                                    Mayor Valor
+                                    {t('dashboard.sort.amountDesc')}
                                 </button>
                                 <button onClick={() => { setSortMode('amount_asc'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-700 ${sortMode === 'amount_asc' ? 'text-indigo-400 font-medium' : 'text-slate-300'}`}>
-                                    Menor Valor
+                                    {t('dashboard.sort.amountAsc')}
                                 </button>
                             </div>
                         )}
@@ -143,7 +142,7 @@ export default function Controls({
                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors text-sm font-medium"
                     >
                         <RefreshCw className="w-4 h-4" />
-                        Importar Fijos
+                        {t('dashboard.importFixed')}
                     </button>
 
                     <button
@@ -151,7 +150,7 @@ export default function Controls({
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors text-sm font-medium"
                     >
                         <Download className="w-4 h-4" />
-                        Exportar
+                        {t('dashboard.export')}
                     </button>
                 </div>
             </div>

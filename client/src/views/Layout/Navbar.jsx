@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { LogOut, Menu, X, Wallet, Settings, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useUI } from '../../context/UIContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { logout, user } = useAuth();
     const { openSettings } = useUI();
+    const { t } = useTranslation();
 
     return (
         <nav className="bg-slate-800/50 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
@@ -23,21 +25,21 @@ export default function Navbar() {
 
                     <div className="hidden md:flex items-center gap-6">
                         <div className="text-slate-400 text-sm">
-                            Hola, <span className="text-slate-200 font-medium">{user?.username}</span>
+                            {t('nav.hello')} <span className="text-slate-200 font-medium">{user?.username}</span>
                         </div>
                         <button
                             onClick={openSettings}
                             className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors cursor-pointer mr-4"
                         >
                             <Settings className="w-4 h-4" />
-                            <span className="text-sm font-medium">Ajustes</span>
+                            <span className="text-sm font-medium">{t('nav.settings')}</span>
                         </button>
                         <button
                             onClick={logout}
                             className="flex items-center gap-2 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
                         >
                             <LogOut className="w-4 h-4" />
-                            <span className="text-sm font-medium">Cerrar Sesión</span>
+                            <span className="text-sm font-medium">{t('nav.logout')}</span>
                         </button>
                     </div>
 
@@ -61,7 +63,7 @@ export default function Navbar() {
                                 <User className="w-4 h-4 text-slate-400" />
                             </div>
                             <div className="flex flex-col overflow-hidden">
-                                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider leading-none mb-0.5">Conectado como</span>
+                                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider leading-none mb-0.5">{t('nav.connectedAs')}</span>
                                 <span className="text-xs font-semibold text-slate-200 truncate">{user?.username}</span>
                             </div>
                         </div>
@@ -74,7 +76,7 @@ export default function Navbar() {
                             <div className="bg-slate-800 group-hover:bg-indigo-500/20 p-1.5 rounded-lg transition-colors">
                                 <Settings className="w-4 h-4 text-indigo-400 group-hover:text-indigo-300" />
                             </div>
-                            Ajustes
+                            {t('nav.settings')}
                         </button>
                         <button
                             onClick={() => { logout(); setMobileMenuOpen(false); }}
@@ -83,7 +85,7 @@ export default function Navbar() {
                             <div className="bg-rose-500/10 group-hover:bg-rose-500/20 p-1.5 rounded-lg transition-colors">
                                 <LogOut className="w-4 h-4 text-rose-500 group-hover:text-rose-400" />
                             </div>
-                            Cerrar Sesión
+                            {t('nav.logout')}
                         </button>
                     </div>
                 </div>

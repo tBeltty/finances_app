@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 
 export default function DatePicker({ value, onChange, className = '' }) {
+    const { t, i18n } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [viewDate, setViewDate] = useState(new Date());
     const containerRef = useRef(null);
@@ -48,12 +50,12 @@ export default function DatePicker({ value, onChange, className = '' }) {
     };
 
     const formatDate = (dateStr) => {
-        if (!dateStr) return 'Seleccionar fecha';
+        if (!dateStr) return t('components.selectDate');
         const [y, m, d] = dateStr.split('-');
-        return new Date(y, m - 1, d).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+        return new Date(y, m - 1, d).toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric' });
     };
 
-    const monthName = viewDate.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+    const monthName = viewDate.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' });
     const days = Array.from({ length: daysInMonth(viewDate) }, (_, i) => i + 1);
     const startDay = firstDayOfMonth(viewDate); // 0 = Sunday
 
@@ -80,7 +82,7 @@ export default function DatePicker({ value, onChange, className = '' }) {
                     </div>
 
                     <div className="grid grid-cols-7 gap-1 mb-2 text-center">
-                        {['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'].map(d => (
+                        {(t('common.daysShort', { returnObjects: true }) || []).map(d => (
                             <div key={d} className="text-xs font-medium text-slate-500">{d}</div>
                         ))}
                     </div>

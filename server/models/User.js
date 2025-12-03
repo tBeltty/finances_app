@@ -59,6 +59,10 @@ const User = sequelize.define('User', {
     currency: {
         type: DataTypes.STRING,
         defaultValue: 'USD'
+    },
+    language: {
+        type: DataTypes.STRING,
+        defaultValue: 'en'
     }
 }, {
     timestamps: true,

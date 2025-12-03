@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Lock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 
 export default function ResetPassword() {
+    const { t } = useTranslation();
     const { token } = useParams();
     const navigate = useNavigate();
     const [password, setPassword] = useState('');
@@ -13,9 +15,10 @@ export default function ResetPassword() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
         if (password !== confirmPassword) {
             setStatus('error');
-            setMessage('Las contraseñas no coinciden');
+            setMessage(t('auth.passwordsDoNotMatch'));
             return;
         }
 
@@ -39,11 +42,11 @@ export default function ResetPassword() {
                 }, 3000);
             } else {
                 setStatus('error');
-                setMessage(data.message || 'Error al restablecer contraseña');
+                setMessage(data.message || t('auth.resetError'));
             }
         } catch (error) {
             setStatus('error');
-            setMessage('Error de conexión. Intenta nuevamente.');
+            setMessage(t('auth.connectionError'));
         }
     };
 
@@ -51,8 +54,8 @@ export default function ResetPassword() {
         <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
             <div className="max-w-md w-full bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl border border-slate-800 shadow-2xl">
                 <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-white mb-2">Nueva Contraseña</h2>
-                    <p className="text-slate-400 text-sm">Ingresa tu nueva contraseña segura</p>
+                    <h2 className="text-2xl font-bold text-white mb-2">{t('auth.newPassword')}</h2>
+                    <p className="text-slate-400 text-sm">{t('auth.newPasswordDesc')}</p>
                 </div>
 
                 {status === 'success' ? (
@@ -60,8 +63,8 @@ export default function ResetPassword() {
                         <div className="bg-emerald-500/10 p-4 rounded-full mb-6 inline-block">
                             <CheckCircle2 className="h-12 w-12 text-emerald-500" />
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">¡Contraseña Actualizada!</h3>
-                        <p className="text-slate-400 mb-8">Tu contraseña ha sido restablecida exitosamente. Redirigiendo al login...</p>
+                        <h3 className="text-xl font-semibold text-white mb-2">{t('auth.passwordUpdated')}</h3>
+                        <p className="text-slate-400 mb-8">{t('auth.passwordUpdatedDesc')}</p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -73,7 +76,7 @@ export default function ResetPassword() {
 
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300 ml-1">Nueva Contraseña</label>
+                                <label className="text-sm font-medium text-slate-300 ml-1">{t('auth.newPassword')}</label>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
                                     <input
@@ -89,7 +92,7 @@ export default function ResetPassword() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300 ml-1">Confirmar Contraseña</label>
+                                <label className="text-sm font-medium text-slate-300 ml-1">{t('auth.confirmPassword')}</label>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
                                     <input
@@ -114,7 +117,7 @@ export default function ResetPassword() {
                                 <Loader2 className="h-5 w-5 animate-spin" />
                             ) : (
                                 <>
-                                    Restablecer Contraseña
+                                    {t('auth.resetPassword')}
                                     <ArrowRight className="h-5 w-5" />
                                 </>
                             )}

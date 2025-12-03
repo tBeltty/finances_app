@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Wallet, Plus, Minus, Check, X } from 'lucide-react';
 
 export default function SavingsWidget({ savings, updateSavings, formatCurrency, loading }) {
+    const { t } = useTranslation();
     const [isEditing, setIsEditing] = useState(false);
     const [amount, setAmount] = useState('');
     const [operation, setOperation] = useState('add'); // 'add' or 'subtract'
@@ -33,14 +35,14 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                     <div className="bg-emerald-500/10 p-1.5 rounded-lg">
                         <Wallet className="w-5 h-5 text-emerald-400" />
                     </div>
-                    Ahorros
+                    {t('dashboard.savingsWidget.title')}
                 </h2>
                 {!isEditing && (
                     <button
                         onClick={() => setIsEditing(true)}
                         className="text-xs font-bold text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg transition-colors"
                     >
-                        Gestionar
+                        {t('dashboard.savingsWidget.manage')}
                     </button>
                 )}
             </div>
@@ -50,7 +52,7 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                     <div className="text-3xl font-bold text-white mb-1">
                         {formatCurrency(savings?.balance || 0)}
                     </div>
-                    <p className="text-xs text-slate-400">Disponible</p>
+                    <p className="text-xs text-slate-400">{t('dashboard.savingsWidget.available')}</p>
                 </div>
             ) : (
                 <form onSubmit={handleSubmit} className="space-y-3">
@@ -59,21 +61,21 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                             type="button"
                             onClick={() => setOperation('add')}
                             className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 ${operation === 'add'
-                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50'
-                                    : 'bg-slate-900/50 text-slate-400 border border-slate-700 hover:bg-slate-800'
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50'
+                                : 'bg-slate-900/50 text-slate-400 border border-slate-700 hover:bg-slate-800'
                                 }`}
                         >
-                            <Plus className="w-4 h-4" /> Ingresar
+                            <Plus className="w-4 h-4" /> {t('dashboard.savingsWidget.deposit')}
                         </button>
                         <button
                             type="button"
                             onClick={() => setOperation('subtract')}
                             className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 ${operation === 'subtract'
-                                    ? 'bg-rose-500/20 text-rose-400 border border-rose-500/50'
-                                    : 'bg-slate-900/50 text-slate-400 border border-slate-700 hover:bg-slate-800'
+                                ? 'bg-rose-500/20 text-rose-400 border border-rose-500/50'
+                                : 'bg-slate-900/50 text-slate-400 border border-slate-700 hover:bg-slate-800'
                                 }`}
                         >
-                            <Minus className="w-4 h-4" /> Retirar
+                            <Minus className="w-4 h-4" /> {t('dashboard.savingsWidget.withdraw')}
                         </button>
                     </div>
 
@@ -94,7 +96,7 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                             disabled={!amount}
                             className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
-                            <Check className="w-4 h-4" /> Confirmar
+                            <Check className="w-4 h-4" /> {t('dashboard.savingsWidget.confirm')}
                         </button>
                         <button
                             type="button"

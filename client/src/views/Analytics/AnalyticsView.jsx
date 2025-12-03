@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { TrendingUp, DollarSign, Calendar } from 'lucide-react';
 
 export default function AnalyticsView({ expenses, categories, currency, formatCurrency }) {
+    const { t } = useTranslation();
 
     // 1. Expenses by Category (Donut)
     const categoryData = useMemo(() => {
@@ -10,7 +12,7 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
         expenses.forEach(exp => {
             const catId = exp.categoryId;
             if (!grouped[catId]) {
-                const cat = categories.find(c => c.id == catId) || { name: 'Sin Categoría', color: 'slate' };
+                const cat = categories.find(c => c.id == catId) || { name: t('analytics.noCategory'), color: 'slate' };
                 grouped[catId] = { name: cat.name, value: 0, color: cat.color };
             }
             grouped[catId].value += exp.amount;
@@ -21,8 +23,7 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
     // 2. Daily Spending (Bar)
     const dailyData = useMemo(() => {
         const grouped = {};
-        // Initialize all days of month? Or just days with expenses?
-        // Let's do days with expenses for now, sorted.
+        // Sort expenses by date
         expenses.forEach(exp => {
             const day = new Date(exp.date).getDate();
             if (!grouped[day]) grouped[day] = 0;
@@ -52,10 +53,10 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
             return (
                 <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700 p-3 rounded-xl shadow-2xl z-50 min-w-[120px]">
                     <p className="text-slate-200 font-bold mb-1 text-sm border-b border-slate-700 pb-1">
-                        {label ? `Día ${label}` : payload[0].name}
+                        {label ? `${t('analytics.day')} ${label}` : payload[0].name}
                     </p>
                     <div className="flex items-center gap-3">
-                        <span className="text-slate-400 text-xs">Total:</span>
+                        <span className="text-slate-400 text-xs">{t('analytics.total')}:</span>
                         <span className="text-indigo-400 font-mono font-bold text-sm">
                             {formatCurrency(payload[0].value)}
                         </span>
@@ -82,7 +83,7 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
         return (
             <div className="flex flex-col items-center justify-center h-64 text-slate-500">
                 <TrendingUp className="w-12 h-12 mb-4 opacity-20" />
-                <p>No hay datos suficientes para mostrar análisis.</p>
+                <p>{t('analytics.insufficientData')}</p>
             </div>
         );
     }
@@ -96,7 +97,7 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
                         <div className="bg-indigo-500/10 p-2 rounded-lg">
                             <TrendingUp className="w-5 h-5 text-indigo-400" />
                         </div>
-                        <span className="text-xs font-bold text-slate-400 uppercase">Top Categoría</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase">{t('analytics.topCategory')}</span>
                     </div>
                     <p className="text-lg font-bold text-slate-200 truncate">{topCategory?.name || '-'}</p>
                     <p className="text-xs text-slate-500">{topCategory ? formatCurrency(topCategory.value) : '-'}</p>
@@ -106,16 +107,16 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
                         <div className="bg-emerald-500/10 p-2 rounded-lg">
                             <Calendar className="w-5 h-5 text-emerald-400" />
                         </div>
-                        <span className="text-xs font-bold text-slate-400 uppercase">Promedio Diario</span>
+                        <span className="text-xs font-bold text-slate-400 uppercase">{t('analytics.dailyAverage')}</span>
                     </div>
                     <p className="text-lg font-bold text-slate-200">{formatCurrency(avgDaily)}</p>
-                    <p className="text-xs text-slate-500">en días con gastos</p>
+                    <p className="text-xs text-slate-500">{t('analytics.inSpendingDays')}</p>
                 </div>
             </div>
 
             {/* Donut Chart */}
             <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl">
-                <h3 className="text-sm font-bold text-slate-400 uppercase mb-6">Gastos por Categoría</h3>
+                <h3 className="text-sm font-bold text-slate-400 uppercase mb-6">{t('analytics.expensesByCategory')}</h3>
                 <div className="h-64 relative">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -146,7 +147,7 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
                     {/* Center Text */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-all duration-300">
                         <span className="text-xs text-slate-500 font-medium mb-1">
-                            {activeItem ? activeItem.name : 'Total'}
+                            {activeItem ? activeItem.name : t('analytics.total')}
                         </span>
                         <span className={`text-xl font-bold ${activeItem ? 'text-indigo-400' : 'text-white'}`}>
                             {formatCurrency(activeItem ? activeItem.value : totalSpent)}
@@ -172,7 +173,7 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
 
             {/* Bar Chart */}
             <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl">
-                <h3 className="text-sm font-bold text-slate-400 uppercase mb-6">Tendencia Diaria</h3>
+                <h3 className="text-sm font-bold text-slate-400 uppercase mb-6">{t('analytics.dailyTrend')}</h3>
                 <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={dailyData}>

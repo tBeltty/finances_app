@@ -31,10 +31,18 @@ class ErrorBoundary extends React.Component {
                         </pre>
                     </div>
                     <button
-                        onClick={() => window.location.reload()}
+                        onClick={async () => {
+                            if ('serviceWorker' in navigator) {
+                                const registrations = await navigator.serviceWorker.getRegistrations();
+                                for (const registration of registrations) {
+                                    await registration.unregister();
+                                }
+                            }
+                            window.location.reload(true);
+                        }}
                         className="mt-8 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-medium transition-colors"
                     >
-                        Recargar Página
+                        Recargar y Actualizar
                     </button>
                 </div>
             );

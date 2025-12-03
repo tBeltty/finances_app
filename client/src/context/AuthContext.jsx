@@ -16,7 +16,6 @@ export const AuthProvider = ({ children }) => {
 
                 if (userRes.ok) {
                     const userDetails = await userRes.json();
-                    console.log("AuthContext: Loaded user:", userDetails);
                     setUser({ ...userDetails, token });
                 } else {
                     // Token is invalid, clear it

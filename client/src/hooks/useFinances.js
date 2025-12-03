@@ -30,7 +30,7 @@ export default function useFinances() {
 
     const activeHouseholdId = useMemo(() => {
         if (user?.Households?.length > 0) {
-            // For now, default to the first household or the one marked as default
+            // Default to the first household or the one marked as default
             const defaultHousehold = user.Households.find(h => h.HouseholdMember.isDefault);
             return defaultHousehold ? defaultHousehold.id : user.Households[0].id;
         }
@@ -95,16 +95,11 @@ export default function useFinances() {
 
     useEffect(() => {
         if (user?.token && activeHouseholdId) {
-            console.log("useFinances: Fetching data for", selectedMonth, "Household:", activeHouseholdId);
-            console.log("useFinances: User Currency:", user.currency);
-
             // Set income from user profile
             if (user.monthlyIncome !== undefined && user.monthlyIncome !== null) {
                 setIncome(Number(user.monthlyIncome));
             }
             fetchData();
-        } else {
-            console.log("useFinances: Skipping fetch. User:", !!user, "Household:", activeHouseholdId);
         }
     }, [user, selectedMonth, activeHouseholdId]);
 
@@ -141,7 +136,7 @@ export default function useFinances() {
 
     const groupedExpenses = useMemo(() => {
         const grouped = {};
-        expenses.forEach(expense => {
+        filteredExpenses.forEach(expense => {
             const catId = expense.categoryId;
             if (!grouped[catId]) {
                 grouped[catId] = {
@@ -156,7 +151,7 @@ export default function useFinances() {
             grouped[catId].items.push(expense);
         });
         return Object.values(grouped).sort((a, b) => b.total - a.total);
-    }, [expenses, categories]);
+    }, [filteredExpenses, categories]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -192,8 +187,7 @@ export default function useFinances() {
                 if (catRes.ok) {
                     const cats = await catRes.json();
                     setCategories(cats);
-                    // Sync local DB: Replace only synced ones or all? Categories are usually global/synced.
-                    // For safety, let's just overwrite categories as they are less prone to high-frequency offline edits
+                    // Sync local DB: Overwrite categories to ensure consistency
                     await db.categories.where('userId').equals(user.id).delete();
                     await db.categories.bulkPut(cats.map(c => ({ ...c, userId: user.id })));
                 }
@@ -221,11 +215,7 @@ export default function useFinances() {
 
                     setExpenses(mergedExpenses);
 
-                    // Update DB: Delete SYNCED expenses for this month, keep UNSYNCED
-                    // This is tricky with Dexie. Easier to bulkPut server ones (overwrite) and keep unsynced.
-                    // But we need to remove deleted ones.
-                    // Strategy: Delete all SYNCED for this month/user, then add new server ones.
-
+                    // Update DB: Replace synced expenses for this month with server data
                     await db.expenses
                         .where('[month+userId]')
                         .equals([selectedMonth, user.id])
@@ -275,11 +265,32 @@ export default function useFinances() {
         e.preventDefault();
         if (!newExpense.name || !newExpense.amount) return;
 
+        // Parse amount based on currency
+        let parsedAmount = 0;
+        const currency = user?.currency || 'USD';
+        const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(currency);
+
+        if (typeof newExpense.amount === 'string') {
+            let cleanVal = newExpense.amount;
+            if (isDotThousands) {
+                // Remove dots, replace comma with dot
+                cleanVal = cleanVal.replace(/\./g, '').replace(/,/g, '.');
+            } else {
+                // Remove commas
+                cleanVal = cleanVal.replace(/,/g, '');
+            }
+            parsedAmount = parseFloat(cleanVal);
+        } else {
+            parsedAmount = parseFloat(newExpense.amount);
+        }
+
+        if (isNaN(parsedAmount)) parsedAmount = 0;
+
         const tempId = Date.now(); // Temporary ID for local DB
         const expensePayload = {
             ...newExpense,
-            amount: parseFloat(newExpense.amount),
-            paid: newExpense.isPaid ? parseFloat(newExpense.amount) : 0,
+            amount: parsedAmount,
+            paid: newExpense.isPaid ? parsedAmount : 0,
             month: selectedMonth,
             // Si está pagado, usa la fecha seleccionada o hoy. Si no, null.
             date: newExpense.isPaid ? (newExpense.date || new Date().toISOString().split('T')[0]) : null,
@@ -489,7 +500,7 @@ export default function useFinances() {
 
             if (res.ok) {
                 const newCat = await res.json();
-                setCategories([...categories, newCat]);
+                setCategories(prev => [...prev, newCat]);
                 return newCat;
             }
         } catch (error) {
@@ -528,7 +539,12 @@ export default function useFinances() {
     };
 
     const handleEditCategory = async (updatedCategory) => {
-        if (!activeHouseholdId) return;
+        if (!activeHouseholdId) return { success: false, message: 'No active household' };
+
+        // Optimistic Update
+        const originalCategories = [...categories];
+        setCategories(prev => prev.map(c => c.id === updatedCategory.id ? updatedCategory : c));
+
         try {
             const res = await fetch(`/api/categories/${updatedCategory.id}`, {
                 method: 'PUT',
@@ -541,10 +557,17 @@ export default function useFinances() {
             });
 
             if (res.ok) {
-                setCategories(categories.map(c => c.id === updatedCategory.id ? updatedCategory : c));
+                return { success: true };
+            } else {
+                // Revert on failure
+                setCategories(originalCategories);
+                return { success: false, message: 'API Error' };
             }
         } catch (error) {
             console.error("Error editing category:", error);
+            // Revert on error
+            setCategories(originalCategories);
+            return { success: false, error };
         }
     };
 

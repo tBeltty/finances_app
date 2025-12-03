@@ -62,6 +62,7 @@ app.put('/api/auth/income', authMiddleware, authController.updateIncome);
 app.put('/api/auth/update-income', authMiddleware, authController.updateIncome); // Alias
 app.put('/api/auth/currency', authMiddleware, authController.updateCurrency);
 app.put('/api/auth/update-currency', authMiddleware, authController.updateCurrency); // Alias
+app.put('/api/auth/update-language', authMiddleware, authController.updateLanguage);
 app.delete('/api/auth/me', authMiddleware, authController.deleteAccount);
 
 const householdMiddleware = require('./middleware/householdMiddleware');

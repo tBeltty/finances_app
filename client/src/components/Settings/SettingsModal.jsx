@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Shield, List, Plus, Trash2, Edit2, Check, RefreshCw, Users, Copy, LogIn } from 'lucide-react';
+import { X, Shield, List, Plus, Trash2, Edit2, Check, RefreshCw, Users, Copy, LogIn, Languages } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import CustomSelect from '../Inputs/CustomSelect';
 
 export default function SettingsModal({
     isOpen,
@@ -14,12 +16,29 @@ export default function SettingsModal({
     household,
     updateHouseholdSettings
 }) {
+    const { t, i18n } = useTranslation();
     const [activeTab, setActiveTab] = useState('general');
     const [newCategory, setNewCategory] = useState('');
     const [editingId, setEditingId] = useState(null);
     const [editName, setEditName] = useState('');
     const [editColor, setEditColor] = useState('slate');
     const [currency, setCurrency] = useState(user?.currency || 'USD');
+
+    const changeLanguage = async (lang) => {
+        i18n.changeLanguage(lang);
+        try {
+            await fetch('/api/auth/update-language', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ language: lang })
+            });
+        } catch (error) {
+            console.error('Error updating language:', error);
+        }
+    };
 
     // 2FA State
     const [is2FAEnabled, setIs2FAEnabled] = useState(user?.isTwoFactorEnabled || false);
@@ -132,7 +151,7 @@ export default function SettingsModal({
 
     const handleDeleteAccount = async () => {
         if (!deletePassword) {
-            setDeleteError('Ingresa tu contraseña para confirmar');
+            setDeleteError(t('settings.deleteErrorPassword'));
             return;
         }
 
@@ -161,27 +180,27 @@ export default function SettingsModal({
                 }
                 window.location.href = '/login';
             } else {
-                setDeleteError(data.message || 'Error al eliminar cuenta');
+                setDeleteError(data.message || t('settings.deleteErrorGeneric'));
             }
         } catch (error) {
             console.error('Delete account error:', error);
-            setDeleteError('Error de conexión');
+            setDeleteError(t('settings.connectionError'));
         }
     };
 
     if (!isOpen) return null;
 
     const CURRENCIES = [
-        { code: 'USD', label: 'Dólar Estadounidense ($)', locale: 'en-US' },
-        { code: 'EUR', label: 'Euro (€)', locale: 'de-DE' },
-        { code: 'COP', label: 'Peso Colombiano ($)', locale: 'es-CO' },
-        { code: 'MXN', label: 'Peso Mexicano ($)', locale: 'es-MX' },
-        { code: 'HNL', label: 'Lempira Hondureño (L)', locale: 'es-HN' },
+        { code: 'USD', label: t('currencies.USD'), locale: 'en-US' },
+        { code: 'EUR', label: t('currencies.EUR'), locale: 'de-DE' },
+        { code: 'COP', label: t('currencies.COP'), locale: 'es-CO' },
+        { code: 'MXN', label: t('currencies.MXN'), locale: 'es-MX' },
+        { code: 'ARS', label: t('currencies.ARS'), locale: 'es-AR' },
+        { code: 'HNL', label: t('currencies.HNL'), locale: 'es-HN' },
     ];
 
     // ... (rest of existing functions: handleCurrencyChange, 2FA handlers, category handlers)
-    const handleCurrencyChange = async (e) => {
-        const newCurrency = e.target.value;
+    const handleCurrencyChange = async (newCurrency) => {
         setCurrency(newCurrency);
         try {
             const res = await fetch('/api/auth/currency', {
@@ -218,7 +237,7 @@ export default function SettingsModal({
     };
 
     const handleDisable2FA = async () => {
-        if (!confirm('¿Estás seguro de que deseas desactivar la autenticación de dos factores?')) return;
+        if (!confirm(t('settings.confirmDisable2FA'))) return;
         try {
             const res = await fetch('/api/auth/2fa/disable', {
                 method: 'POST',
@@ -249,9 +268,9 @@ export default function SettingsModal({
                 setShowSetup(false);
                 setToken('');
                 if (refreshUser) refreshUser();
-                alert('2FA activado correctamente');
+                alert(t('settings.2faActivated'));
             } else {
-                alert('Código incorrecto');
+                alert(t('settings.incorrectCode'));
             }
         } catch (error) {
             console.error("Error verifying 2FA:", error);
@@ -308,23 +327,23 @@ export default function SettingsModal({
                                 <div className="bg-rose-500/10 p-3 rounded-full">
                                     <Trash2 className="h-8 w-8" />
                                 </div>
-                                <h3 className="text-xl font-bold text-white">¿Eliminar Cuenta?</h3>
+                                <h3 className="text-xl font-bold text-white">{t('settings.deleteAccountConfirmTitle')}</h3>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="bg-rose-950/30 border border-rose-500/20 p-4 rounded-xl">
                                     <p className="text-rose-200 text-sm font-medium">
-                                        Esta acción es permanente e irreversible.
+                                        {t('settings.deleteAccountConfirmDesc')}
                                     </p>
                                     <ul className="list-disc list-inside text-rose-300/70 text-xs mt-2 space-y-1">
-                                        <li>Se borrarán todos tus gastos e ingresos.</li>
-                                        <li>Se eliminarán tus categorías y ahorros.</li>
-                                        <li>Perderás acceso a tus hogares compartidos.</li>
+                                        <li>{t('settings.deleteAccountWarning1')}</li>
+                                        <li>{t('settings.deleteAccountWarning2')}</li>
+                                        <li>{t('settings.deleteAccountWarning3')}</li>
                                     </ul>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm text-slate-400">Ingresa tu contraseña para confirmar:</label>
+                                    <label className="text-sm text-slate-400">{t('settings.enterPasswordConfirm')}</label>
                                     <input
                                         type="password"
                                         value={deletePassword}
@@ -333,7 +352,7 @@ export default function SettingsModal({
                                             setDeleteError('');
                                         }}
                                         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none"
-                                        placeholder="Tu contraseña actual"
+                                        placeholder={t('settings.currentPasswordPlaceholder')}
                                     />
                                     {deleteError && <p className="text-rose-500 text-sm">{deleteError}</p>}
                                 </div>
@@ -348,13 +367,13 @@ export default function SettingsModal({
                                     }}
                                     className="flex-1 py-3 text-slate-400 hover:text-white font-medium transition-colors"
                                 >
-                                    Cancelar
+                                    {t('settings.cancel')}
                                 </button>
                                 <button
                                     onClick={handleDeleteAccount}
                                     className="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold shadow-lg shadow-rose-900/20 transition-all hover:scale-[1.02]"
                                 >
-                                    Sí, Eliminar Todo
+                                    {t('settings.confirmDelete')}
                                 </button>
                             </div>
                         </div>
@@ -363,7 +382,7 @@ export default function SettingsModal({
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-slate-800">
-                    <h2 className="text-xl font-bold text-white">Ajustes</h2>
+                    <h2 className="text-xl font-bold text-white">{t('settings.title')}</h2>
                     <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
                         <X className="h-6 w-6" />
                     </button>
@@ -379,7 +398,7 @@ export default function SettingsModal({
                             }`}
                     >
                         <RefreshCw className="h-4 w-4" />
-                        General
+                        {t('settings.general')}
                     </button>
                     <button
                         onClick={() => setActiveTab('categories')}
@@ -389,7 +408,7 @@ export default function SettingsModal({
                             }`}
                     >
                         <List className="h-4 w-4" />
-                        Categorías
+                        {t('settings.categories')}
                     </button>
                     <button
                         onClick={() => setActiveTab('household')}
@@ -399,7 +418,7 @@ export default function SettingsModal({
                             }`}
                     >
                         <Users className="h-4 w-4" />
-                        Hogar
+                        {t('settings.household')}
                     </button>
                     <button
                         onClick={() => setActiveTab('security')}
@@ -409,7 +428,7 @@ export default function SettingsModal({
                             }`}
                     >
                         <Shield className="h-4 w-4" />
-                        Seguridad
+                        {t('settings.security')}
                     </button>
                 </div>
 
@@ -418,71 +437,81 @@ export default function SettingsModal({
                     {activeTab === 'general' && (
                         <div className="space-y-8">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-400">Moneda Principal</label>
+                                <label className="text-sm font-medium text-slate-400">{t('settings.currency')}</label>
                                 <div className="relative">
-                                    <select
+                                    <CustomSelect
                                         value={currency}
                                         onChange={handleCurrencyChange}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white appearance-none focus:border-indigo-500 focus:outline-none cursor-pointer"
-                                    >
-                                        {CURRENCIES.map((curr) => (
-                                            <option key={curr.code} value={curr.code}>
-                                                {curr.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </div>
+                                        options={CURRENCIES.map(c => ({ value: c.code, label: c.label }))}
+                                        placeholder={t('settings.currency')}
+                                    />
                                 </div>
                                 <p className="text-xs text-slate-500 mt-2">
-                                    Esto cambiará el símbolo de moneda y el formato de números en toda la aplicación.
+                                    {t('settings.currencyDesc')}
                                 </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-slate-400">{t('settings.language')}</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        onClick={() => changeLanguage('en')}
+                                        className={`p-3 rounded-xl border text-left transition-all ${i18n.language === 'en'
+                                            ? 'bg-indigo-600/20 border-indigo-500 text-white'
+                                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                                            }`}
+                                    >
+                                        <div className="font-bold flex items-center gap-2">🇺🇸 English</div>
+                                    </button>
+                                    <button
+                                        onClick={() => changeLanguage('es')}
+                                        className={`p-3 rounded-xl border text-left transition-all ${i18n.language === 'es'
+                                            ? 'bg-indigo-600/20 border-indigo-500 text-white'
+                                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
+                                            }`}
+                                    >
+                                        <div className="font-bold flex items-center gap-2">🇪🇸 Español</div>
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Auto Savings Section */}
                             <div className="pt-8 border-t border-slate-800">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase mb-4">Ahorro Automático</h3>
+                                <h3 className="text-sm font-bold text-slate-400 uppercase mb-4">{t('settings.autoSavings')}</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-medium text-slate-400">Tipo de Meta</label>
+                                        <label className="text-xs font-medium text-slate-400">{t('settings.goalType')}</label>
                                         <div className="relative">
-                                            <select
+                                            <CustomSelect
                                                 value={household?.savingsGoalType || 'NONE'}
-                                                onChange={(e) => updateHouseholdSettings({ savingsGoalType: e.target.value })}
-                                                className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-xl px-4 py-3 appearance-none focus:outline-none focus:border-indigo-500 transition-all cursor-pointer"
-                                            >
-                                                <option value="NONE">Desactivado</option>
-                                                <option value="PERCENT">Porcentaje (%)</option>
-                                                <option value="FIXED">Monto Fijo</option>
-                                            </select>
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </div>
+                                                onChange={(val) => updateHouseholdSettings({ savingsGoalType: val })}
+                                                options={[
+                                                    { value: 'NONE', label: t('settings.goalTypeNone') },
+                                                    { value: 'PERCENT', label: t('settings.goalTypePercent') },
+                                                    { value: 'FIXED', label: t('settings.goalTypeFixed') }
+                                                ]}
+                                                placeholder={t('settings.goalType')}
+                                            />
                                         </div>
                                     </div>
 
                                     {household?.savingsGoalType !== 'NONE' && (
                                         <div className="space-y-2 animate-in fade-in slide-in-from-left-2">
                                             <label className="text-xs font-medium text-slate-400">
-                                                {household?.savingsGoalType === 'PERCENT' ? 'Porcentaje a Ahorrar (%)' : 'Monto a Ahorrar'}
+                                                {household?.savingsGoalType === 'PERCENT' ? t('settings.savingsGoalValuePercent') : t('settings.savingsGoalValueFixed')}
                                             </label>
                                             <input
                                                 type="number"
                                                 value={household?.savingsGoalValue || ''}
                                                 onChange={(e) => updateHouseholdSettings({ savingsGoalValue: parseFloat(e.target.value) })}
-                                                placeholder={household?.savingsGoalType === 'PERCENT' ? 'Ej: 10' : 'Ej: 200'}
+                                                placeholder={household?.savingsGoalType === 'PERCENT' ? t('settings.savingsGoalPercentPlaceholder') : t('settings.savingsGoalFixedPlaceholder')}
                                                 className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-all"
                                             />
                                         </div>
                                     )}
                                 </div>
                                 <p className="text-xs text-slate-500 mt-2">
-                                    Al guardar tu ingreso mensual, se te preguntará si deseas mover esta cantidad a tus ahorros automáticamente.
+                                    {t('settings.autoSavingsDesc')}
                                 </p>
                             </div>
 
@@ -490,18 +519,18 @@ export default function SettingsModal({
                             <div className="pt-8 border-t border-slate-800">
                                 <h3 className="text-rose-500 font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
                                     <Trash2 className="h-4 w-4" />
-                                    Zona de Peligro
+                                    {t('settings.dangerZone')}
                                 </h3>
                                 <div className="bg-rose-950/10 border border-rose-900/30 rounded-xl p-4 flex items-center justify-between">
                                     <div>
-                                        <h4 className="text-white font-medium">Eliminar Cuenta</h4>
-                                        <p className="text-slate-400 text-xs mt-1">Borrar permanentemente tu cuenta y todos sus datos.</p>
+                                        <h4 className="text-white font-medium">{t('settings.deleteAccount')}</h4>
+                                        <p className="text-slate-400 text-xs mt-1">{t('settings.deleteAccountDesc')}</p>
                                     </div>
                                     <button
                                         onClick={() => setShowDeleteConfirm(true)}
                                         className="px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg text-sm font-medium transition-colors border border-rose-500/20"
                                     >
-                                        Eliminar
+                                        {t('settings.deleteAccountButton')}
                                     </button>
                                 </div>
                             </div>
@@ -512,13 +541,13 @@ export default function SettingsModal({
                         <div className="space-y-8">
                             {/* Add New */}
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Nueva Categoría</h3>
+                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">{t('settings.newCategory')}</h3>
                                 <form onSubmit={onAddCategory} className="flex gap-2">
                                     <input
                                         type="text"
                                         value={newCategory}
                                         onChange={(e) => setNewCategory(e.target.value)}
-                                        placeholder="Nombre de la categoría..."
+                                        placeholder={t('settings.categoryNamePlaceholder')}
                                         className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:border-indigo-500 focus:outline-none"
                                     />
                                     <button
@@ -532,21 +561,21 @@ export default function SettingsModal({
                                 <div className="pt-2 border-t border-slate-800">
                                     <button
                                         onClick={() => {
-                                            if (confirm('¿Deseas cargar las categorías por defecto? (Servicios, Hogar, Transporte, etc.)')) {
+                                            if (confirm(t('settings.confirmLoadTemplates'))) {
                                                 handleAddTemplateCategories();
                                             }
                                         }}
                                         className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl flex items-center justify-center gap-2 transition-colors border border-slate-700 hover:border-slate-600"
                                     >
                                         <RefreshCw className="h-4 w-4" />
-                                        Cargar Plantillas (Templates)
+                                        {t('settings.loadTemplates')}
                                     </button>
                                 </div>
                             </div>
 
                             {/* List */}
                             <div className="space-y-4">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Tus Categorías</h3>
+                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">{t('settings.yourCategories')}</h3>
                                 <div className="space-y-2">
                                     {categories.map(cat => (
                                         <div key={cat.id} className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl group">
@@ -594,10 +623,10 @@ export default function SettingsModal({
                                                         </button>
                                                         <button
                                                             onClick={async () => {
-                                                                if (confirm('¿Eliminar esta categoría?')) {
+                                                                if (confirm(t('settings.confirmDeleteCategory'))) {
                                                                     const result = await handleDeleteCategory(cat.id);
                                                                     if (result && !result.success) {
-                                                                        alert(result.message || 'Error al eliminar');
+                                                                        alert(result.message || t('settings.deleteCategoryError'));
                                                                     }
                                                                 }
                                                             }}
@@ -625,17 +654,17 @@ export default function SettingsModal({
                                             <Edit2 className="h-6 w-6 text-slate-400" />
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-bold text-white">Nombre del Hogar</h3>
-                                            <p className="text-sm text-slate-400">Personaliza el nombre de tu espacio compartido.</p>
+                                            <h3 className="text-lg font-bold text-white">{t('settings.householdName')}</h3>
+                                            <p className="text-sm text-slate-400">{t('settings.householdNameDesc')}</p>
                                         </div>
                                     </div>
-                                    {renameStatus === 'saving' && <span className="text-xs text-indigo-400 animate-pulse">Guardando...</span>}
-                                    {renameStatus === 'saved' && <span className="text-xs text-emerald-400 font-bold flex items-center gap-1"><Check className="w-3 h-3" /> Guardado</span>}
+                                    {renameStatus === 'saving' && <span className="text-xs text-indigo-400 animate-pulse">{t('settings.saving')}</span>}
+                                    {renameStatus === 'saved' && <span className="text-xs text-emerald-400 font-bold flex items-center gap-1"><Check className="w-3 h-3" /> {t('settings.saved')}</span>}
                                 </div>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
-                                        placeholder="Ej: Familia Pérez"
+                                        placeholder={t('settings.householdNamePlaceholder')}
                                         className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:border-indigo-500 focus:outline-none transition-all"
                                         defaultValue={user?.Households?.find(h => h.HouseholdMember.isDefault)?.name || ''}
                                         onBlur={(e) => handleRename(e.target.value)}
@@ -655,17 +684,17 @@ export default function SettingsModal({
                                         <Users className="h-6 w-6 text-indigo-400" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-white">Invitar Miembros</h3>
-                                        <p className="text-sm text-slate-400">Genera un código para invitar a otros a tu hogar.</p>
+                                        <h3 className="text-lg font-bold text-white">{t('settings.inviteMembers')}</h3>
+                                        <p className="text-sm text-slate-400">{t('settings.inviteMembersDesc')}</p>
                                     </div>
                                 </div>
 
                                 {inviteCode ? (
                                     <div className="bg-slate-950 border border-slate-800 rounded-lg p-4 flex items-center justify-between">
                                         <div className="space-y-1">
-                                            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Código de Invitación</p>
+                                            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">{t('settings.inviteCode')}</p>
                                             <p className="text-2xl font-mono font-bold text-white tracking-widest">{inviteCode}</p>
-                                            <p className="text-xs text-slate-500">Expira: {inviteExpires?.toLocaleString()}</p>
+                                            <p className="text-xs text-slate-500">{t('settings.expires')} {inviteExpires?.toLocaleString()}</p>
                                         </div>
                                         <button
                                             onClick={() => navigator.clipboard.writeText(inviteCode)}
@@ -679,20 +708,20 @@ export default function SettingsModal({
                                         onClick={handleCreateInvite}
                                         className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-colors"
                                     >
-                                        Generar Código de Invitación
+                                        {t('settings.generateInviteCode')}
                                     </button>
                                 )}
                             </div>
 
                             {/* Join Section */}
                             <div className="space-y-4 pt-4 border-t border-slate-800">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Unirse a otro Hogar</h3>
+                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">{t('settings.joinHousehold')}</h3>
                                 <form onSubmit={handleJoinHousehold} className="flex gap-2">
                                     <input
                                         type="text"
                                         value={joinCode}
                                         onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                                        placeholder="Ingresa el código de invitación..."
+                                        placeholder={t('settings.joinCodePlaceholder')}
                                         className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:border-indigo-500 focus:outline-none font-mono"
                                         maxLength={8}
                                     />
@@ -701,14 +730,14 @@ export default function SettingsModal({
                                         className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
                                     >
                                         <LogIn className="h-4 w-4" />
-                                        Unirse
+                                        {t('settings.join')}
                                     </button>
                                 </form>
                             </div>
 
                             {/* Members List */}
                             <div className="space-y-4 pt-4 border-t border-slate-800">
-                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">Miembros del Hogar</h3>
+                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider">{t('settings.householdMembers')}</h3>
                                 <div className="space-y-2">
                                     {members.map(member => (
                                         <div key={member.id} className="flex items-center justify-between bg-slate-950 border border-slate-800 p-3 rounded-xl">
@@ -718,7 +747,7 @@ export default function SettingsModal({
                                                 </div>
                                                 <div>
                                                     <p className="text-white font-medium">{member.User?.username}</p>
-                                                    <p className="text-xs text-slate-500">{member.role === 'owner' ? 'Propietario' : 'Miembro'}</p>
+                                                    <p className="text-xs text-slate-500">{member.role === 'owner' ? t('settings.roleOwner') : t('settings.roleMember')}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -733,11 +762,11 @@ export default function SettingsModal({
                             <div className="bg-slate-950 inline-block p-6 rounded-full mb-4">
                                 <Shield className="h-12 w-12 text-indigo-500" />
                             </div>
-                            <h3 className="text-xl font-bold text-white">Autenticación de Dos Factores (2FA)</h3>
+                            <h3 className="text-xl font-bold text-white">{t('settings.2faTitle')}</h3>
                             <p className="text-slate-400 max-w-md mx-auto">
                                 {is2FAEnabled
-                                    ? "Tu cuenta está protegida con autenticación de dos factores."
-                                    : "Añade una capa extra de seguridad a tu cuenta requiriendo un código de tu aplicación autenticadora al iniciar sesión."}
+                                    ? t('settings.2faEnabledDesc')
+                                    : t('settings.2faDisabledDesc')}
                             </p>
 
                             {!showSetup ? (
@@ -748,7 +777,7 @@ export default function SettingsModal({
                                         : 'bg-indigo-600 hover:bg-indigo-500 text-white'
                                         }`}
                                 >
-                                    {is2FAEnabled ? 'Desactivar 2FA' : 'Activar 2FA'}
+                                    {is2FAEnabled ? t('settings.disable2FA') : t('settings.enable2FA')}
                                 </button>
                             ) : (
                                 <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 max-w-sm mx-auto space-y-4">
@@ -756,8 +785,8 @@ export default function SettingsModal({
                                         <img src={qrCode} alt="QR Code" className="w-48 h-48" />
                                     </div>
                                     <div className="text-left space-y-2">
-                                        <p className="text-sm text-slate-400">1. Escanea el código QR con tu app autenticadora (Google Authenticator, Authy, etc).</p>
-                                        <p className="text-sm text-slate-400">2. Ingresa el código de 6 dígitos que genera la app:</p>
+                                        <p className="text-sm text-slate-400">{t('settings.2faStep1')}</p>
+                                        <p className="text-sm text-slate-400">{t('settings.2faStep2')}</p>
                                     </div>
                                     <input
                                         type="text"
@@ -772,13 +801,13 @@ export default function SettingsModal({
                                             onClick={() => setShowSetup(false)}
                                             className="flex-1 py-2 text-slate-400 hover:text-white transition-colors"
                                         >
-                                            Cancelar
+                                            {t('settings.cancel')}
                                         </button>
                                         <button
                                             onClick={handleVerify2FA}
                                             className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors"
                                         >
-                                            Verificar
+                                            {t('settings.verify')}
                                         </button>
                                     </div>
                                 </div>
@@ -791,7 +820,7 @@ export default function SettingsModal({
                 <div className="p-6 border-t border-slate-800 flex justify-between items-center bg-slate-900/50">
                     <button
                         onClick={async () => {
-                            if (confirm('¿Estás seguro? Esto borrará los datos locales y recargará la página. (Tus datos en el servidor están seguros)')) {
+                            if (confirm(t('settings.confirmReset'))) {
                                 localStorage.clear();
                                 const { db } = await import('../../db');
                                 await db.delete();
@@ -807,13 +836,13 @@ export default function SettingsModal({
                         }}
                         className="text-xs text-rose-500 hover:text-rose-400 underline"
                     >
-                        Reset App / Borrar Cache
+                        {t('settings.resetApp')}
                     </button>
                     <button
                         onClick={onClose}
                         className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
                     >
-                        Cerrar
+                        {t('settings.close')}
                     </button>
                 </div>
             </div>

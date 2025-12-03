@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DollarSign, Wallet, TrendingDown, CreditCard, CheckCircle2, Edit3, X } from 'lucide-react';
 
 export default function KPIs({
@@ -12,8 +13,10 @@ export default function KPIs({
     expenses,
     formatCurrency,
     household,
-    updateSavings
+    updateSavings,
+    onPendingClick
 }) {
+    const { t } = useTranslation();
     const [isEditingIncome, setIsEditingIncome] = useState(false);
     const [tempIncome, setTempIncome] = useState(String(income));
 
@@ -37,10 +40,11 @@ export default function KPIs({
 
             if (savingsAmount > 0) {
                 // Small delay to let the UI update first
+                // Small delay to let the UI update first
                 setTimeout(async () => {
-                    if (confirm(`¿Deseas transferir ${formatCurrency(savingsAmount)} a tus ahorros automáticamente?`)) {
+                    if (confirm(t('dashboard.confirmTransfer', { amount: formatCurrency(savingsAmount) }))) {
                         await updateSavings(savingsAmount, 'add');
-                        alert(`Se han añadido ${formatCurrency(savingsAmount)} a tus ahorros.`);
+                        alert(t('dashboard.savingsAdded', { amount: formatCurrency(savingsAmount) }));
                     }
                 }, 100);
             }
@@ -62,7 +66,7 @@ export default function KPIs({
                         <DollarSign className="w-5 h-5 text-emerald-400" />
                     </div>
                     <div className="w-full flex flex-col items-center">
-                        <p className="text-slate-400 text-xs font-medium mb-1">Ingresos</p>
+                        <p className="text-slate-400 text-xs font-medium mb-1">{t('dashboard.income')}</p>
                         {isEditingIncome ? (
                             <div className="flex items-center justify-center gap-2">
                                 <input
@@ -105,7 +109,7 @@ export default function KPIs({
                         <Wallet className="w-5 h-5 text-blue-400" />
                     </div>
                     <div className="w-full">
-                        <p className="text-slate-400 text-xs font-medium mb-1">Balance Real (Caja)</p>
+                        <p className="text-slate-400 text-xs font-medium mb-1">{t('dashboard.realBalance')}</p>
                         <h3 className={`text-xl font-bold ${currentBalance >= 0 ? 'text-slate-200' : 'text-rose-400'}`}>
                             {formatCurrency(currentBalance)}
                         </h3>
@@ -120,7 +124,7 @@ export default function KPIs({
                         <DollarSign className="w-5 h-5 text-slate-400" />
                     </div>
                     <div className="w-full">
-                        <p className="text-slate-400 text-xs font-medium mb-1">Gastos Totales</p>
+                        <p className="text-slate-400 text-xs font-medium mb-1">{t('dashboard.totalExpenses')}</p>
                         <h3 className="text-xl font-bold text-slate-200 break-words">
                             {formatCurrency(totalBudgeted)}
                         </h3>
@@ -129,14 +133,17 @@ export default function KPIs({
             </div>
 
             {/* Por Pagar */}
-            <div className="bg-slate-800/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-700 shadow-lg hover:shadow-amber-500/10 transition-all duration-300 h-full">
+            <div
+                onClick={onPendingClick}
+                className="bg-slate-800/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-700 shadow-lg hover:shadow-amber-500/10 transition-all duration-300 h-full cursor-pointer group hover:scale-[1.02] active:scale-[0.98]"
+            >
                 <div className="flex flex-col items-center justify-center text-center gap-2 h-full">
-                    <div className="bg-amber-500/10 p-2.5 rounded-xl">
+                    <div className="bg-amber-500/10 p-2.5 rounded-xl group-hover:bg-amber-500/20 transition-colors">
                         <TrendingDown className="w-5 h-5 text-amber-400" />
                     </div>
                     <div className="w-full">
-                        <p className="text-slate-400 text-xs font-medium mb-1">Por Pagar</p>
-                        <h3 className="text-xl font-bold text-slate-200 break-words">
+                        <p className="text-slate-400 text-xs font-medium mb-1">{t('dashboard.pending')}</p>
+                        <h3 className="text-xl font-bold text-slate-200 break-words group-hover:text-amber-400 transition-colors">
                             {formatCurrency(totalPending)}
                         </h3>
                     </div>
@@ -152,10 +159,7 @@ export default function KPIs({
                         </div>
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <p className="text-slate-400 text-sm font-medium">Saldo Proyectado (Final)</p>
-                                <span className="text-xs font-bold px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400">
-                                    Si pagas todo
-                                </span>
+                                <p className="text-slate-400 text-sm font-medium">{t('dashboard.projectedBalance')}</p>
                             </div>
                             <h3 className={`text-3xl font-bold ${projectedBalance >= 0 ? 'text-slate-200' : 'text-rose-400'}`}>
                                 {formatCurrency(projectedBalance)}
@@ -163,10 +167,10 @@ export default function KPIs({
                         </div>
                     </div>
                     <div className="text-sm text-slate-400 bg-slate-900/50 px-4 py-3 rounded-xl border border-slate-700">
-                        <p className="mb-1">Resumen:</p>
+                        <p className="mb-1">{t('dashboard.summary')}</p>
                         <div className="flex gap-4 text-xs">
-                            <span>Ingresos: <span className="text-emerald-400 font-semibold">{formatCurrency(income)}</span></span>
-                            <span>- Gastos: <span className="text-rose-400 font-semibold">{formatCurrency(totalBudgeted)}</span></span>
+                            <span>{t('dashboard.income')}: <span className="text-emerald-400 font-semibold">{formatCurrency(income)}</span></span>
+                            <span>- {t('dashboard.totalExpenses')}: <span className="text-rose-400 font-semibold">{formatCurrency(totalBudgeted)}</span></span>
                         </div>
                     </div>
                 </div>
