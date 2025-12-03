@@ -59,7 +59,7 @@ class EmailService {
                             </div>
                             <div class="footer">
                                 <p>Recibiste este correo porque te registraste en Finances App.</p>
-                                <p>&copy; ${new Date().getFullYear()} Finances App. Todos los derechos reservados.</p>
+                                <p>&copy; ${new Date().getFullYear()} tBelt Finances App. Todos los derechos reservados.</p>
                             </div>
                         </div>
                     </body>
@@ -136,7 +136,7 @@ class EmailService {
                             </div>
                             <div class="footer">
                                 <p>Este es un mensaje de seguridad automático.</p>
-                                <p>&copy; ${new Date().getFullYear()} Finances App. Todos los derechos reservados.</p>
+                                <p>&copy; ${new Date().getFullYear()} tBelt Finances App. Todos los derechos reservados.</p>
                             </div>
                         </div>
                     </body>
@@ -224,7 +224,7 @@ class EmailService {
                             </div>
                             <div class="footer">
                                 <p>Gracias por confiar en nosotros.</p>
-                                <p>&copy; ${new Date().getFullYear()} Finances App. Todos los derechos reservados.</p>
+                                <p>&copy; ${new Date().getFullYear()} tBelt Finances App. Todos los derechos reservados.</p>
                             </div>
                         </div>
                     </body>

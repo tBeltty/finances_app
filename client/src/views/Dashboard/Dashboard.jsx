@@ -222,7 +222,7 @@ export default function Dashboard() {
 
                 {/* Debug Version Indicator */}
                 <div className="fixed bottom-2 left-2 text-xs text-slate-600 font-mono pointer-events-none z-50">
-                    v1.0.0
+                    v1.1.0
                 </div>
             </div>
         </ErrorBoundary>

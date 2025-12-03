@@ -13,7 +13,7 @@ import Onboarding from './views/Onboarding/Onboarding';
 function App() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const CURRENT_VERSION = '1.0.0';
+  const CURRENT_VERSION = '1.1.0';
 
   React.useEffect(() => {
     const checkVersion = async () => {

@@ -75,6 +75,25 @@ FRONTEND_URL=${frontendUrl}
         // But better to try requiring the actual model if possible.
         // Since we are in root, and server is in ./server
 
+        console.log('\n📦 Installing dependencies...');
+        try {
+            // Install root deps (concurrently)
+            console.log('   - Root...');
+            const { execSync } = require('child_process');
+            execSync('npm install', { stdio: 'inherit' });
+
+            // Install server deps
+            console.log('   - Server (Backend)...');
+            execSync('cd server && npm install', { stdio: 'inherit' });
+
+            // Install client deps
+            console.log('   - Client (Frontend)...');
+            execSync('cd client && npm install', { stdio: 'inherit' });
+
+            console.log('✅ Dependencies installed.');
+        } catch (error) {
+            console.error('❌ Error installing dependencies:', error.message);
+        }
         // Let's try to sync using the existing db config logic if possible, but we just overwrote .env
         // So we can just use the sequelize instance we just created.
 
