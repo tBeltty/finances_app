@@ -87,6 +87,13 @@
         "tutorial": {
             "step1": "Scroll right to mark as paid →",
             "step2": "Pay all expenses in this category"
+        },
+        "style": {
+            "title": "Choose your Style",
+            "subtitle": "Customize the appearance of your experience",
+            "theme": "Theme",
+            "mode": "Mode",
+            "logo": "Logo"
         }
     },
     "settings": {

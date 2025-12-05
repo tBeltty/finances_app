@@ -87,6 +87,13 @@
         "tutorial": {
             "step1": "Desliza para marcar como pagado →",
             "step2": "Paga todos los gastos de esta categoría"
+        },
+        "style": {
+            "title": "Elige tu Estilo",
+            "subtitle": "Personaliza la apariencia de tu experiencia",
+            "theme": "Tema",
+            "mode": "Modo",
+            "logo": "Logo"
         }
     },
     "settings": {

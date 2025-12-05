@@ -343,8 +343,8 @@ export default function Onboarding({ onComplete }) {
                             </div>
                         </div>
                         <div className="space-y-1">
-                            <h1 className="text-2xl font-bold text-main">Elige tu Estilo</h1>
-                            <p className="text-secondary text-sm">Personaliza la apariencia de tu experiencia</p>
+                            <h1 className="text-2xl font-bold text-main">{t('onboarding.style.title')}</h1>
+                            <p className="text-secondary text-sm">{t('onboarding.style.subtitle')}</p>
                         </div>
 
                         {/* Builder UI */}
@@ -371,7 +371,7 @@ export default function Onboarding({ onComplete }) {
                                 {/* Controls */}
                                 <div className="space-y-3 text-left">
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-secondary uppercase">Tema</label>
+                                        <label className="text-xs font-bold text-secondary uppercase">{t('onboarding.style.theme')}</label>
                                         <div className="flex gap-2">
                                             {[{ id: 'cosmic', color: '#6366f1' }, { id: 'takito', color: '#f59e0b' }, { id: 'cookie', color: '#0ea5e9' }].map((t) => (
                                                 <button key={t.id} onClick={() => setTheme(t.id)} className={`w-9 h-9 rounded-lg border-2 transition-all ${theme === t.id ? 'border-primary scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`} style={{ backgroundColor: t.color }} />
@@ -379,7 +379,7 @@ export default function Onboarding({ onComplete }) {
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-secondary uppercase">Modo</label>
+                                        <label className="text-xs font-bold text-secondary uppercase">{t('onboarding.style.mode')}</label>
                                         <div className="flex gap-2">
                                             <button onClick={() => setMode('light')} className={`flex-1 flex items-center justify-center py-1.5 rounded-lg border transition-all ${mode === 'light' ? 'bg-white text-slate-900 border-slate-200' : 'bg-surface border-outline text-secondary'}`}>
                                                 <Sun className="h-4 w-4" />
@@ -390,7 +390,7 @@ export default function Onboarding({ onComplete }) {
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-bold text-secondary uppercase">Logo</label>
+                                        <label className="text-xs font-bold text-secondary uppercase">{t('onboarding.style.logo')}</label>
                                         <div className="flex gap-2">
                                             {[{ id: 'cosmic', icon: '/logo-cosmic.png' }, { id: 'takito', icon: '/logo-shiba.png' }, { id: 'cookie', icon: '/logo-ragdoll.png' }].map((l) => (
                                                 <button key={l.id} onClick={() => setLogo(l.id)} className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all ${logo === l.id ? 'border-primary scale-110 shadow-lg' : 'border-outline hover:scale-105'}`}>
