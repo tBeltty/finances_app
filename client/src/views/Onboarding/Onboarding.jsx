@@ -7,7 +7,7 @@ import CustomSelect from '../../components/Inputs/CustomSelect';
 
 export default function Onboarding({ onComplete }) {
     const { user, refreshUser } = useAuth();
-    const { theme, setTheme, mode, setMode } = useTheme();
+    const { theme, setTheme, mode, setMode, logo, setLogo } = useTheme();
     const { t, i18n } = useTranslation();
     const [step, setStep] = useState(0); // Start at 0 for Language Selection
     const [income, setIncome] = useState('');
@@ -344,35 +344,46 @@ export default function Onboarding({ onComplete }) {
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-                            {[
-                                { id: 'cosmic', name: 'Cosmic Slate', icon: '/logo-cosmic.png', color: 'bg-surface' },
-                                { id: 'takito', name: 'Takito', icon: '/logo-shiba.png', color: 'bg-amber-950' },
-                                { id: 'cookie', name: 'Cookie', icon: '/logo-ragdoll.png', color: 'bg-sky-950' }
-                            ].map((t) => (
-                                <button
-                                    key={t.id}
-                                    onClick={() => setTheme(t.id)}
-                                    className={`relative p-4 rounded-xl border transition-all flex flex-col items-center gap-3 group ${theme === t.id
-                                        ? 'bg-primary/20 border-primary ring-2 ring-primary/20'
-                                        : 'bg-surface-container border-outline hover:border-primary'
-                                        }`}
-                                >
-                                    <div className={`w-16 h-16 rounded-full ${t.color} flex items-center justify-center overflow-hidden border-2 ${theme === t.id ? 'border-indigo-400' : 'border-slate-600'}`}>
-                                        <img src={t.icon} alt={t.name} className="w-full h-full object-cover" />
-                                    </div>
-                                    <span className={`font-medium ${theme === t.id ? 'text-main' : 'text-secondary group-hover:text-main'}`}>
-                                        {t.name}
-                                    </span>
-                                    {theme === t.id && (
-                                        <div className="absolute top-3 right-3 bg-primary rounded-full p-1">
-                                            <Check className="h-3 w-3 text-main" />
+                        {/* Theme Selection */}
+                        <div className="space-y-3">
+                            <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Tema</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {[
+                                    { id: 'cosmic', name: 'Cosmic Slate', colors: ['#334155', '#6366f1', '#818cf8'] },
+                                    { id: 'takito', name: 'Warm Amber', colors: ['#78350f', '#f59e0b', '#fbbf24'] },
+                                    { id: 'cookie', name: 'Ocean Blue', colors: ['#0c4a6e', '#0ea5e9', '#38bdf8'] }
+                                ].map((t) => (
+                                    <button
+                                        key={t.id}
+                                        onClick={() => setTheme(t.id)}
+                                        className={`relative p-4 rounded-xl border transition-all flex flex-col items-center gap-3 group ${theme === t.id
+                                            ? 'bg-primary/20 border-primary ring-2 ring-primary/20'
+                                            : 'bg-surface-container border-outline hover:border-primary'
+                                            }`}
+                                    >
+                                        <div className="flex gap-1">
+                                            {t.colors.map((color, i) => (
+                                                <div
+                                                    key={i}
+                                                    className={`w-8 h-8 rounded-full border-2 ${theme === t.id ? 'border-primary' : 'border-outline'}`}
+                                                    style={{ backgroundColor: color }}
+                                                />
+                                            ))}
                                         </div>
-                                    )}
-                                </button>
-                            ))}
+                                        <span className={`font-medium ${theme === t.id ? 'text-main' : 'text-secondary group-hover:text-main'}`}>
+                                            {t.name}
+                                        </span>
+                                        {theme === t.id && (
+                                            <div className="absolute top-3 right-3 bg-primary rounded-full p-1">
+                                                <Check className="h-3 w-3 text-main" />
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
+                        {/* Mode Selection */}
                         <div className="flex justify-center gap-4 bg-surface/50 p-2 rounded-xl border border-outline/50 w-fit mx-auto">
                             <button
                                 onClick={() => setMode('light')}
@@ -388,6 +399,40 @@ export default function Onboarding({ onComplete }) {
                                 <Moon className="h-4 w-4" />
                                 <span className="text-sm font-medium">Dark</span>
                             </button>
+                        </div>
+
+                        {/* Mascot Selection */}
+                        <div className="space-y-3 pt-4 border-t border-outline">
+                            <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Mascota</h3>
+                            <p className="text-xs text-secondary">El logo se verá en tu inicio y en el icono de la app</p>
+                            <div className="grid grid-cols-3 gap-4">
+                                {[
+                                    { id: 'cosmic', name: 'Finances Basic', icon: '/logo-cosmic.png' },
+                                    { id: 'takito', name: 'Takito', icon: '/logo-shiba.png' },
+                                    { id: 'cookie', name: 'Cookie', icon: '/logo-ragdoll.png' }
+                                ].map((l) => (
+                                    <button
+                                        key={l.id}
+                                        onClick={() => setLogo(l.id)}
+                                        className={`relative p-3 rounded-xl border transition-all flex flex-col items-center gap-2 ${logo === l.id
+                                            ? 'bg-primary/20 border-primary ring-2 ring-primary/20'
+                                            : 'bg-surface-container border-outline hover:border-primary'
+                                            }`}
+                                    >
+                                        <div className={`w-12 h-12 rounded-full overflow-hidden border-2 ${logo === l.id ? 'border-primary' : 'border-outline'}`}>
+                                            <img src={l.icon} alt={l.name} className="w-full h-full object-cover" />
+                                        </div>
+                                        <span className={`text-xs font-medium ${logo === l.id ? 'text-main' : 'text-secondary'}`}>
+                                            {l.name}
+                                        </span>
+                                        {logo === l.id && (
+                                            <div className="absolute top-2 right-2 bg-primary rounded-full p-0.5">
+                                                <Check className="h-2 w-2 text-main" />
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="flex gap-4">
