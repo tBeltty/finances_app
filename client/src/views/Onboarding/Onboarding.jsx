@@ -21,6 +21,7 @@ export default function Onboarding({ onComplete }) {
     const [showStartSuggestion, setShowStartSuggestion] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [uiMode, setUiMode] = useState(3); // 1=Dropdowns, 2=Cards, 3=Builder
 
     const getCurrencySymbol = (code) => {
         switch (code) {
@@ -329,125 +330,213 @@ export default function Onboarding({ onComplete }) {
                     </div>
                 )}
 
-                {/* Step 2: Theme Selection */}
+                {/* Step 2: Theme Selection - 3 UI Modes */}
                 {step === 2 && (
-                    <div className="bg-surface-container backdrop-blur-xl rounded-2xl border border-outline p-10 text-center space-y-8">
+                    <div className="bg-surface-container backdrop-blur-xl rounded-2xl border border-outline p-6 text-center space-y-5 max-w-2xl mx-auto">
                         <div className="flex justify-center">
-                            <div className="bg-primary/10 p-4 rounded-full">
-                                <Palette className="h-12 w-12 text-primary" />
+                            <div className="bg-primary/10 p-3 rounded-full">
+                                <Palette className="h-10 w-10 text-primary" />
                             </div>
                         </div>
-                        <div className="space-y-4 px-4">
-                            <h1 className="text-3xl font-bold text-main">Elige tu Estilo</h1>
-                            <p className="text-secondary text-lg leading-relaxed">
-                                Personaliza la apariencia de tu experiencia.
-                            </p>
+                        <div className="space-y-1">
+                            <h1 className="text-2xl font-bold text-main">Elige tu Estilo</h1>
+                            <p className="text-secondary text-sm">Prueba diferentes modos de selección</p>
                         </div>
 
-                        {/* Theme Selection */}
-                        <div className="space-y-3">
-                            <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Tema</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {/* UI Mode Toggle */}
+                        <div className="flex justify-center gap-1 bg-surface/50 p-1 rounded-lg border border-outline/50 w-fit mx-auto">
+                            {[
+                                { id: 1, label: 'Dropdowns' },
+                                { id: 2, label: 'Cards' },
+                                { id: 3, label: 'Builder' }
+                            ].map((m) => (
+                                <button
+                                    key={m.id}
+                                    onClick={() => setUiMode(m.id)}
+                                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${uiMode === m.id
+                                        ? 'bg-primary text-main shadow-sm'
+                                        : 'text-secondary hover:text-main'
+                                        }`}
+                                >
+                                    {m.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* MODE 1: Dropdowns */}
+                        {uiMode === 1 && (
+                            <div className="space-y-3 text-left max-w-xs mx-auto">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-secondary uppercase">Tema</label>
+                                    <div className="relative">
+                                        <select
+                                            value={theme}
+                                            onChange={(e) => setTheme(e.target.value)}
+                                            className="w-full bg-surface border border-outline rounded-xl px-4 py-2.5 text-main text-sm appearance-none cursor-pointer focus:border-primary focus:outline-none"
+                                        >
+                                            <option value="cosmic">🔮 Cosmic Slate</option>
+                                            <option value="takito">🔥 Warm Amber</option>
+                                            <option value="cookie">🌊 Ocean Blue</option>
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary text-xs">▼</div>
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-secondary uppercase">Modo</label>
+                                    <div className="relative">
+                                        <select
+                                            value={mode}
+                                            onChange={(e) => setMode(e.target.value)}
+                                            className="w-full bg-surface border border-outline rounded-xl px-4 py-2.5 text-main text-sm appearance-none cursor-pointer focus:border-primary focus:outline-none"
+                                        >
+                                            <option value="light">☀️ Light Mode</option>
+                                            <option value="dark">🌙 Dark Mode</option>
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary text-xs">▼</div>
+                                    </div>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-secondary uppercase">Mascota</label>
+                                    <div className="relative">
+                                        <select
+                                            value={logo}
+                                            onChange={(e) => setLogo(e.target.value)}
+                                            className="w-full bg-surface border border-outline rounded-xl px-4 py-2.5 text-main text-sm appearance-none cursor-pointer focus:border-primary focus:outline-none"
+                                        >
+                                            <option value="cosmic">💎 Finances Basic</option>
+                                            <option value="takito">🐕 Takito</option>
+                                            <option value="cookie">🐱 Cookie</option>
+                                        </select>
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary text-xs">▼</div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* MODE 2: Cards */}
+                        {uiMode === 2 && (
+                            <div className="grid grid-cols-3 gap-3">
                                 {[
-                                    { id: 'cosmic', name: 'Cosmic Slate', colors: ['#334155', '#6366f1', '#818cf8'] },
-                                    { id: 'takito', name: 'Warm Amber', colors: ['#78350f', '#f59e0b', '#fbbf24'] },
-                                    { id: 'cookie', name: 'Ocean Blue', colors: ['#0c4a6e', '#0ea5e9', '#38bdf8'] }
+                                    { id: 'cosmic', name: 'Cosmic', colors: ['#334155', '#6366f1', '#818cf8'] },
+                                    { id: 'takito', name: 'Amber', colors: ['#78350f', '#f59e0b', '#fbbf24'] },
+                                    { id: 'cookie', name: 'Ocean', colors: ['#0c4a6e', '#0ea5e9', '#38bdf8'] }
                                 ].map((t) => (
-                                    <button
+                                    <div
                                         key={t.id}
-                                        onClick={() => setTheme(t.id)}
-                                        className={`relative p-4 rounded-xl border transition-all flex flex-col items-center gap-3 group ${theme === t.id
-                                            ? 'bg-primary/20 border-primary ring-2 ring-primary/20'
-                                            : 'bg-surface-container border-outline hover:border-primary'
+                                        className={`relative rounded-xl border transition-all overflow-hidden ${theme === t.id
+                                            ? 'border-primary ring-2 ring-primary/20'
+                                            : 'border-outline hover:border-primary/50'
                                             }`}
                                     >
-                                        <div className="flex gap-1">
+                                        <button onClick={() => setTheme(t.id)} className="w-full h-12 flex">
                                             {t.colors.map((color, i) => (
-                                                <div
-                                                    key={i}
-                                                    className={`w-8 h-8 rounded-full border-2 ${theme === t.id ? 'border-primary' : 'border-outline'}`}
-                                                    style={{ backgroundColor: color }}
-                                                />
+                                                <div key={i} className="flex-1" style={{ backgroundColor: color }} />
                                             ))}
-                                        </div>
-                                        <span className={`font-medium ${theme === t.id ? 'text-main' : 'text-secondary group-hover:text-main'}`}>
-                                            {t.name}
-                                        </span>
-                                        {theme === t.id && (
-                                            <div className="absolute top-3 right-3 bg-primary rounded-full p-1">
-                                                <Check className="h-3 w-3 text-main" />
+                                        </button>
+                                        <div className="p-2 bg-surface-container space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-medium text-xs text-main">{t.name}</span>
+                                                {theme === t.id && (
+                                                    <div className="flex gap-0.5 bg-surface/50 p-0.5 rounded">
+                                                        <button onClick={() => setMode('light')} className={`p-0.5 rounded ${mode === 'light' ? 'bg-white text-slate-900' : 'text-secondary'}`}>
+                                                            <Sun className="h-3 w-3" />
+                                                        </button>
+                                                        <button onClick={() => setMode('dark')} className={`p-0.5 rounded ${mode === 'dark' ? 'bg-surface text-main' : 'text-secondary'}`}>
+                                                            <Moon className="h-3 w-3" />
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Mode Selection */}
-                        <div className="flex justify-center gap-4 bg-surface/50 p-2 rounded-xl border border-outline/50 w-fit mx-auto">
-                            <button
-                                onClick={() => setMode('light')}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${mode === 'light' ? 'bg-white text-slate-900 shadow-sm' : 'text-secondary hover:text-main'}`}
-                            >
-                                <Sun className="h-4 w-4" />
-                                <span className="text-sm font-medium">Light</span>
-                            </button>
-                            <button
-                                onClick={() => setMode('dark')}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${mode === 'dark' ? 'bg-surface-container text-main shadow-sm' : 'text-secondary hover:text-main'}`}
-                            >
-                                <Moon className="h-4 w-4" />
-                                <span className="text-sm font-medium">Dark</span>
-                            </button>
-                        </div>
-
-                        {/* Mascot Selection */}
-                        <div className="space-y-3 pt-4 border-t border-outline">
-                            <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Mascota</h3>
-                            <p className="text-xs text-secondary">El logo se verá en tu inicio y en el icono de la app</p>
-                            <div className="grid grid-cols-3 gap-4">
-                                {[
-                                    { id: 'cosmic', name: 'Finances Basic', icon: '/logo-cosmic.png' },
-                                    { id: 'takito', name: 'Takito', icon: '/logo-shiba.png' },
-                                    { id: 'cookie', name: 'Cookie', icon: '/logo-ragdoll.png' }
-                                ].map((l) => (
-                                    <button
-                                        key={l.id}
-                                        onClick={() => setLogo(l.id)}
-                                        className={`relative p-3 rounded-xl border transition-all flex flex-col items-center gap-2 ${logo === l.id
-                                            ? 'bg-primary/20 border-primary ring-2 ring-primary/20'
-                                            : 'bg-surface-container border-outline hover:border-primary'
-                                            }`}
-                                    >
-                                        <div className={`w-12 h-12 rounded-full overflow-hidden border-2 ${logo === l.id ? 'border-primary' : 'border-outline'}`}>
-                                            <img src={l.icon} alt={l.name} className="w-full h-full object-cover" />
+                                            {theme === t.id && (
+                                                <div className="flex justify-center gap-1 pt-1 border-t border-outline/50">
+                                                    {[
+                                                        { id: 'cosmic', icon: '/logo-cosmic.png' },
+                                                        { id: 'takito', icon: '/logo-shiba.png' },
+                                                        { id: 'cookie', icon: '/logo-ragdoll.png' }
+                                                    ].map((m) => (
+                                                        <button key={m.id} onClick={() => setLogo(m.id)} className={`w-6 h-6 rounded-full overflow-hidden border-2 transition-all ${logo === m.id ? 'border-primary scale-110' : 'border-outline opacity-50 hover:opacity-100'}`}>
+                                                            <img src={m.icon} alt="" className="w-full h-full object-cover" />
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
-                                        <span className={`text-xs font-medium ${logo === l.id ? 'text-main' : 'text-secondary'}`}>
-                                            {l.name}
-                                        </span>
-                                        {logo === l.id && (
-                                            <div className="absolute top-2 right-2 bg-primary rounded-full p-0.5">
+                                        {theme === t.id && (
+                                            <div className="absolute top-1 right-1 bg-primary rounded-full p-0.5">
                                                 <Check className="h-2 w-2 text-main" />
                                             </div>
                                         )}
-                                    </button>
+                                    </div>
                                 ))}
                             </div>
-                        </div>
+                        )}
 
-                        <div className="flex gap-4">
-                            <button
-                                onClick={() => setStep(1)}
-                                className="flex-1 bg-surface-container hover:bg-surface-container-high text-main py-3 px-6 rounded-xl font-medium transition-colors"
-                            >
+                        {/* MODE 3: Builder */}
+                        {uiMode === 3 && (
+                            <div className="bg-surface rounded-xl border border-outline p-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Preview */}
+                                    <div className="rounded-xl border border-outline overflow-hidden">
+                                        <div className="h-7 flex items-center justify-between px-2" style={{ backgroundColor: theme === 'cosmic' ? '#334155' : theme === 'takito' ? '#78350f' : '#0c4a6e' }}>
+                                            <div className="flex items-center gap-1.5">
+                                                <img src={logo === 'cosmic' ? '/logo-cosmic.png' : logo === 'takito' ? '/logo-shiba.png' : '/logo-ragdoll.png'} className="w-4 h-4 rounded-full" alt="" />
+                                                <span className="text-[10px] text-white font-medium">tBelt Finanzas</span>
+                                            </div>
+                                            <div className="flex gap-0.5">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-white/30"></div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-white/30"></div>
+                                            </div>
+                                        </div>
+                                        <div className="p-3 space-y-1.5" style={{ backgroundColor: mode === 'dark' ? (theme === 'cosmic' ? '#0f172a' : theme === 'takito' ? '#0c0a09' : '#082f49') : (theme === 'cosmic' ? '#f8fafc' : theme === 'takito' ? '#fffbeb' : '#f0f9ff') }}>
+                                            <div className="h-5 rounded-lg" style={{ backgroundColor: theme === 'cosmic' ? '#6366f1' : theme === 'takito' ? '#f59e0b' : '#0ea5e9', width: '60%' }}></div>
+                                            <div className="h-3 rounded opacity-30" style={{ backgroundColor: mode === 'dark' ? '#fff' : '#000', width: '80%' }}></div>
+                                            <div className="h-3 rounded opacity-20" style={{ backgroundColor: mode === 'dark' ? '#fff' : '#000', width: '65%' }}></div>
+                                        </div>
+                                    </div>
+                                    {/* Controls */}
+                                    <div className="space-y-3 text-left">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-secondary uppercase">Tema</label>
+                                            <div className="flex gap-2">
+                                                {[{ id: 'cosmic', color: '#6366f1' }, { id: 'takito', color: '#f59e0b' }, { id: 'cookie', color: '#0ea5e9' }].map((t) => (
+                                                    <button key={t.id} onClick={() => setTheme(t.id)} className={`w-9 h-9 rounded-lg border-2 transition-all ${theme === t.id ? 'border-primary scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`} style={{ backgroundColor: t.color }} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-secondary uppercase">Modo</label>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => setMode('light')} className={`flex-1 flex items-center justify-center py-1.5 rounded-lg border transition-all ${mode === 'light' ? 'bg-white text-slate-900 border-slate-200' : 'bg-surface border-outline text-secondary'}`}>
+                                                    <Sun className="h-4 w-4" />
+                                                </button>
+                                                <button onClick={() => setMode('dark')} className={`flex-1 flex items-center justify-center py-1.5 rounded-lg border transition-all ${mode === 'dark' ? 'bg-surface-container text-main border-primary' : 'bg-surface border-outline text-secondary'}`}>
+                                                    <Moon className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-bold text-secondary uppercase">Mascota</label>
+                                            <div className="flex gap-2">
+                                                {[{ id: 'cosmic', icon: '/logo-cosmic.png' }, { id: 'takito', icon: '/logo-shiba.png' }, { id: 'cookie', icon: '/logo-ragdoll.png' }].map((l) => (
+                                                    <button key={l.id} onClick={() => setLogo(l.id)} className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all ${logo === l.id ? 'border-primary scale-110 shadow-lg' : 'border-outline hover:scale-105'}`}>
+                                                        <img src={l.icon} alt="" className="w-full h-full object-cover" />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Navigation */}
+                        <div className="flex gap-3 pt-2">
+                            <button onClick={() => setStep(1)} className="flex-1 bg-surface-container hover:bg-surface-container-high text-main py-2.5 px-4 rounded-xl font-medium transition-colors text-sm">
                                 {t('common.back')}
                             </button>
-                            <button
-                                onClick={() => setStep(3)}
-                                className="flex-1 bg-primary hover:bg-primary-container text-main py-3 px-6 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
-                            >
+                            <button onClick={() => setStep(3)} className="flex-1 bg-primary hover:bg-primary-container text-main py-2.5 px-4 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 text-sm">
                                 {t('common.next')}
-                                <ArrowRight className="h-5 w-5" />
+                                <ArrowRight className="h-4 w-4" />
                             </button>
                         </div>
                     </div>
