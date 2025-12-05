@@ -47,7 +47,7 @@ export default function EmailVerification() {
                 {status === 'success' && (
                     <div className="flex flex-col items-center">
                         <div className="bg-success/10 p-4 rounded-full mb-6">
-                            <CheckCircle2 className="h-16 w-16 text-emerald-500" />
+                            <CheckCircle2 className="h-16 w-16 text-success" />
                         </div>
                         <h2 className="text-2xl font-bold text-main mb-2">{t('auth.emailVerified')}</h2>
                         <p className="text-secondary mb-8">{message}</p>

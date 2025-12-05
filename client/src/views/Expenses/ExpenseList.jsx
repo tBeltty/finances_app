@@ -222,7 +222,7 @@ export default function ExpenseList({
 
                                     {/* Columna Input Pago */}
                                     <td className="p-4 w-1/4">
-                                        <div className={`flex items-center gap-2 bg-main/50 border rounded-lg px-3 py-1.5 transition-all focus-within:ring-2 focus-within:ring-primary focus-within:border-primary ${isFullyPaid ? 'border-emerald-500/30 bg-success/10' : 'border-border'}`}>
+                                        <div className={`flex items-center gap-2 bg-main/50 border rounded-lg px-3 py-1.5 transition-all focus-within:ring-2 focus-within:ring-primary focus-within:border-primary ${isFullyPaid ? 'border-success/30 bg-success/10' : 'border-border'}`}>
                                             <span className="text-secondary text-xs">$</span>
                                             <input
                                                 type="number"

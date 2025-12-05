@@ -178,7 +178,7 @@ export default function ExpenseForm({
 
                 <div className="flex items-end gap-2">
                     <label className="flex items-center gap-3 w-full bg-surface/50 border border-outline rounded-xl px-4 py-2.5 cursor-pointer hover:bg-surface/80 transition-colors">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newExpense.isPaid ? 'bg-emerald-500 border-emerald-500' : 'border-on-surface-variant'}`}>
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newExpense.isPaid ? 'bg-success border-success' : 'border-on-surface-variant'}`}>
                             {newExpense.isPaid && <Sparkles className="w-3.5 h-3.5 text-white" />}
                         </div>
                         <input
@@ -187,7 +187,7 @@ export default function ExpenseForm({
                             onChange={(e) => setNewExpense({ ...newExpense, isPaid: e.target.checked, payWithSavings: false })}
                             className="hidden"
                         />
-                        <span className={`text-sm font-medium ${newExpense.isPaid ? 'text-emerald-400' : 'text-on-surface-variant'}`}>
+                        <span className={`text-sm font-medium ${newExpense.isPaid ? 'text-success' : 'text-on-surface-variant'}`}>
                             <span>{newExpense.isPaid ? t('expenses.paid') : t('expenses.pending')}</span>
                         </span>
                     </label>

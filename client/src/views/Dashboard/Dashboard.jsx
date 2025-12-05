@@ -104,10 +104,10 @@ export default function Dashboard() {
                     />
 
                     {/* View Switcher */}
-                    <div className="flex p-1 bg-surface-container border border-outline rounded-xl w-fit">
+                    <div className="flex p-1 bg-surface-container border border-outline rounded-xl w-full md:w-fit">
                         <button
                             onClick={() => setActiveView('overview')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'overview'
+                            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'overview'
                                 ? 'bg-primary-container text-on-primary-container shadow-sm'
                                 : 'text-on-surface-variant hover:text-on-surface'
                                 }`}
@@ -117,7 +117,7 @@ export default function Dashboard() {
                         </button>
                         <button
                             onClick={() => setActiveView('analytics')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'analytics'
+                            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeView === 'analytics'
                                 ? 'bg-primary-container text-on-primary-container shadow-sm'
                                 : 'text-on-surface-variant hover:text-on-surface'
                                 }`}

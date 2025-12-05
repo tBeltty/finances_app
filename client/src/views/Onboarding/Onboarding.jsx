@@ -713,7 +713,7 @@ export default function Onboarding({ onComplete }) {
                                 type="button"
                                 onClick={handleComplete}
                                 disabled={loading}
-                                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-main py-3 px-6 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex-1 bg-success hover:opacity-80 text-main py-3 px-6 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? (
                                     <>

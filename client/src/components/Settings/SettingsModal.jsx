@@ -679,7 +679,7 @@ export default function SettingsModal({
                                                             />
                                                         ))}
                                                     </div>
-                                                    <button onClick={saveEdit} className="text-success hover:text-emerald-300 p-1">
+                                                    <button onClick={saveEdit} className="text-success hover:text-success p-1">
                                                         <Check className="h-4 w-4" />
                                                     </button>
                                                     <button onClick={() => setEditingId(null)} className="text-secondary hover:text-main p-1">

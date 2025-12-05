@@ -55,7 +55,7 @@ export default function Register({ onSwitchToLogin }) {
                 )}
 
                 {success && (
-                    <div className="bg-success/10 border border-emerald-500/20 text-success p-3 rounded-xl text-sm mb-6 text-center">
+                    <div className="bg-success/10 border border-success/20 text-success p-3 rounded-xl text-sm mb-6 text-center">
                         {success}
                     </div>
                 )}
@@ -67,7 +67,7 @@ export default function Register({ onSwitchToLogin }) {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-success/50 focus:border-success transition-all"
                             placeholder={t('auth.chooseUsername')}
                             required
                         />
@@ -79,7 +79,7 @@ export default function Register({ onSwitchToLogin }) {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-success/50 focus:border-success transition-all"
                             placeholder="tu@email.com"
                             required
                         />
@@ -91,7 +91,7 @@ export default function Register({ onSwitchToLogin }) {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-success/50 focus:border-success transition-all"
                             placeholder="••••••••"
                             required
                         />
@@ -103,7 +103,7 @@ export default function Register({ onSwitchToLogin }) {
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all"
+                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-success/50 focus:border-success transition-all"
                             placeholder="••••••••"
                             required
                         />
@@ -112,7 +112,7 @@ export default function Register({ onSwitchToLogin }) {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-main font-bold py-3 rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                        className="w-full bg-success hover:opacity-80 text-main font-bold py-3 rounded-xl shadow-lg shadow-success/20 hover:shadow-success/40 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                     >
                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('auth.register')} <UserPlus className="w-5 h-5" /></>}
                     </button>
@@ -121,7 +121,7 @@ export default function Register({ onSwitchToLogin }) {
                 <div className="mt-6 text-center">
                     <p className="text-secondary text-sm">
                         {t('auth.haveAccount')}{' '}
-                        <button onClick={onSwitchToLogin} className="text-success hover:text-emerald-300 font-medium transition-colors">
+                        <button onClick={onSwitchToLogin} className="text-success hover:text-success font-medium transition-colors">
                             {t('auth.login')}
                         </button>
                     </p>

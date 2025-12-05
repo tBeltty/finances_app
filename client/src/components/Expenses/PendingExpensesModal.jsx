@@ -42,7 +42,7 @@ export default function PendingExpensesModal({ isOpen, onClose, expenses, format
                                     </div>
                                     <button
                                         onClick={() => onPay(expense.id)}
-                                        className="p-2 bg-success/10 text-success hover:bg-emerald-500/20 rounded-lg transition-colors"
+                                        className="p-2 bg-success/10 text-success hover:bg-success/20 rounded-lg transition-colors"
                                         title={t('expenses.payFull')}
                                     >
                                         <CheckCircle2 size={20} />

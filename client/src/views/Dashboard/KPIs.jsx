@@ -60,7 +60,7 @@ export default function KPIs({
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
             {/* Ingresos */}
-            <div className="bg-surface-container backdrop-blur-sm p-6 rounded-2xl border border-outline shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 group h-full">
+            <div className="bg-surface-container backdrop-blur-sm p-6 rounded-2xl border border-outline shadow-lg hover:shadow-success/10 transition-all duration-300 group h-full">
                 <div className="flex flex-col items-center justify-center text-center gap-2 h-full">
                     <div className="bg-success/10 p-2.5 rounded-xl group-hover:scale-110 transition-transform">
                         <DollarSign className="w-5 h-5 text-success" />

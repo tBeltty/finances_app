@@ -40,7 +40,7 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                 {!isEditing && (
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="text-xs font-bold text-success hover:text-emerald-300 bg-success/10 hover:bg-success/20 px-3 py-1.5 rounded-lg transition-colors"
+                        className="text-xs font-bold text-success hover:text-success bg-success/10 hover:bg-success/20 px-3 py-1.5 rounded-lg transition-colors"
                     >
                         {t('dashboard.savingsWidget.manage')}
                     </button>
@@ -61,7 +61,7 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                             type="button"
                             onClick={() => setOperation('add')}
                             className={`flex-1 py-2 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 ${operation === 'add'
-                                ? 'bg-success/20 text-success border border-emerald-500/50'
+                                ? 'bg-success/20 text-success border border-success/50'
                                 : 'bg-surface/50 text-on-surface-variant border border-outline hover:bg-surface'
                                 }`}
                         >
@@ -85,7 +85,7 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
                             placeholder="0"
-                            className="w-full bg-surface/50 border border-outline rounded-xl px-4 py-2 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-mono"
+                            className="w-full bg-surface/50 border border-outline rounded-xl px-4 py-2 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-success/50 focus:border-success transition-all font-mono"
                             autoFocus
                         />
                     </div>
@@ -94,7 +94,7 @@ export default function SavingsWidget({ savings, updateSavings, formatCurrency, 
                         <button
                             type="submit"
                             disabled={!amount}
-                            className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-main font-bold py-2 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="flex-1 bg-success hover:opacity-80 text-main font-bold py-2 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             <Check className="w-4 h-4" /> {t('dashboard.savingsWidget.confirm')}
                         </button>

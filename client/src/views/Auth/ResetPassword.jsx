@@ -61,7 +61,7 @@ export default function ResetPassword() {
                 {status === 'success' ? (
                     <div className="text-center animate-in fade-in zoom-in duration-300">
                         <div className="bg-success/10 p-4 rounded-full mb-6 inline-block">
-                            <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+                            <CheckCircle2 className="h-12 w-12 text-success" />
                         </div>
                         <h3 className="text-xl font-semibold text-main mb-2">{t('auth.passwordUpdated')}</h3>
                         <p className="text-secondary mb-8">{t('auth.passwordUpdatedDesc')}</p>
