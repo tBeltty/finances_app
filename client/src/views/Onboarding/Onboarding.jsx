@@ -330,204 +330,78 @@ export default function Onboarding({ onComplete }) {
                     </div>
                 )}
 
-                {/* Step 2: Theme Selection - 3 UI Modes */}
+                {/* Step 2: Theme Selection - Builder Mode */}
                 {step === 2 && (
                     <div className="bg-surface-container backdrop-blur-xl rounded-2xl border border-outline p-6 text-center space-y-5 max-w-2xl mx-auto">
                         <div className="flex justify-center">
-                            <div className="bg-primary/10 p-3 rounded-full">
-                                <Palette className="h-10 w-10 text-primary" />
+                            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary shadow-lg shadow-primary/20 transition-all">
+                                <img
+                                    src={logo === 'cosmic' ? '/logo-cosmic.png' : logo === 'takito' ? '/logo-shiba.png' : '/logo-ragdoll.png'}
+                                    alt="Logo"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
                         </div>
                         <div className="space-y-1">
                             <h1 className="text-2xl font-bold text-main">Elige tu Estilo</h1>
-                            <p className="text-secondary text-sm">Prueba diferentes modos de selección</p>
+                            <p className="text-secondary text-sm">Personaliza la apariencia de tu experiencia</p>
                         </div>
 
-                        {/* UI Mode Toggle */}
-                        <div className="flex justify-center gap-1 bg-surface/50 p-1 rounded-lg border border-outline/50 w-fit mx-auto">
-                            {[
-                                { id: 1, label: 'Dropdowns' },
-                                { id: 2, label: 'Cards' },
-                                { id: 3, label: 'Builder' }
-                            ].map((m) => (
-                                <button
-                                    key={m.id}
-                                    onClick={() => setUiMode(m.id)}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${uiMode === m.id
-                                        ? 'bg-primary text-main shadow-sm'
-                                        : 'text-secondary hover:text-main'
-                                        }`}
-                                >
-                                    {m.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* MODE 1: Dropdowns */}
-                        {uiMode === 1 && (
-                            <div className="space-y-3 text-left max-w-xs mx-auto">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-secondary uppercase">Tema</label>
-                                    <div className="relative">
-                                        <select
-                                            value={theme}
-                                            onChange={(e) => setTheme(e.target.value)}
-                                            className="w-full bg-surface border border-outline rounded-xl px-4 py-2.5 text-main text-sm appearance-none cursor-pointer focus:border-primary focus:outline-none"
-                                        >
-                                            <option value="cosmic">🔮 Cosmic Slate</option>
-                                            <option value="takito">🔥 Warm Amber</option>
-                                            <option value="cookie">🌊 Ocean Blue</option>
-                                        </select>
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary text-xs">▼</div>
+                        {/* Builder UI */}
+                        <div className="bg-surface rounded-xl border border-outline p-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Preview */}
+                                <div className="rounded-xl border border-outline overflow-hidden">
+                                    <div className="h-7 flex items-center justify-between px-2" style={{ backgroundColor: theme === 'cosmic' ? '#334155' : theme === 'takito' ? '#78350f' : '#0c4a6e' }}>
+                                        <div className="flex items-center gap-1.5">
+                                            <img src={logo === 'cosmic' ? '/logo-cosmic.png' : logo === 'takito' ? '/logo-shiba.png' : '/logo-ragdoll.png'} className="w-4 h-4 rounded-full" alt="" />
+                                            <span className="text-[10px] text-white font-medium">tBelt Finanzas</span>
+                                        </div>
+                                        <div className="flex gap-0.5">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-white/30"></div>
+                                            <div className="w-1.5 h-1.5 rounded-full bg-white/30"></div>
+                                        </div>
+                                    </div>
+                                    <div className="p-3 space-y-1.5" style={{ backgroundColor: mode === 'dark' ? (theme === 'cosmic' ? '#0f172a' : theme === 'takito' ? '#0c0a09' : '#082f49') : (theme === 'cosmic' ? '#f8fafc' : theme === 'takito' ? '#fffbeb' : '#f0f9ff') }}>
+                                        <div className="h-5 rounded-lg" style={{ backgroundColor: theme === 'cosmic' ? '#6366f1' : theme === 'takito' ? '#f59e0b' : '#0ea5e9', width: '60%' }}></div>
+                                        <div className="h-3 rounded opacity-30" style={{ backgroundColor: mode === 'dark' ? '#fff' : '#000', width: '80%' }}></div>
+                                        <div className="h-3 rounded opacity-20" style={{ backgroundColor: mode === 'dark' ? '#fff' : '#000', width: '65%' }}></div>
                                     </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-secondary uppercase">Modo</label>
-                                    <div className="relative">
-                                        <select
-                                            value={mode}
-                                            onChange={(e) => setMode(e.target.value)}
-                                            className="w-full bg-surface border border-outline rounded-xl px-4 py-2.5 text-main text-sm appearance-none cursor-pointer focus:border-primary focus:outline-none"
-                                        >
-                                            <option value="light">☀️ Light Mode</option>
-                                            <option value="dark">🌙 Dark Mode</option>
-                                        </select>
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary text-xs">▼</div>
-                                    </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-bold text-secondary uppercase">Mascota</label>
-                                    <div className="relative">
-                                        <select
-                                            value={logo}
-                                            onChange={(e) => setLogo(e.target.value)}
-                                            className="w-full bg-surface border border-outline rounded-xl px-4 py-2.5 text-main text-sm appearance-none cursor-pointer focus:border-primary focus:outline-none"
-                                        >
-                                            <option value="cosmic">💎 Finances Basic</option>
-                                            <option value="takito">🐕 Takito</option>
-                                            <option value="cookie">🐱 Cookie</option>
-                                        </select>
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-secondary text-xs">▼</div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* MODE 2: Cards */}
-                        {uiMode === 2 && (
-                            <div className="grid grid-cols-3 gap-3">
-                                {[
-                                    { id: 'cosmic', name: 'Cosmic', colors: ['#334155', '#6366f1', '#818cf8'] },
-                                    { id: 'takito', name: 'Amber', colors: ['#78350f', '#f59e0b', '#fbbf24'] },
-                                    { id: 'cookie', name: 'Ocean', colors: ['#0c4a6e', '#0ea5e9', '#38bdf8'] }
-                                ].map((t) => (
-                                    <div
-                                        key={t.id}
-                                        className={`relative rounded-xl border transition-all overflow-hidden ${theme === t.id
-                                            ? 'border-primary ring-2 ring-primary/20'
-                                            : 'border-outline hover:border-primary/50'
-                                            }`}
-                                    >
-                                        <button onClick={() => setTheme(t.id)} className="w-full h-12 flex">
-                                            {t.colors.map((color, i) => (
-                                                <div key={i} className="flex-1" style={{ backgroundColor: color }} />
+                                {/* Controls */}
+                                <div className="space-y-3 text-left">
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-secondary uppercase">Tema</label>
+                                        <div className="flex gap-2">
+                                            {[{ id: 'cosmic', color: '#6366f1' }, { id: 'takito', color: '#f59e0b' }, { id: 'cookie', color: '#0ea5e9' }].map((t) => (
+                                                <button key={t.id} onClick={() => setTheme(t.id)} className={`w-9 h-9 rounded-lg border-2 transition-all ${theme === t.id ? 'border-primary scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`} style={{ backgroundColor: t.color }} />
                                             ))}
-                                        </button>
-                                        <div className="p-2 bg-surface-container space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <span className="font-medium text-xs text-main">{t.name}</span>
-                                                {theme === t.id && (
-                                                    <div className="flex gap-0.5 bg-surface/50 p-0.5 rounded">
-                                                        <button onClick={() => setMode('light')} className={`p-0.5 rounded ${mode === 'light' ? 'bg-white text-slate-900' : 'text-secondary'}`}>
-                                                            <Sun className="h-3 w-3" />
-                                                        </button>
-                                                        <button onClick={() => setMode('dark')} className={`p-0.5 rounded ${mode === 'dark' ? 'bg-surface text-main' : 'text-secondary'}`}>
-                                                            <Moon className="h-3 w-3" />
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            {theme === t.id && (
-                                                <div className="flex justify-center gap-1 pt-1 border-t border-outline/50">
-                                                    {[
-                                                        { id: 'cosmic', icon: '/logo-cosmic.png' },
-                                                        { id: 'takito', icon: '/logo-shiba.png' },
-                                                        { id: 'cookie', icon: '/logo-ragdoll.png' }
-                                                    ].map((m) => (
-                                                        <button key={m.id} onClick={() => setLogo(m.id)} className={`w-6 h-6 rounded-full overflow-hidden border-2 transition-all ${logo === m.id ? 'border-primary scale-110' : 'border-outline opacity-50 hover:opacity-100'}`}>
-                                                            <img src={m.icon} alt="" className="w-full h-full object-cover" />
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                        {theme === t.id && (
-                                            <div className="absolute top-1 right-1 bg-primary rounded-full p-0.5">
-                                                <Check className="h-2 w-2 text-main" />
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* MODE 3: Builder */}
-                        {uiMode === 3 && (
-                            <div className="bg-surface rounded-xl border border-outline p-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* Preview */}
-                                    <div className="rounded-xl border border-outline overflow-hidden">
-                                        <div className="h-7 flex items-center justify-between px-2" style={{ backgroundColor: theme === 'cosmic' ? '#334155' : theme === 'takito' ? '#78350f' : '#0c4a6e' }}>
-                                            <div className="flex items-center gap-1.5">
-                                                <img src={logo === 'cosmic' ? '/logo-cosmic.png' : logo === 'takito' ? '/logo-shiba.png' : '/logo-ragdoll.png'} className="w-4 h-4 rounded-full" alt="" />
-                                                <span className="text-[10px] text-white font-medium">tBelt Finanzas</span>
-                                            </div>
-                                            <div className="flex gap-0.5">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-white/30"></div>
-                                                <div className="w-1.5 h-1.5 rounded-full bg-white/30"></div>
-                                            </div>
-                                        </div>
-                                        <div className="p-3 space-y-1.5" style={{ backgroundColor: mode === 'dark' ? (theme === 'cosmic' ? '#0f172a' : theme === 'takito' ? '#0c0a09' : '#082f49') : (theme === 'cosmic' ? '#f8fafc' : theme === 'takito' ? '#fffbeb' : '#f0f9ff') }}>
-                                            <div className="h-5 rounded-lg" style={{ backgroundColor: theme === 'cosmic' ? '#6366f1' : theme === 'takito' ? '#f59e0b' : '#0ea5e9', width: '60%' }}></div>
-                                            <div className="h-3 rounded opacity-30" style={{ backgroundColor: mode === 'dark' ? '#fff' : '#000', width: '80%' }}></div>
-                                            <div className="h-3 rounded opacity-20" style={{ backgroundColor: mode === 'dark' ? '#fff' : '#000', width: '65%' }}></div>
                                         </div>
                                     </div>
-                                    {/* Controls */}
-                                    <div className="space-y-3 text-left">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-secondary uppercase">Tema</label>
-                                            <div className="flex gap-2">
-                                                {[{ id: 'cosmic', color: '#6366f1' }, { id: 'takito', color: '#f59e0b' }, { id: 'cookie', color: '#0ea5e9' }].map((t) => (
-                                                    <button key={t.id} onClick={() => setTheme(t.id)} className={`w-9 h-9 rounded-lg border-2 transition-all ${theme === t.id ? 'border-primary scale-110 shadow-lg' : 'border-transparent hover:scale-105'}`} style={{ backgroundColor: t.color }} />
-                                                ))}
-                                            </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-secondary uppercase">Modo</label>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => setMode('light')} className={`flex-1 flex items-center justify-center py-1.5 rounded-lg border transition-all ${mode === 'light' ? 'bg-white text-slate-900 border-slate-200' : 'bg-surface border-outline text-secondary'}`}>
+                                                <Sun className="h-4 w-4" />
+                                            </button>
+                                            <button onClick={() => setMode('dark')} className={`flex-1 flex items-center justify-center py-1.5 rounded-lg border transition-all ${mode === 'dark' ? 'bg-surface-container text-main border-primary' : 'bg-surface border-outline text-secondary'}`}>
+                                                <Moon className="h-4 w-4" />
+                                            </button>
                                         </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-secondary uppercase">Modo</label>
-                                            <div className="flex gap-2">
-                                                <button onClick={() => setMode('light')} className={`flex-1 flex items-center justify-center py-1.5 rounded-lg border transition-all ${mode === 'light' ? 'bg-white text-slate-900 border-slate-200' : 'bg-surface border-outline text-secondary'}`}>
-                                                    <Sun className="h-4 w-4" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-bold text-secondary uppercase">Logo</label>
+                                        <div className="flex gap-2">
+                                            {[{ id: 'cosmic', icon: '/logo-cosmic.png' }, { id: 'takito', icon: '/logo-shiba.png' }, { id: 'cookie', icon: '/logo-ragdoll.png' }].map((l) => (
+                                                <button key={l.id} onClick={() => setLogo(l.id)} className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all ${logo === l.id ? 'border-primary scale-110 shadow-lg' : 'border-outline hover:scale-105'}`}>
+                                                    <img src={l.icon} alt="" className="w-full h-full object-cover" />
                                                 </button>
-                                                <button onClick={() => setMode('dark')} className={`flex-1 flex items-center justify-center py-1.5 rounded-lg border transition-all ${mode === 'dark' ? 'bg-surface-container text-main border-primary' : 'bg-surface border-outline text-secondary'}`}>
-                                                    <Moon className="h-4 w-4" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold text-secondary uppercase">Mascota</label>
-                                            <div className="flex gap-2">
-                                                {[{ id: 'cosmic', icon: '/logo-cosmic.png' }, { id: 'takito', icon: '/logo-shiba.png' }, { id: 'cookie', icon: '/logo-ragdoll.png' }].map((l) => (
-                                                    <button key={l.id} onClick={() => setLogo(l.id)} className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all ${logo === l.id ? 'border-primary scale-110 shadow-lg' : 'border-outline hover:scale-105'}`}>
-                                                        <img src={l.icon} alt="" className="w-full h-full object-cover" />
-                                                    </button>
-                                                ))}
-                                            </div>
+                                            ))}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        )}
+                        </div>
 
                         {/* Navigation */}
                         <div className="flex gap-3 pt-2">
