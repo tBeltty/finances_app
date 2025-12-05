@@ -348,12 +348,13 @@ exports.updateLanguage = async (req, res) => {
 
 exports.updateTheme = async (req, res) => {
     try {
-        const { theme, mode } = req.body;
+        const { theme, mode, logo } = req.body;
         const user = await User.findByPk(req.user.id);
         if (theme) user.theme = theme;
         if (mode) user.mode = mode;
+        if (logo) user.logo = logo;
         await user.save();
-        res.json({ success: true, theme: user.theme, mode: user.mode });
+        res.json({ success: true, theme: user.theme, mode: user.mode, logo: user.logo });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

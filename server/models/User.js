@@ -71,6 +71,10 @@ const User = sequelize.define('User', {
     mode: {
         type: DataTypes.STRING,
         defaultValue: 'dark'
+    },
+    logo: {
+        type: DataTypes.STRING,
+        defaultValue: 'cosmic'
     }
 }, {
     timestamps: true,

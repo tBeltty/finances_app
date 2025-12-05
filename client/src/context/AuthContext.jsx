@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const updateTheme = async (theme, mode) => {
+    const updateTheme = async (theme, mode, logo) => {
         try {
             const token = localStorage.getItem('token');
             const response = await fetch('/api/auth/update-theme', {
@@ -97,12 +97,12 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ theme, mode }),
+                body: JSON.stringify({ theme, mode, logo }),
             });
 
             if (response.ok) {
                 const data = await response.json();
-                setUser(prev => ({ ...prev, theme: data.theme, mode: data.mode }));
+                setUser(prev => ({ ...prev, theme: data.theme, mode: data.mode, logo: data.logo }));
                 return { success: true };
             }
         } catch (error) {

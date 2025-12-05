@@ -19,7 +19,7 @@ export default function SettingsModal({
     updateHouseholdSettings
 }) {
     const { t, i18n } = useTranslation();
-    const { theme, setTheme, mode, setMode } = useTheme();
+    const { theme, setTheme, mode, setMode, logo, setLogo } = useTheme();
     const [activeTab, setActiveTab] = useState('general');
     const [newCategory, setNewCategory] = useState('');
     const [editingId, setEditingId] = useState(null);
@@ -613,6 +613,39 @@ export default function SettingsModal({
                                         <Moon className="h-6 w-6" />
                                         <span className="font-bold">Dark Mode</span>
                                     </button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t border-border">
+                                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Logo / Mascota</h3>
+                                <p className="text-xs text-secondary">El logo se usará como favicon y al instalar la PWA</p>
+                                <div className="grid grid-cols-3 gap-4">
+                                    {[
+                                        { id: 'cosmic', name: 'Cosmic', icon: '/logo-cosmic.png' },
+                                        { id: 'takito', name: 'Takito', icon: '/logo-shiba.png' },
+                                        { id: 'cookie', name: 'Cookie', icon: '/logo-ragdoll.png' }
+                                    ].map((l) => (
+                                        <button
+                                            key={l.id}
+                                            onClick={() => setLogo(l.id)}
+                                            className={`relative p-3 rounded-xl border transition-all flex flex-col items-center gap-2 ${logo === l.id
+                                                ? 'bg-primary/20 border-primary ring-2 ring-primary/20'
+                                                : 'bg-main border-border hover:border-secondary'
+                                                }`}
+                                        >
+                                            <div className={`w-14 h-14 rounded-full overflow-hidden border-2 ${logo === l.id ? 'border-primary' : 'border-border'}`}>
+                                                <img src={l.icon} alt={l.name} className="w-full h-full object-cover" />
+                                            </div>
+                                            <span className={`text-sm font-medium ${logo === l.id ? 'text-main' : 'text-secondary'}`}>
+                                                {l.name}
+                                            </span>
+                                            {logo === l.id && (
+                                                <div className="absolute top-2 right-2 bg-primary rounded-full p-0.5">
+                                                    <Check className="h-3 w-3 text-main" />
+                                                </div>
+                                            )}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         </div>
