@@ -618,7 +618,7 @@ export default function SettingsModal({
 
                             <div className="space-y-4 pt-4 border-t border-border">
                                 <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Logo / Mascota</h3>
-                                <p className="text-xs text-secondary">El logo se usará como favicon y al instalar la PWA</p>
+                                <p className="text-xs text-secondary">El logo se verá en tu inicio y en el icono de la app después de instalar</p>
                                 <div className="grid grid-cols-3 gap-4">
                                     {[
                                         { id: 'cosmic', name: 'Cosmic', icon: '/logo-cosmic.png' },
