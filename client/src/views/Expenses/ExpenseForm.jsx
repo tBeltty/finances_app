@@ -38,11 +38,11 @@ export default function ExpenseForm({
     };
 
     return (
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 shadow-lg p-6">
+        <div className="bg-surface-container backdrop-blur-sm rounded-2xl border border-outline shadow-lg p-6">
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-                    <div className="bg-indigo-500/10 p-1.5 rounded-lg">
-                        <Plus className="w-5 h-5 text-indigo-400" />
+                <h2 className="text-lg font-bold text-on-surface flex items-center gap-2">
+                    <div className="bg-primary-container p-1.5 rounded-lg">
+                        <Plus className="w-5 h-5 text-on-primary-container" />
                     </div>
                     {t('expenses.newExpense')}
                 </h2>
@@ -50,18 +50,18 @@ export default function ExpenseForm({
 
             <form onSubmit={handleAddExpense} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('expenses.description')}</label>
+                    <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">{t('expenses.description')}</label>
                     <input
                         type="text"
                         placeholder={t('expenses.descriptionPlaceholder')}
                         value={newExpense.name}
                         onChange={(e) => setNewExpense({ ...newExpense, name: e.target.value })}
-                        className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-2.5 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
+                        className="w-full bg-surface/50 border border-outline rounded-xl px-4 py-2.5 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('expenses.amount')}</label>
+                    <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">{t('expenses.amount')}</label>
                     <div className="relative">
                         <input
                             type="text"
@@ -98,13 +98,13 @@ export default function ExpenseForm({
 
                                 setNewExpense({ ...newExpense, amount: formattedInteger + decimalPart });
                             }}
-                            className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-2.5 text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-mono"
+                            className="w-full bg-surface/50 border border-outline rounded-xl px-4 py-2.5 text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all font-mono"
                         />
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('expenses.type')}</label>
+                    <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">{t('expenses.type')}</label>
                     <div className="relative">
                         <CustomSelect
                             value={newExpense.type}
@@ -119,17 +119,17 @@ export default function ExpenseForm({
                 </div>
 
                 <div className="relative">
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('expenses.category')}</label>
+                    <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">{t('expenses.category')}</label>
 
                     {showQuickCategory ? (
-                        <div className="absolute top-0 left-0 w-full z-20 bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl p-2 flex items-center gap-2 animate-in fade-in zoom-in duration-200">
+                        <div className="absolute top-0 left-0 w-full z-20 bg-surface-container/95 backdrop-blur-xl border border-outline rounded-2xl shadow-2xl p-2 flex items-center gap-2 animate-in fade-in zoom-in duration-200">
                             <input
                                 type="text"
                                 autoFocus
                                 placeholder={t('expenses.newCategory')}
                                 value={newCategoryName}
                                 onChange={(e) => setNewCategoryName(e.target.value)}
-                                className="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-3 py-2 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-slate-600"
+                                className="w-full bg-surface/50 border border-outline rounded-xl px-3 py-2 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-on-surface-variant"
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault();
@@ -140,14 +140,14 @@ export default function ExpenseForm({
                             <button
                                 type="button"
                                 onClick={saveNewCategory}
-                                className="bg-indigo-500 hover:bg-indigo-600 text-white p-2 rounded-lg transition-colors shadow-lg shadow-indigo-500/20"
+                                className="bg-primary hover:bg-primary-hover text-on-primary p-2 rounded-lg transition-colors shadow-lg shadow-primary/20"
                             >
                                 <Check className="w-4 h-4" />
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setShowQuickCategory(false)}
-                                className="bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 p-2 rounded-lg transition-colors border border-slate-700"
+                                className="bg-surface-container hover:bg-surface text-on-surface-variant hover:text-on-surface p-2 rounded-lg transition-colors border border-outline"
                             >
                                 <X className="w-4 h-4" />
                             </button>
@@ -166,19 +166,19 @@ export default function ExpenseForm({
                 </div>
 
                 <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('expenses.date')}</label>
+                    <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">{t('expenses.date')}</label>
                     <input
                         type="date"
                         value={newExpense.date}
                         onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value })}
                         disabled={!newExpense.isPaid}
-                        className={`w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-2.5 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all ${!newExpense.isPaid ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`w-full bg-surface/50 border border-outline rounded-xl px-4 py-2.5 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all ${!newExpense.isPaid ? 'opacity-50 cursor-not-allowed' : ''}`}
                     />
                 </div>
 
                 <div className="flex items-end gap-2">
-                    <label className="flex items-center gap-3 w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newExpense.isPaid ? 'bg-emerald-500 border-emerald-500' : 'border-slate-500'}`}>
+                    <label className="flex items-center gap-3 w-full bg-surface/50 border border-outline rounded-xl px-4 py-2.5 cursor-pointer hover:bg-surface/80 transition-colors">
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newExpense.isPaid ? 'bg-emerald-500 border-emerald-500' : 'border-on-surface-variant'}`}>
                             {newExpense.isPaid && <Sparkles className="w-3.5 h-3.5 text-white" />}
                         </div>
                         <input
@@ -187,14 +187,14 @@ export default function ExpenseForm({
                             onChange={(e) => setNewExpense({ ...newExpense, isPaid: e.target.checked, payWithSavings: false })}
                             className="hidden"
                         />
-                        <span className={`text-sm font-medium ${newExpense.isPaid ? 'text-emerald-400' : 'text-slate-400'}`}>
+                        <span className={`text-sm font-medium ${newExpense.isPaid ? 'text-emerald-400' : 'text-on-surface-variant'}`}>
                             <span>{newExpense.isPaid ? t('expenses.paid') : t('expenses.pending')}</span>
                         </span>
                     </label>
 
                     {newExpense.isPaid && (
-                        <label className="flex items-center gap-2 bg-slate-900/50 border border-slate-600 rounded-xl px-3 py-2.5 cursor-pointer hover:bg-slate-800/50 transition-colors" title={t('expenses.payWithSavings')}>
-                            <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newExpense.payWithSavings ? 'bg-indigo-500 border-indigo-500' : 'border-slate-500'}`}>
+                        <label className="flex items-center gap-2 bg-surface/50 border border-outline rounded-xl px-3 py-2.5 cursor-pointer hover:bg-surface/80 transition-colors" title={t('expenses.payWithSavings')}>
+                            <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${newExpense.payWithSavings ? 'bg-primary border-primary' : 'border-on-surface-variant'}`}>
                                 {newExpense.payWithSavings && <Check className="w-3.5 h-3.5 text-white" />}
                             </div>
                             <input
@@ -203,7 +203,7 @@ export default function ExpenseForm({
                                 onChange={(e) => setNewExpense({ ...newExpense, payWithSavings: e.target.checked })}
                                 className="hidden"
                             />
-                            <span className={`text-xs font-bold ${newExpense.payWithSavings ? 'text-indigo-400' : 'text-slate-400'}`}>
+                            <span className={`text-xs font-bold ${newExpense.payWithSavings ? 'text-primary' : 'text-on-surface-variant'}`}>
                                 {t('expenses.savings')}
                             </span>
                         </label>
@@ -214,7 +214,7 @@ export default function ExpenseForm({
                     <button
                         type="submit"
                         disabled={!newExpense.name || !newExpense.amount}
-                        className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transform active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full bg-primary hover:bg-primary-hover text-on-primary font-bold py-3 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transform active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         <Plus className="w-5 h-5" />
                         <span>{t('expenses.addExpense')}</span>

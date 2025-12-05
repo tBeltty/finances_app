@@ -88,6 +88,29 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateTheme = async (theme, mode) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/auth/update-theme', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ theme, mode }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setUser(prev => ({ ...prev, theme: data.theme, mode: data.mode }));
+                return { success: true };
+            }
+        } catch (error) {
+            console.error('Error updating theme:', error);
+            return { success: false, error: error.message };
+        }
+    };
+
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
@@ -95,7 +118,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading, refreshUser }}>
+        <AuthContext.Provider value={{ user, login, register, logout, loading, refreshUser, updateTheme }}>
             {children}
         </AuthContext.Provider>
     );

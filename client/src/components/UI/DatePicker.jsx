@@ -63,20 +63,20 @@ export default function DatePicker({ value, onChange, className = '' }) {
         <div className={`relative ${className}`} ref={containerRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white cursor-pointer hover:border-indigo-500 transition-colors"
+                className="flex items-center gap-2 w-full bg-surface border border-outline rounded-xl px-4 py-3 text-main cursor-pointer hover:border-primary transition-colors"
             >
-                <CalendarIcon className="h-5 w-5 text-slate-400" />
+                <CalendarIcon className="h-5 w-5 text-secondary" />
                 <span className="text-sm font-medium">{formatDate(value)}</span>
             </div>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-50 p-4">
+                <div className="absolute top-full left-0 mt-2 w-72 bg-surface-container border border-outline rounded-xl shadow-2xl z-50 p-4">
                     <div className="flex items-center justify-between mb-4">
-                        <button onClick={handlePrevMonth} className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded">
+                        <button onClick={handlePrevMonth} className="p-1 text-secondary hover:text-main hover:bg-surface-container rounded">
                             <ChevronLeft className="h-5 w-5" />
                         </button>
-                        <span className="text-white font-bold capitalize">{monthName}</span>
-                        <button onClick={handleNextMonth} className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded">
+                        <span className="text-main font-bold capitalize">{monthName}</span>
+                        <button onClick={handleNextMonth} className="p-1 text-secondary hover:text-main hover:bg-surface-container rounded">
                             <ChevronRight className="h-5 w-5" />
                         </button>
                     </div>
@@ -102,8 +102,8 @@ export default function DatePicker({ value, onChange, className = '' }) {
                                     onClick={() => handleDayClick(day)}
                                     className={`
                                         h-8 w-8 rounded-lg text-sm font-medium flex items-center justify-center transition-colors
-                                        ${isSelected ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:bg-slate-800'}
-                                        ${isToday && !isSelected ? 'border border-indigo-500/50 text-indigo-400' : ''}
+                                        ${isSelected ? 'bg-primary text-main' : 'text-main hover:bg-surface-container'}
+                                        ${isToday && !isSelected ? 'border border-primary/50 text-primary' : ''}
                                     `}
                                 >
                                     {day}

@@ -14,7 +14,7 @@ otplib.authenticator.options = { window: 1 };
 
 exports.register = async (req, res) => {
     try {
-        const { username, email, password, language } = req.body;
+        const { username, email, password, language, theme, mode } = req.body;
 
         // Validate email is provided
         if (!email) {
@@ -40,7 +40,9 @@ exports.register = async (req, res) => {
             password: hashedPassword,
             emailVerificationToken,
             emailVerified: false,
-            language: language || 'en'
+            language: language || 'en',
+            theme: theme || 'cosmic',
+            mode: mode || 'dark'
         });
 
         // Create default Personal Household
@@ -159,7 +161,9 @@ exports.login = async (req, res) => {
                 currency: user.currency,
                 monthlyIncome: user.monthlyIncome,
                 hasCompletedOnboarding: user.username === 'testuser2' ? false : user.hasCompletedOnboarding,
-                language: user.language
+                language: user.language,
+                theme: user.theme,
+                mode: user.mode
             }
         });
     } catch (error) {
@@ -291,7 +295,7 @@ exports.disable2FA = async (req, res) => {
 exports.getMe = async (req, res) => {
     try {
         const user = await User.findByPk(req.user.id, {
-            attributes: ['id', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'currency', 'language'],
+            attributes: ['id', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'currency', 'language', 'theme', 'mode'],
             include: [{
                 model: Household,
                 through: { attributes: ['role', 'isDefault'] }
@@ -337,6 +341,19 @@ exports.updateLanguage = async (req, res) => {
         user.language = language || 'en';
         await user.save();
         res.json({ success: true, language: user.language });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.updateTheme = async (req, res) => {
+    try {
+        const { theme, mode } = req.body;
+        const user = await User.findByPk(req.user.id);
+        if (theme) user.theme = theme;
+        if (mode) user.mode = mode;
+        await user.save();
+        res.json({ success: true, theme: user.theme, mode: user.mode });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

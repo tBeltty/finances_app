@@ -52,19 +52,19 @@ export default function Controls({
     const monthNameCapitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
     return (
-        <div className="bg-slate-900/50 backdrop-blur-xl p-6 rounded-2xl border border-slate-800 mb-8 relative z-20">
+        <div className="bg-surface-container backdrop-blur-xl p-6 rounded-2xl border border-outline mb-8 relative z-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 {/* Month Navigation & Title */}
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => changeMonth(-1)}
-                        className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                        className="p-2 hover:bg-surface rounded-lg transition-colors text-on-surface-variant hover:text-on-surface"
                     >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
 
                     {filterMode === 'month' ? (
-                        <h2 className="text-xl font-bold text-white min-w-[200px] text-center">
+                        <h2 className="text-xl font-bold text-on-surface min-w-[200px] text-center">
                             {monthNameCapitalized}
                         </h2>
                     ) : (
@@ -76,7 +76,7 @@ export default function Controls({
 
                     <button
                         onClick={() => changeMonth(1)}
-                        className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                        className="p-2 hover:bg-surface rounded-lg transition-colors text-on-surface-variant hover:text-on-surface"
                     >
                         <ChevronRight className="w-5 h-5" />
                     </button>
@@ -85,12 +85,12 @@ export default function Controls({
                 {/* Controls Group */}
                 <div className="flex items-center gap-3 flex-wrap">
                     {/* Filter Mode Toggle */}
-                    <div className="flex bg-slate-800 rounded-lg p-1">
+                    <div className="flex bg-surface rounded-lg p-1">
                         <button
                             onClick={() => setFilterMode('month')}
                             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${filterMode === 'month'
-                                ? 'bg-indigo-600 text-white'
-                                : 'text-slate-400 hover:text-white'
+                                ? 'bg-primary text-on-primary'
+                                : 'text-on-surface-variant hover:text-on-surface'
                                 }`}
                         >
                             {t('dashboard.month')}
@@ -98,8 +98,8 @@ export default function Controls({
                         <button
                             onClick={() => setFilterMode('day')}
                             className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${filterMode === 'day'
-                                ? 'bg-indigo-600 text-white'
-                                : 'text-slate-400 hover:text-white'
+                                ? 'bg-primary text-on-primary'
+                                : 'text-on-surface-variant hover:text-on-surface'
                                 }`}
                         >
                             {t('dashboard.day')}
@@ -113,7 +113,7 @@ export default function Controls({
                         onMouseLeave={handleMouseLeave}
                     >
                         <button
-                            className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm font-medium"
+                            className="flex items-center gap-2 px-4 py-2 bg-surface-container hover:bg-surface text-on-surface border border-outline rounded-lg transition-colors text-sm font-medium"
                         >
                             <ArrowDownUp className="w-4 h-4" />
                             {sortMode === 'date' ? t('dashboard.sort.date') : sortMode === 'amount_desc' ? t('dashboard.sort.amountDesc') : t('dashboard.sort.amountAsc')}
@@ -121,16 +121,16 @@ export default function Controls({
 
                         {sortOpen && (
                             <div
-                                className="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-50"
+                                className="absolute right-0 mt-2 w-48 bg-surface-container border border-outline rounded-xl shadow-xl overflow-hidden z-50"
                                 onMouseEnter={handleMouseEnter}
                             >
-                                <button onClick={() => { setSortMode('date'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-700 ${sortMode === 'date' ? 'text-indigo-400 font-medium' : 'text-slate-300'}`}>
+                                <button onClick={() => { setSortMode('date'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-surface ${sortMode === 'date' ? 'text-primary font-medium' : 'text-on-surface-variant'}`}>
                                     {t('dashboard.sort.default')}
                                 </button>
-                                <button onClick={() => { setSortMode('amount_desc'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-700 ${sortMode === 'amount_desc' ? 'text-indigo-400 font-medium' : 'text-slate-300'}`}>
+                                <button onClick={() => { setSortMode('amount_desc'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-surface ${sortMode === 'amount_desc' ? 'text-primary font-medium' : 'text-on-surface-variant'}`}>
                                     {t('dashboard.sort.amountDesc')}
                                 </button>
-                                <button onClick={() => { setSortMode('amount_asc'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-700 ${sortMode === 'amount_asc' ? 'text-indigo-400 font-medium' : 'text-slate-300'}`}>
+                                <button onClick={() => { setSortMode('amount_asc'); setSortOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-surface ${sortMode === 'amount_asc' ? 'text-primary font-medium' : 'text-on-surface-variant'}`}>
                                     {t('dashboard.sort.amountAsc')}
                                 </button>
                             </div>
@@ -139,7 +139,7 @@ export default function Controls({
 
                     <button
                         onClick={handleRollover}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors text-sm font-medium"
+                        className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-container text-on-primary rounded-lg transition-colors text-sm font-medium"
                     >
                         <RefreshCw className="w-4 h-4" />
                         {t('dashboard.importFixed')}
@@ -147,7 +147,7 @@ export default function Controls({
 
                     <button
                         onClick={handleExport}
-                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors text-sm font-medium"
+                        className="flex items-center gap-2 px-4 py-2 bg-success hover:opacity-80 text-main rounded-lg transition-colors text-sm font-medium"
                     >
                         <Download className="w-4 h-4" />
                         {t('dashboard.export')}

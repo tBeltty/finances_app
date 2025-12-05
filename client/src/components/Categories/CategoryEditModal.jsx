@@ -59,18 +59,18 @@ export default function CategoryEditModal({ category, onClose, onSave }) {
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-            <div className="bg-slate-900 rounded-2xl w-full max-w-md border border-slate-800 shadow-2xl my-auto">
+            <div className="bg-surface-container rounded-2xl w-full max-w-md border border-outline shadow-2xl my-auto">
                 {/* Header */}
-                <div className="flex justify-between items-center p-6 border-b border-slate-800">
+                <div className="flex justify-between items-center p-6 border-b border-outline">
                     <div className="flex items-center gap-3">
-                        <div className="bg-indigo-500/10 p-2 rounded-lg">
-                            <Palette className="h-5 w-5 text-indigo-400" />
+                        <div className="bg-primary/10 p-2 rounded-lg">
+                            <Palette className="h-5 w-5 text-primary" />
                         </div>
-                        <h3 className="text-lg font-bold text-white">{t('expenses.editCategoryTitle')}</h3>
+                        <h3 className="text-lg font-bold text-main">{t('expenses.editCategoryTitle')}</h3>
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-slate-400 hover:text-white transition-colors"
+                        className="text-secondary hover:text-main transition-colors"
                         disabled={isSaving}
                     >
                         <X className="h-5 w-5" />
@@ -81,14 +81,14 @@ export default function CategoryEditModal({ category, onClose, onSave }) {
                 <div className="p-6 space-y-6">
                     {/* Name Input */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">{t('expenses.name')}</label>
+                        <label className="text-sm font-medium text-secondary">{t('expenses.name')}</label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder={t('expenses.categoryNamePlaceholder')}
-                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-indigo-500 focus:outline-none placeholder:text-slate-600"
+                            className="w-full bg-surface border border-outline rounded-xl px-4 py-3 text-main focus:border-primary focus:outline-none placeholder:text-slate-600"
                             autoFocus
                             disabled={isSaving}
                         />
@@ -96,7 +96,7 @@ export default function CategoryEditModal({ category, onClose, onSave }) {
 
                     {/* Color Picker */}
                     <div className="space-y-3">
-                        <label className="text-sm font-medium text-slate-400">{t('expenses.color')}</label>
+                        <label className="text-sm font-medium text-secondary">{t('expenses.color')}</label>
                         <div className="grid grid-cols-6 gap-2">
                             {COLORS.map((c) => (
                                 <button
@@ -116,31 +116,31 @@ export default function CategoryEditModal({ category, onClose, onSave }) {
                     </div>
 
                     {/* Preview */}
-                    <div className="p-4 bg-slate-950 rounded-xl border border-slate-800">
-                        <p className="text-xs text-slate-400 mb-2">{t('expenses.preview')}</p>
+                    <div className="p-4 bg-surface rounded-xl border border-outline">
+                        <p className="text-xs text-secondary mb-2">{t('expenses.preview')}</p>
                         <div className="flex items-center gap-3">
                             <div
                                 className="w-3 h-10 rounded-full"
                                 style={{ backgroundColor: COLORS.find(c => c.name === color)?.hex || '#64748b' }}
                             ></div>
-                            <span className="text-white font-semibold">{name || t('expenses.newCategory')}</span>
+                            <span className="text-main font-semibold">{name || t('expenses.newCategory')}</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 border-t border-slate-800 flex gap-3">
+                <div className="p-6 border-t border-outline flex gap-3">
                     <button
                         onClick={onClose}
                         disabled={isSaving}
-                        className="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+                        className="flex-1 bg-surface-container hover:bg-surface-container-high text-main py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
                     >
                         {t('common.cancel')}
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={!name.trim() || isSaving}
-                        className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 bg-primary hover:bg-primary-container text-main py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isSaving ? (
                             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

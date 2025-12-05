@@ -5,6 +5,7 @@ import './index.css'
 import './i18n'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import { UIProvider } from './context/UIContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import ReloadPrompt from './components/ReloadPrompt'
@@ -16,9 +17,11 @@ createRoot(document.getElementById('root')).render(
     <ErrorBoundary>
       <BrowserRouter>
         <AuthProvider>
-          <UIProvider>
-            <App />
-          </UIProvider>
+          <ThemeProvider>
+            <UIProvider>
+              <App />
+            </UIProvider>
+          </ThemeProvider>
         </AuthProvider>
       </BrowserRouter>
     </ErrorBoundary>

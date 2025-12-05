@@ -54,39 +54,39 @@ export default function ExpenseList({
     };
 
     const renderCategoryGroup = (group, groupIndex) => (
-        <div key={group.id} className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden hover:border-slate-600 transition-colors h-fit">
+        <div key={group.id} className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border overflow-hidden hover:border-secondary/50 transition-colors h-fit">
             {/* Header de Categoría */}
-            <div className="p-4 border-b border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-800/80">
+            <div className="p-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/80">
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                     <div className={`w-3 h-10 rounded-full flex-shrink-0 bg-${group.color || 'slate'}-500`}></div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-start gap-2 mb-1">
-                            <h3 className="font-bold text-slate-200 text-base leading-tight break-words">{group.name}</h3>
+                            <h3 className="font-bold text-main text-base leading-tight break-words">{group.name}</h3>
                             <button
                                 onClick={() => setEditingCategory(group)}
-                                className="p-2 hover:bg-slate-700 rounded text-slate-400 hover:text-indigo-400 transition-colors flex-shrink-0"
+                                className="p-2 hover:bg-main rounded text-secondary hover:text-primary transition-colors flex-shrink-0"
                                 title={t('expenses.editCategory')}
                             >
                                 <Edit2 size={16} />
                             </button>
                         </div>
-                        <div className="flex items-center gap-2 text-xs font-medium text-slate-400 flex-wrap">
-                            <span className="bg-slate-700/50 px-2 py-0.5 rounded text-slate-300 whitespace-nowrap">{t('expenses.itemsCount', { count: group.items.length })}</span>
-                            {group.items.every(i => i.paid >= i.amount) && group.items.length > 0 && <span className="text-emerald-400 flex items-center gap-1 whitespace-nowrap"><CheckCircle2 size={12} /> {t('expenses.paid')}</span>}
+                        <div className="flex items-center gap-2 text-xs font-medium text-secondary flex-wrap">
+                            <span className="bg-main/50 px-2 py-0.5 rounded text-secondary whitespace-nowrap">{t('expenses.itemsCount', { count: group.items.length })}</span>
+                            {group.items.every(i => i.paid >= i.amount) && group.items.length > 0 && <span className="text-success flex items-center gap-1 whitespace-nowrap"><CheckCircle2 size={12} /> {t('expenses.paid')}</span>}
                         </div>
                     </div>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pl-6 sm:pl-0">
                     <div className="text-right">
-                        <p className="text-xs text-slate-400 uppercase font-bold tracking-wider">{t('expenses.total')}</p>
-                        <p className="font-bold text-slate-200 text-lg">{formatCurrency(group.items.reduce((s, i) => s + i.amount, 0))}</p>
+                        <p className="text-xs text-secondary uppercase font-bold tracking-wider">{t('expenses.total')}</p>
+                        <p className="font-bold text-main text-lg">{formatCurrency(group.items.reduce((s, i) => s + i.amount, 0))}</p>
                     </div>
                     <div className="flex items-center gap-2">
                         {group.items.some(i => i.paid < i.amount) && (
                             <button
                                 onClick={() => handlePayCategory(group.id)}
-                                className="p-2 hover:bg-emerald-500/10 text-slate-400 hover:text-emerald-400 rounded-lg transition-colors"
+                                className="p-2 hover:bg-success/10 text-secondary hover:text-success rounded-lg transition-colors"
                                 title={t('expenses.payCategory')}
                             >
                                 <CheckCircle2 size={20} />
@@ -95,13 +95,13 @@ export default function ExpenseList({
                         <div className="relative">
                             <button
                                 onClick={() => handleDeleteClick(group.id)}
-                                className="p-2 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 rounded-lg transition-colors"
+                                className="p-2 hover:bg-error/10 text-secondary hover:text-error rounded-lg transition-colors"
                                 title={t('expenses.deleteCategory')}
                             >
                                 <Trash2 size={20} />
                             </button>
                             {errorCatId === group.id && (
-                                <div className="absolute right-0 top-full mt-2 w-48 bg-rose-500 text-white text-xs font-bold p-2 rounded-lg shadow-xl z-50 text-center animate-in fade-in slide-in-from-top-2">
+                                <div className="absolute right-0 top-full mt-2 w-48 bg-rose-500 text-main text-xs font-bold p-2 rounded-lg shadow-xl z-50 text-center animate-in fade-in slide-in-from-top-2">
                                     {errorMsg}
                                     <div className="absolute -top-1 right-3 w-2 h-2 bg-rose-500 rotate-45"></div>
                                 </div>
@@ -114,13 +114,13 @@ export default function ExpenseList({
             {/* Tabla de Items */}
             <div className="overflow-x-auto max-h-[320px] overflow-y-auto">
                 <table className="w-full text-left border-collapse">
-                    <tbody className="text-sm divide-y divide-slate-700/50">
+                    <tbody className="text-sm divide-y divide-border/50">
                         {group.items.map((expense, expenseIndex) => {
                             const isEditing = editingExpenseId === expense.id;
                             const isFullyPaid = expense.paid >= expense.amount;
 
                             return (
-                                <tr key={expense.id} className={`group hover:bg-slate-700/30 transition-colors ${isEditing ? 'bg-indigo-500/10' : ''} relative`}>
+                                <tr key={expense.id} className={`group hover:bg-main/30 transition-colors ${isEditing ? 'bg-primary/10' : ''} relative`}>
                                     {/* Columna Nombre */}
                                     <td className="p-4 w-1/3 min-w-[200px]">
                                         {isEditing ? (
@@ -129,7 +129,7 @@ export default function ExpenseList({
                                                     type="text"
                                                     value={editForm.name || ''}
                                                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                                    className="w-full border-b border-indigo-500 bg-transparent focus:outline-none font-semibold text-slate-200 py-1"
+                                                    className="w-full border-b border-primary bg-transparent focus:outline-none font-semibold text-main py-1"
                                                     autoFocus
                                                     placeholder={t('expenses.name')}
                                                 />
@@ -139,15 +139,15 @@ export default function ExpenseList({
                                                         <select
                                                             value={editForm.categoryId || group.id}
                                                             onChange={(e) => setEditForm({ ...editForm, categoryId: e.target.value })}
-                                                            className="w-full appearance-none bg-slate-800 border border-slate-600 rounded-lg pl-3 pr-8 py-2 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none cursor-pointer hover:bg-slate-700 transition-colors shadow-sm"
+                                                            className="w-full appearance-none bg-card border border-border rounded-lg pl-3 pr-8 py-2 text-sm text-main focus:border-primary focus:outline-none cursor-pointer hover:bg-main transition-colors shadow-sm"
                                                         >
                                                             {categories.map(cat => (
-                                                                <option key={cat.id} value={cat.id} className="bg-slate-900 text-slate-200">
+                                                                <option key={cat.id} value={cat.id} className="bg-card text-main">
                                                                     {cat.name}
                                                                 </option>
                                                             ))}
                                                         </select>
-                                                        <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 z-10">
+                                                        <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-secondary z-10">
                                                             <ChevronDown size={14} />
                                                         </div>
                                                     </div>
@@ -159,16 +159,16 @@ export default function ExpenseList({
                                                 className="cursor-pointer"
                                                 title={t('expenses.clickEditName')}
                                             >
-                                                <div className="font-semibold text-slate-200 flex items-center gap-2">
+                                                <div className="font-semibold text-main flex items-center gap-2">
                                                     {expense.name}
-                                                    <Edit3 size={12} className="opacity-0 group-hover:opacity-100 text-slate-400" />
+                                                    <Edit3 size={12} className="opacity-0 group-hover:opacity-100 text-secondary" />
                                                 </div>
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleToggleExpenseType(expense.id);
                                                     }}
-                                                    className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wide hover:text-indigo-400 transition-colors cursor-pointer"
+                                                    className="text-[10px] text-secondary mt-0.5 uppercase tracking-wide hover:text-primary transition-colors cursor-pointer"
                                                     title={t('expenses.clickChangeType')}
                                                 >
                                                     {expense.type} ↻
@@ -178,18 +178,18 @@ export default function ExpenseList({
                                     </td>
 
                                     {/* Columna Fecha */}
-                                    <td className="p-4 w-32 text-slate-400 text-xs whitespace-nowrap">
+                                    <td className="p-4 w-32 text-secondary text-xs whitespace-nowrap">
                                         {isEditing ? (
                                             <input
                                                 type="date"
                                                 value={editForm.date || ''}
                                                 onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-                                                className="w-full bg-slate-900/50 border border-indigo-500 rounded px-2 py-1 text-slate-300 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                                className="w-full bg-main/50 border border-primary rounded px-2 py-1 text-main text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                                             />
                                         ) : (
                                             <div
                                                 onClick={() => startEditing(expense)}
-                                                className="cursor-pointer hover:text-indigo-400 transition-colors"
+                                                className="cursor-pointer hover:text-primary transition-colors"
                                                 title={t('expenses.clickEditDate')}
                                             >
                                                 {expense.date ? (() => {
@@ -207,12 +207,12 @@ export default function ExpenseList({
                                                 type="number"
                                                 value={editForm.amount || ''}
                                                 onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
-                                                className="w-full text-right border-b border-indigo-500 bg-transparent focus:outline-none font-mono text-slate-300 font-medium"
+                                                className="w-full text-right border-b border-primary bg-transparent focus:outline-none font-mono text-main font-medium"
                                             />
                                         ) : (
                                             <div
                                                 onClick={() => startEditing(expense)}
-                                                className="font-mono text-slate-300 font-medium cursor-pointer"
+                                                className="font-mono text-main font-medium cursor-pointer"
                                                 title={t('expenses.clickEditAmount')}
                                             >
                                                 {formatCurrency(expense.amount)}
@@ -222,14 +222,14 @@ export default function ExpenseList({
 
                                     {/* Columna Input Pago */}
                                     <td className="p-4 w-1/4">
-                                        <div className={`flex items-center gap-2 bg-slate-900/50 border rounded-lg px-3 py-1.5 transition-all focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 ${isFullyPaid ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-slate-600'}`}>
-                                            <span className="text-slate-500 text-xs">$</span>
+                                        <div className={`flex items-center gap-2 bg-main/50 border rounded-lg px-3 py-1.5 transition-all focus-within:ring-2 focus-within:ring-primary focus-within:border-primary ${isFullyPaid ? 'border-emerald-500/30 bg-success/10' : 'border-border'}`}>
+                                            <span className="text-secondary text-xs">$</span>
                                             <input
                                                 type="number"
                                                 value={expense.paid === 0 ? '' : expense.paid}
                                                 placeholder="0"
                                                 onChange={(e) => handleUpdatePayment(expense.id, e.target.value)}
-                                                className={`w-full bg-transparent text-right outline-none text-slate-200 font-medium placeholder:text-slate-600 ${isFullyPaid ? 'text-emerald-400 font-bold' : ''}`}
+                                                className={`w-full bg-transparent text-right outline-none text-main font-medium placeholder:text-secondary ${isFullyPaid ? 'text-success font-bold' : ''}`}
                                             />
                                         </div>
                                     </td>
@@ -238,8 +238,8 @@ export default function ExpenseList({
                                     <td className="p-4 text-right w-24">
                                         {isEditing ? (
                                             <div className="flex justify-end gap-1">
-                                                <button onClick={saveEditing} className="p-1.5 bg-indigo-500/20 text-indigo-400 rounded hover:bg-indigo-500/30"><Save size={16} /></button>
-                                                <button onClick={cancelEditing} className="p-1.5 text-slate-400 hover:text-slate-200"><X size={16} /></button>
+                                                <button onClick={saveEditing} className="p-1.5 bg-primary/20 text-primary rounded hover:bg-primary/30"><Save size={16} /></button>
+                                                <button onClick={cancelEditing} className="p-1.5 text-secondary hover:text-main"><X size={16} /></button>
                                             </div>
                                         ) : (
                                             <div className="flex justify-end gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
@@ -247,7 +247,7 @@ export default function ExpenseList({
                                                     <button
                                                         onClick={() => handlePayFull(expense.id)}
                                                         title={t('expenses.payFull')}
-                                                        className="p-2 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                                                        className="p-2 text-success hover:bg-success/10 rounded-lg transition-colors"
                                                     >
                                                         <DollarSign size={18} />
                                                     </button>
@@ -263,7 +263,7 @@ export default function ExpenseList({
                                                 <button
                                                     onClick={() => handleDeleteExpense(expense.id)}
                                                     title={t('expenses.delete')}
-                                                    className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                                                    className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 size={18} />
                                                 </button>
@@ -274,7 +274,7 @@ export default function ExpenseList({
                             );
                         })}
                         {group.items.length === 0 && (
-                            <tr><td colSpan="4" className="p-4 text-center text-slate-500 text-sm italic">{t('expenses.noExpenses')}</td></tr>
+                            <tr><td colSpan="4" className="p-4 text-center text-secondary text-sm italic">{t('expenses.noExpenses')}</td></tr>
                         )}
                     </tbody>
                 </table>

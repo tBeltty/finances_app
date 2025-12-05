@@ -9,11 +9,13 @@ import ForgotPassword from './views/Auth/ForgotPassword';
 import ResetPassword from './views/Auth/ResetPassword';
 import Dashboard from './views/Dashboard/Dashboard';
 import Onboarding from './views/Onboarding/Onboarding';
+import ThemeDebug from './components/ThemeDebug';
+
+import { APP_VERSION } from './config';
 
 function App() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const APP_VERSION = '1.2.4';
 
   React.useEffect(() => {
     const checkVersion = async () => {
@@ -43,7 +45,7 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  if (authLoading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Cargando...</div>;
+  if (authLoading) return <div className="min-h-screen bg-surface flex items-center justify-center text-main">Cargando...</div>;
 
   if (!user) {
     return (
@@ -64,7 +66,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-surface text-on-surface font-sans selection:bg-primary/30">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Routes>

@@ -51,39 +51,39 @@ export default function ResetPassword() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
-            <div className="max-w-md w-full bg-slate-900/50 backdrop-blur-xl p-8 rounded-2xl border border-slate-800 shadow-2xl">
+        <div className="min-h-screen flex items-center justify-center bg-surface px-4">
+            <div className="max-w-md w-full bg-surface-container backdrop-blur-xl p-8 rounded-2xl border border-outline shadow-2xl">
                 <div className="text-center mb-8">
-                    <h2 className="text-2xl font-bold text-white mb-2">{t('auth.newPassword')}</h2>
-                    <p className="text-slate-400 text-sm">{t('auth.newPasswordDesc')}</p>
+                    <h2 className="text-2xl font-bold text-main mb-2">{t('auth.newPassword')}</h2>
+                    <p className="text-secondary text-sm">{t('auth.newPasswordDesc')}</p>
                 </div>
 
                 {status === 'success' ? (
                     <div className="text-center animate-in fade-in zoom-in duration-300">
-                        <div className="bg-emerald-500/10 p-4 rounded-full mb-6 inline-block">
+                        <div className="bg-success/10 p-4 rounded-full mb-6 inline-block">
                             <CheckCircle2 className="h-12 w-12 text-emerald-500" />
                         </div>
-                        <h3 className="text-xl font-semibold text-white mb-2">{t('auth.passwordUpdated')}</h3>
-                        <p className="text-slate-400 mb-8">{t('auth.passwordUpdatedDesc')}</p>
+                        <h3 className="text-xl font-semibold text-main mb-2">{t('auth.passwordUpdated')}</h3>
+                        <p className="text-secondary mb-8">{t('auth.passwordUpdatedDesc')}</p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {status === 'error' && (
-                            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl text-sm text-center">
+                            <div className="bg-error/10 border border-rose-500/20 text-error p-4 rounded-xl text-sm text-center">
                                 {message}
                             </div>
                         )}
 
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300 ml-1">{t('auth.newPassword')}</label>
+                                <label className="text-sm font-medium text-main ml-1">{t('auth.newPassword')}</label>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
                                     <input
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                        className="w-full bg-surface border border-outline rounded-xl py-3 pl-12 pr-4 text-main placeholder-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-indigo-500 transition-all"
                                         placeholder="••••••••"
                                         required
                                         minLength={6}
@@ -92,14 +92,14 @@ export default function ResetPassword() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300 ml-1">{t('auth.confirmPassword')}</label>
+                                <label className="text-sm font-medium text-main ml-1">{t('auth.confirmPassword')}</label>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-500" />
                                     <input
                                         type="password"
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                        className="w-full bg-surface border border-outline rounded-xl py-3 pl-12 pr-4 text-main placeholder-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-indigo-500 transition-all"
                                         placeholder="••••••••"
                                         required
                                         minLength={6}
@@ -111,7 +111,7 @@ export default function ResetPassword() {
                         <button
                             type="submit"
                             disabled={status === 'loading'}
-                            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-primary hover:bg-primary-container text-main font-semibold py-3.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-indigo-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {status === 'loading' ? (
                                 <Loader2 className="h-5 w-5 animate-spin" />

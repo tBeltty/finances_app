@@ -9,11 +9,11 @@ export default function PendingExpensesModal({ isOpen, onClose, expenses, format
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200">
+            <div className="bg-surface-container border border-outline rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200">
                 {/* Header */}
-                <div className="p-4 border-b border-slate-700 flex items-center justify-between bg-slate-800/50 rounded-t-2xl">
-                    <h2 className="text-lg font-bold text-slate-200">{t('dashboard.pendingExpenses')}</h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+                <div className="p-4 border-b border-outline flex items-center justify-between bg-surface-container-high/50 rounded-t-2xl">
+                    <h2 className="text-lg font-bold text-on-surface">{t('dashboard.pendingExpenses')}</h2>
+                    <button onClick={onClose} className="text-on-surface-variant hover:text-on-surface transition-colors">
                         <X size={20} />
                     </button>
                 </div>
@@ -21,13 +21,13 @@ export default function PendingExpensesModal({ isOpen, onClose, expenses, format
                 {/* List */}
                 <div className="overflow-y-auto p-4 space-y-3 custom-scrollbar">
                     {expenses.length === 0 ? (
-                        <p className="text-center text-slate-500 py-8">{t('expenses.noExpenses')}</p>
+                        <p className="text-center text-on-surface-variant py-8">{t('expenses.noExpenses')}</p>
                     ) : (
                         expenses.map(expense => (
-                            <div key={expense.id} className="bg-slate-800/50 border border-slate-700 p-3 rounded-xl flex items-center justify-between hover:bg-slate-800 transition-colors">
+                            <div key={expense.id} className="bg-surface/50 border border-outline p-3 rounded-xl flex items-center justify-between hover:bg-surface transition-colors">
                                 <div>
-                                    <p className="font-semibold text-slate-200">{expense.name}</p>
-                                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
+                                    <p className="font-semibold text-on-surface">{expense.name}</p>
+                                    <div className="flex items-center gap-2 text-xs text-on-surface-variant mt-1">
                                         <Calendar size={12} />
                                         <span>{expense.date ? (() => {
                                             const [year, month, day] = expense.date.split('-');
@@ -37,12 +37,12 @@ export default function PendingExpensesModal({ isOpen, onClose, expenses, format
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="text-right">
-                                        <p className="font-bold text-amber-400">{formatCurrency(expense.amount - (expense.paid || 0))}</p>
-                                        <p className="text-[10px] text-slate-500 uppercase">{t('dashboard.remaining')}</p>
+                                        <p className="font-bold text-primary">{formatCurrency(expense.amount - (expense.paid || 0))}</p>
+                                        <p className="text-[10px] text-on-surface-variant uppercase">{t('dashboard.remaining')}</p>
                                     </div>
                                     <button
                                         onClick={() => onPay(expense.id)}
-                                        className="p-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded-lg transition-colors"
+                                        className="p-2 bg-success/10 text-success hover:bg-emerald-500/20 rounded-lg transition-colors"
                                         title={t('expenses.payFull')}
                                     >
                                         <CheckCircle2 size={20} />
@@ -54,10 +54,10 @@ export default function PendingExpensesModal({ isOpen, onClose, expenses, format
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-slate-700 bg-slate-800/50 rounded-b-2xl">
+                <div className="p-4 border-t border-outline bg-surface-container-high/50 rounded-b-2xl">
                     <button
                         onClick={onClose}
-                        className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl transition-colors"
+                        className="w-full bg-surface hover:bg-surface-container-high text-on-surface font-medium py-2.5 rounded-xl transition-colors border border-outline"
                     >
                         {t('common.close')}
                     </button>

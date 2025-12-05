@@ -1,31 +1,47 @@
-# Finances App v1.0
+# Finances App v1.3
 
 A modern, comprehensive web application for personal and shared financial management, built with React, Node.js, and PostgreSQL.
+
+![Version](https://img.shields.io/badge/version-1.3.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+## ✨ What's New in v1.3
+
+### 🎨 Complete Theming System
+- **3 Unique Themes:** Cosmic Slate (default), Takito (warm orange), Cookie (cool blue)
+- **Light/Dark Modes:** Each theme fully supports both modes
+- **Themed Backgrounds:** Each theme has its distinctive tinted background
+- **Semantic Colors:** Success/error/warning colors adapt to each theme
+- **Glassmorphism UI:** Modern glass-effect design across all components
+
+### 🌐 Internationalization (i18n)
+- **Full Localization:** Complete Spanish and English translations
+- **Dynamic Currency Formatting:** Locale-aware number and currency display
 
 ## Key Features
 
 ### 💰 Financial Management
-- **Expenses:** Detailed tracking of fixed and variable expenses.
-- **Categories:** Flexible categorization system with custom colors and predefined templates.
-- **Savings:** Dedicated widget for savings goals and using savings to pay for expenses.
-- **Multi-currency:** Native support for USD, EUR, COP, MXN, and HNL.
+- **Expenses:** Detailed tracking of fixed and variable expenses
+- **Categories:** Flexible categorization with custom colors and templates
+- **Savings:** Dedicated widget for savings goals and expense payments
+- **Multi-currency:** Native support for USD, EUR, COP, MXN, ARS, HNL
 
 ### 📊 Dashboard & Analytics
-- **Real-time KPIs:** Balance, Total Expenses, Accounts Payable, and Projected Balance.
-- **Visualization:** Intuitive charts for expense breakdown by category.
-- **Filters:** Historical navigation by month and year.
-- **Sorting:** Tools to analyze expenses by date or amount.
+- **Real-time KPIs:** Balance, Total Expenses, Pending Payments, Projected Balance
+- **Visualization:** Intuitive charts for expense breakdown by category
+- **Filters:** Navigation by month/year with day-specific views
+- **Sorting:** Analyze expenses by date or amount
 
 ### 🏠 Collaborative Households
-- **Shared Spaces:** Create multiple "Households" (Personal, Home, Business).
-- **Collaboration:** Invite family members or partners.
-- **Roles:** Permission management (Owner, Member).
+- **Shared Spaces:** Create multiple "Households" (Personal, Home, Business)
+- **Collaboration:** Invite family members or partners via invite codes
+- **Roles:** Permission management (Owner, Member)
 
 ### 🔒 Security & Technology
-- **Robust Authentication:** JWT and secure sessions.
-- **2FA (Two-Factor):** Optional extra security layer with TOTP (Google Authenticator).
-- **PWA:** Installable on mobile devices as a native-like app.
-- **Responsive Design:** Interface optimized for both mobile and desktop.
+- **Robust Authentication:** JWT with secure sessions
+- **2FA (Two-Factor):** Optional TOTP security (Google Authenticator compatible)
+- **PWA:** Installable on mobile devices as a native-like app
+- **Responsive Design:** Optimized for mobile and desktop
 
 ## Prerequisites
 
@@ -37,18 +53,16 @@ A modern, comprehensive web application for personal and shared financial manage
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/finances-app.git
-   cd finances-app
+   git clone https://github.com/tBeltty/finances_app.git
+   cd finances_app
    ```
 
 2. **Install dependencies:**
    ```bash
    npm run install:all
    ```
-   *(Or manually install in root, client, and server)*
 
 3. **Automatic Configuration:**
-   Run the setup wizard to configure your database and environment variables:
    ```bash
    node setup_wizard.cjs
    ```
@@ -60,7 +74,7 @@ A modern, comprehensive web application for personal and shared financial manage
 
 ## Manual Configuration (.env)
 
-If you prefer manual configuration, create a `server/.env` file:
+Create a `server/.env` file:
 
 ```env
 PORT=3001
@@ -76,35 +90,44 @@ FRONTEND_URL=http://localhost:5173
 
 ## Tech Stack
 
-- **Frontend:** React, Vite, TailwindCSS, Lucide Icons, Recharts.
-- **Backend:** Node.js, Express, Sequelize (ORM).
-- **Database:** PostgreSQL.
-- **Infrastructure:** Support for VPS deployment (Nginx + PM2).
+| Layer | Technologies |
+|-------|-------------|
+| **Frontend** | React 19, Vite, TailwindCSS v4, Lucide Icons, Recharts |
+| **Backend** | Node.js, Express, Sequelize ORM |
+| **Database** | PostgreSQL |
+| **Infrastructure** | Nginx + PM2 (VPS), PWA support |
 
 ## Project Structure
 
-```bash
+```
 .
 ├── client/                 # Frontend (React + Vite)
-│   ├── public/             # Static assets (PWA icons, etc.)
+│   ├── public/             # Static assets (PWA icons, themes)
 │   ├── src/
-│   │   ├── components/     # UI Components (Layout, Inputs, etc.)
-│   │   ├── context/        # Global State (Auth, UI)
-│   │   ├── hooks/          # Custom Hooks (useFinances)
-│   │   ├── views/          # Page Views (Dashboard, Expenses, etc.)
-│   │   ├── App.jsx         # Main App Component
-│   │   └── db.js           # Local IndexedDB Config (Dexie)
-│   └── vite.config.js      # Vite Configuration
+│   │   ├── components/     # UI Components
+│   │   ├── context/        # Global State (Auth, Theme)
+│   │   ├── hooks/          # Custom Hooks
+│   │   ├── locales/        # i18n translations (en, es)
+│   │   └── views/          # Page Views
+│   └── tailwind.config.js  # TailwindCSS Configuration
 ├── server/                 # Backend (Node.js + Express)
-│   ├── config/             # DB Configuration
 │   ├── controllers/        # API Logic
-│   ├── middleware/         # Auth & Validation Middleware
-│   ├── models/             # Sequelize Models (PostgreSQL)
-│   ├── services/           # External Services (Email)
-│   └── index.js            # Server Entry Point
+│   ├── middleware/         # Auth & Validation
+│   ├── models/             # Sequelize Models
+│   └── services/           # External Services
 ├── setup_wizard.cjs        # Interactive Setup Script
 └── package.json            # Monorepo Orchestration
 ```
 
+## Version History
+
+| Version | Release | Highlights |
+|---------|---------|------------|
+| v1.3.0 | Dec 2024 | Complete theming system, semantic colors, glassmorphism |
+| v1.2.0 | Nov 2024 | Full i18n support, Spanish/English translations |
+| v1.1.0 | Nov 2024 | Monorepo refactor, client/server separation |
+| v1.0.0 | Nov 2024 | Initial release |
+
 ---
+
 © 2025 tBelt Finances App. All rights reserved.

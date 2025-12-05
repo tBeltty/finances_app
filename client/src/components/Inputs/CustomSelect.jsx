@@ -34,16 +34,16 @@ export default function CustomSelect({
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full bg-slate-900/50 border ${isOpen ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-slate-600'} rounded-xl px-4 py-2.5 text-left flex items-center justify-between transition-all hover:bg-slate-800/50`}
+                className={`w-full bg-surface-container border ${isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-outline'} rounded-xl px-4 py-2.5 text-left flex items-center justify-between transition-all hover:bg-surface-container-high`}
             >
-                <span className={`block truncate ${selectedOption ? 'text-slate-200' : 'text-slate-500'}`}>
+                <span className={`block truncate ${selectedOption ? 'text-on-surface' : 'text-on-surface-variant'}`}>
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
-                <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-180 text-indigo-400' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-on-surface-variant transition-transform duration-200 ${isOpen ? 'rotate-180 text-primary' : ''}`} />
             </button>
 
             {isOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-xl shadow-2xl max-h-60 overflow-auto animate-in fade-in zoom-in-95 duration-100 origin-top scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                <div className="absolute z-[100] w-full mt-2 glass-dropdown border border-outline rounded-xl shadow-2xl max-h-60 overflow-auto animate-in fade-in zoom-in-95 duration-100 origin-top scrollbar-thin scrollbar-thumb-outline scrollbar-track-transparent">
                     <div className="p-1 space-y-0.5">
                         {options.map((option) => (
                             <button
@@ -51,8 +51,8 @@ export default function CustomSelect({
                                 type="button"
                                 onClick={() => handleSelect(option.value)}
                                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors ${value === option.value
-                                        ? 'bg-indigo-600/20 text-indigo-300'
-                                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                                    ? 'bg-primary/20 text-primary'
+                                    : 'text-on-surface-variant hover:bg-surface hover:text-on-surface'
                                     }`}
                             >
                                 <span className="flex items-center gap-2 truncate">

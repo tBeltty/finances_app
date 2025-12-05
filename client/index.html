@@ -3,12 +3,27 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/favicon.png?v=4" />
-  <link rel="icon" type="image/png" href="/icon.png?v=4" />
+  <link id="favicon" rel="icon" type="image/png" href="/favicon.png?v=4" />
   <link rel="apple-touch-icon" href="/icon.png?v=4" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tBelt Finanzas</title>
 </head>
+<script>
+  (function () {
+    try {
+      const localMode = localStorage.getItem('mode');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const mode = localMode ? localMode : (systemDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', mode);
+      document.documentElement.classList.add(mode);
+
+      const localTheme = localStorage.getItem('theme');
+      if (localTheme && localTheme !== 'cosmic') {
+        document.documentElement.classList.add(`theme-${localTheme}`);
+      }
+    } catch (e) { }
+  })();
+</script>
 
 <body>
   <div id="root"></div>

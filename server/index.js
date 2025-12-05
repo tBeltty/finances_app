@@ -63,6 +63,7 @@ app.put('/api/auth/update-income', authMiddleware, authController.updateIncome);
 app.put('/api/auth/currency', authMiddleware, authController.updateCurrency);
 app.put('/api/auth/update-currency', authMiddleware, authController.updateCurrency); // Alias
 app.put('/api/auth/update-language', authMiddleware, authController.updateLanguage);
+app.put('/api/auth/update-theme', authMiddleware, authController.updateTheme);
 app.delete('/api/auth/me', authMiddleware, authController.deleteAccount);
 
 const householdMiddleware = require('./middleware/householdMiddleware');
@@ -73,7 +74,7 @@ app.post('/api/households/join', authMiddleware, householdController.joinHouseho
 app.get('/api/households/members', authMiddleware, householdController.getMembers);
 app.put('/api/households/rename', authMiddleware, householdMiddleware, householdController.renameHousehold);
 app.put('/api/households/settings', authMiddleware, householdMiddleware, householdController.updateSettings);
-app.get('/api/households/current', authMiddleware, householdMiddleware, householdController.getHousehold);
+app.get('/api/households/current', authMiddleware, householdController.getHousehold);
 
 // Finance Routes
 app.get('/api/expenses', authMiddleware, householdMiddleware, financeController.getExpenses);

@@ -51,13 +51,13 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700 p-3 rounded-xl shadow-2xl z-50 min-w-[120px]">
-                    <p className="text-slate-200 font-bold mb-1 text-sm border-b border-slate-700 pb-1">
+                <div className="bg-surface-container/95 backdrop-blur-xl border border-outline p-3 rounded-xl shadow-2xl z-50 min-w-[120px]">
+                    <p className="text-on-surface font-bold mb-1 text-sm border-b border-outline pb-1">
                         {label ? `${t('analytics.day')} ${label}` : payload[0].name}
                     </p>
                     <div className="flex items-center gap-3">
-                        <span className="text-slate-400 text-xs">{t('analytics.total')}:</span>
-                        <span className="text-indigo-400 font-mono font-bold text-sm">
+                        <span className="text-on-surface-variant text-xs">{t('analytics.total')}:</span>
+                        <span className="text-primary font-mono font-bold text-sm">
                             {formatCurrency(payload[0].value)}
                         </span>
                     </div>
@@ -81,7 +81,7 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
 
     if (expenses.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+            <div className="flex flex-col items-center justify-center h-64 text-secondary">
                 <TrendingUp className="w-12 h-12 mb-4 opacity-20" />
                 <p>{t('analytics.insufficientData')}</p>
             </div>
@@ -92,31 +92,31 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* KPIs */}
             <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-900/50 border border-slate-800 p-4 rounded-2xl">
+                <div className="bg-surface-container border border-outline p-4 rounded-2xl">
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="bg-indigo-500/10 p-2 rounded-lg">
-                            <TrendingUp className="w-5 h-5 text-indigo-400" />
+                        <div className="bg-primary/10 p-2 rounded-lg">
+                            <TrendingUp className="w-5 h-5 text-primary" />
                         </div>
-                        <span className="text-xs font-bold text-slate-400 uppercase">{t('analytics.topCategory')}</span>
+                        <span className="text-xs font-bold text-on-surface-variant uppercase">{t('analytics.topCategory')}</span>
                     </div>
-                    <p className="text-lg font-bold text-slate-200 truncate">{topCategory?.name || '-'}</p>
-                    <p className="text-xs text-slate-500">{topCategory ? formatCurrency(topCategory.value) : '-'}</p>
+                    <p className="text-lg font-bold text-on-surface truncate">{topCategory?.name || '-'}</p>
+                    <p className="text-xs text-on-surface-variant">{topCategory ? formatCurrency(topCategory.value) : '-'}</p>
                 </div>
-                <div className="bg-slate-900/50 border border-slate-800 p-4 rounded-2xl">
+                <div className="bg-surface-container border border-outline p-4 rounded-2xl">
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="bg-emerald-500/10 p-2 rounded-lg">
-                            <Calendar className="w-5 h-5 text-emerald-400" />
+                        <div className="bg-success/10 p-2 rounded-lg">
+                            <Calendar className="w-5 h-5 text-success" />
                         </div>
-                        <span className="text-xs font-bold text-slate-400 uppercase">{t('analytics.dailyAverage')}</span>
+                        <span className="text-xs font-bold text-on-surface-variant uppercase">{t('analytics.dailyAverage')}</span>
                     </div>
-                    <p className="text-lg font-bold text-slate-200">{formatCurrency(avgDaily)}</p>
-                    <p className="text-xs text-slate-500">{t('analytics.inSpendingDays')}</p>
+                    <p className="text-lg font-bold text-on-surface">{formatCurrency(avgDaily)}</p>
+                    <p className="text-xs text-on-surface-variant">{t('analytics.inSpendingDays')}</p>
                 </div>
             </div>
 
             {/* Donut Chart */}
-            <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl">
-                <h3 className="text-sm font-bold text-slate-400 uppercase mb-6">{t('analytics.expensesByCategory')}</h3>
+            <div className="bg-surface-container border border-outline p-6 rounded-3xl">
+                <h3 className="text-sm font-bold text-on-surface-variant uppercase mb-6">{t('analytics.expensesByCategory')}</h3>
                 <div className="h-64 relative">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
@@ -146,14 +146,14 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
                     </ResponsiveContainer>
                     {/* Center Text */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-all duration-300">
-                        <span className="text-xs text-slate-500 font-medium mb-1">
+                        <span className="text-xs text-on-surface-variant font-medium mb-1">
                             {activeItem ? activeItem.name : t('analytics.total')}
                         </span>
-                        <span className={`text-xl font-bold ${activeItem ? 'text-indigo-400' : 'text-white'}`}>
+                        <span className={`text-xl font-bold ${activeItem ? 'text-primary' : 'text-on-surface'}`}>
                             {formatCurrency(activeItem ? activeItem.value : totalSpent)}
                         </span>
                         {activeItem && (
-                            <span className="text-xs text-slate-500 mt-1">
+                            <span className="text-xs text-on-surface-variant mt-1">
                                 {Math.round((activeItem.value / totalSpent) * 100)}%
                             </span>
                         )}
@@ -164,28 +164,28 @@ export default function AnalyticsView({ expenses, categories, currency, formatCu
                     {categoryData.slice(0, 6).map((cat, i) => (
                         <div key={i} className="flex items-center gap-2 text-xs">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[cat.color] || COLORS.slate }} />
-                            <span className="text-slate-300 truncate flex-1">{cat.name}</span>
-                            <span className="text-slate-500">{Math.round((cat.value / totalSpent) * 100)}%</span>
+                            <span className="text-on-surface-variant truncate flex-1">{cat.name}</span>
+                            <span className="text-on-surface-variant">{Math.round((cat.value / totalSpent) * 100)}%</span>
                         </div>
                     ))}
                 </div>
             </div>
 
             {/* Bar Chart */}
-            <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-3xl">
-                <h3 className="text-sm font-bold text-slate-400 uppercase mb-6">{t('analytics.dailyTrend')}</h3>
+            <div className="bg-surface-container border border-outline p-6 rounded-3xl">
+                <h3 className="text-sm font-bold text-on-surface-variant uppercase mb-6">{t('analytics.dailyTrend')}</h3>
                 <div className="h-48">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={dailyData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--outline))" opacity={0.3} vertical={false} />
                             <XAxis
                                 dataKey="day"
-                                tick={{ fill: '#64748b', fontSize: 10 }}
+                                tick={{ fill: 'rgb(var(--on-surface-variant))', fontSize: 10 }}
                                 axisLine={false}
                                 tickLine={false}
                             />
-                            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#334155', opacity: 0.2 }} />
-                            <Bar dataKey="amount" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgb(var(--outline))', opacity: 0.2 }} />
+                            <Bar dataKey="amount" fill="rgb(var(--primary))" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

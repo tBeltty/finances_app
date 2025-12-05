@@ -1,36 +1,382 @@
 @import 'tailwindcss';
 
+@theme {
+    /* Register semantic colors with Tailwind v4 */
+    --color-surface: var(--surface);
+    --color-surface-container: var(--surface-container);
+    --color-surface-container-high: var(--surface-container-high);
+    --color-primary: var(--primary);
+    --color-on-primary: var(--on-primary);
+    --color-primary-container: var(--primary-container);
+    --color-on-primary-container: var(--on-primary-container);
+    --color-outline: var(--outline);
+    --color-on-surface: var(--on-surface);
+    --color-on-surface-variant: var(--on-surface-variant);
+
+    /* Legacy colors */
+    --color-main: var(--surface);
+    --color-card: var(--surface-container);
+    --color-border: var(--outline);
+}
+
+/* Glassmorphism Classes - for menus and dropdowns with themed colors */
+.glass-menu {
+    background-color: rgb(var(--surface-container) / 0.9);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+.glass-dropdown {
+    background-color: rgb(var(--surface-container) / 0.9);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+/* Glass block for cards - 90% opacity with theme colors */
+.glass-block {
+    background-color: rgb(var(--surface-container) / 0.9);
+}
+
+/* Override Tailwind theme colors to ensure they resolve correctly */
+/* Full Glassmorphism - all cards/blocks have transparency + blur */
+.bg-surface {
+    background-color: rgb(var(--surface)) !important;
+}
+
+.bg-surface-container {
+    background-color: rgb(var(--surface-container) / 0.4) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.bg-surface-container-high {
+    background-color: rgb(var(--surface-container-high) / 0.4) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.bg-card {
+    background-color: rgb(var(--surface-container) / 0.4) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.bg-card\/50 {
+    background-color: rgb(var(--surface-container) / 0.4) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.bg-card\/80 {
+    background-color: rgb(var(--surface-container) / 0.4) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.bg-main {
+    background-color: rgb(var(--surface)) !important;
+}
+
+.bg-primary {
+    background-color: rgb(var(--primary)) !important;
+}
+
+.bg-primary-container {
+    background-color: rgb(var(--primary-container)) !important;
+}
+
+.text-primary {
+    color: rgb(var(--primary)) !important;
+}
+
+.text-main {
+    color: rgb(var(--on-surface)) !important;
+}
+
+.text-secondary {
+    color: rgb(var(--on-surface-variant)) !important;
+}
+
+.text-on-surface {
+    color: rgb(var(--on-surface)) !important;
+}
+
+.text-on-surface-variant {
+    color: rgb(var(--on-surface-variant)) !important;
+}
+
+.border-outline {
+    border-color: rgb(var(--outline)) !important;
+}
+
+.border-border {
+    border-color: rgb(var(--outline)) !important;
+}
+
+/* Semantic color overrides */
+.bg-success {
+    background-color: rgb(var(--success)) !important;
+}
+
+.bg-success\/10 {
+    background-color: rgb(var(--success) / 0.1) !important;
+}
+
+.bg-success\/20 {
+    background-color: rgb(var(--success) / 0.2) !important;
+}
+
+.text-success {
+    color: rgb(var(--success)) !important;
+}
+
+.border-success {
+    border-color: rgb(var(--success)) !important;
+}
+
+.bg-error {
+    background-color: rgb(var(--error)) !important;
+}
+
+.bg-error\/10 {
+    background-color: rgb(var(--error) / 0.1) !important;
+}
+
+.bg-error\/20 {
+    background-color: rgb(var(--error) / 0.2) !important;
+}
+
+.text-error {
+    color: rgb(var(--error)) !important;
+}
+
+.border-error {
+    border-color: rgb(var(--error)) !important;
+}
+
+.bg-warning {
+    background-color: rgb(var(--warning)) !important;
+}
+
+.text-warning {
+    color: rgb(var(--warning)) !important;
+}
+
+
+:root {
+    /* Default Theme (Cosmic - Light Mode) */
+    --surface: 248 250 252;
+    /* Slate-50 (tinted white) */
+    --surface-container: 226 232 240;
+    /* Slate-200 */
+    --surface-container-high: 203 213 225;
+    /* Slate-300 */
+    --on-surface: 15 23 42;
+    --on-surface-variant: 71 85 105;
+    --primary: 79 70 229;
+    --on-primary: 255 255 255;
+    --primary-container: 224 231 255;
+    --on-primary-container: 49 46 129;
+    --outline: 203 213 225;
+    /* Semantic colors - Cosmic */
+    --success: 16 185 129;
+    /* Emerald-500 */
+    --error: 244 63 94;
+    /* Rose-500 */
+    --warning: 245 158 11;
+    /* Amber-500 */
+}
+
+[data-theme="dark"] {
+    /* Default Theme (Cosmic - Dark Mode) */
+    --surface: 2 6 23;
+    /* Slate-950 */
+    --surface-container: 30 41 59;
+    /* Slate-800 */
+    --surface-container-high: 51 65 85;
+    /* Slate-700 */
+    --on-surface: 226 232 240;
+    --on-surface-variant: 148 163 184;
+    --primary: 165 180 252;
+    --on-primary: 49 46 129;
+    --primary-container: 49 46 129;
+    --on-primary-container: 224 231 255;
+    --outline: 51 65 85;
+    /* Semantic colors - Cosmic Dark */
+    --success: 52 211 153;
+    /* Emerald-400 */
+    --error: 251 113 133;
+    /* Rose-400 */
+    --warning: 251 191 36;
+    /* Amber-400 */
+}
+
+/* Takito Theme (formerly Shiba) */
+html.theme-takito {
+    /* Light Mode */
+    --surface: 255 251 235;
+    /* Amber-50 (warm tinted white) */
+    --surface-container: 254 215 170;
+    /* Orange-200 */
+    --surface-container-high: 253 186 116;
+    /* Orange-300 */
+    --on-surface: 69 26 3;
+    --on-surface-variant: 146 64 14;
+    --primary: 249 115 22;
+    /* Orange-500 */
+    --on-primary: 255 255 255;
+    --primary-container: 255 237 213;
+    /* Orange-100 */
+    --on-primary-container: 154 52 18;
+    /* Orange-800 */
+    --outline: 253 186 116;
+    /* Semantic colors - Takito Light (warm tones) */
+    --success: 22 163 74;
+    /* Green-600 */
+    --error: 220 38 38;
+    /* Red-600 */
+    --warning: 217 119 6;
+    /* Amber-600 */
+}
+
+html.theme-takito[data-theme="dark"] {
+    /* Dark Mode */
+    --surface: 12 10 9;
+    /* Stone-950 */
+    --surface-container: 41 37 36;
+    /* Stone-800 */
+    --surface-container-high: 68 64 60;
+    /* Stone-700 */
+    --on-surface: 254 243 199;
+    --on-surface-variant: 214 211 209;
+    --primary: 251 146 60;
+    /* Orange-400 */
+    --on-primary: 67 20 7;
+    /* Orange-950 */
+    --primary-container: 154 52 18;
+    /* Orange-800 */
+    --on-primary-container: 255 237 213;
+    /* Orange-100 */
+    --outline: 68 64 60;
+    /* Semantic colors - Takito Dark (warm tones) */
+    --success: 74 222 128;
+    /* Green-400 */
+    --error: 248 113 113;
+    /* Red-400 */
+    --warning: 251 191 36;
+    /* Amber-400 */
+}
+
+/* Cookie Theme (formerly Ragdoll) */
+html.theme-cookie {
+    /* Light Mode */
+    --surface: 240 249 255;
+    /* Sky-50 (cool tinted white) */
+    --surface-container: 186 230 253;
+    /* Sky-200 */
+    --surface-container-high: 125 211 252;
+    /* Sky-300 */
+    --on-surface: 8 47 73;
+    /* Sky-950 */
+    --on-surface-variant: 12 74 110;
+    /* Sky-900 */
+    --primary: 14 165 233;
+    --on-primary: 255 255 255;
+    --primary-container: 224 242 254;
+    /* Sky-100 */
+    --on-primary-container: 12 74 110;
+    --outline: 125 211 252;
+    /* Semantic colors - Cookie Light (cool tones) */
+    --success: 5 150 105;
+    /* Emerald-600 */
+    --error: 225 29 72;
+    /* Rose-600 */
+    --warning: 202 138 4;
+    /* Yellow-600 */
+}
+
+html.theme-cookie[data-theme="dark"] {
+    /* Dark Mode */
+    --surface: 8 47 73;
+    /* Sky-950 */
+    --surface-container: 7 89 133;
+    /* Sky-800 */
+    --surface-container-high: 3 105 161;
+    /* Sky-700 */
+    --on-surface: 224 242 254;
+    --on-surface-variant: 186 230 253;
+    --primary: 125 211 252;
+    --on-primary: 8 47 73;
+    --primary-container: 12 74 110;
+    --on-primary-container: 224 242 254;
+    --outline: 22 78 99;
+    /* Semantic colors - Cookie Dark (cool tones) */
+    --success: 52 211 153;
+    /* Emerald-400 */
+    --error: 251 113 133;
+    /* Rose-400 */
+    --warning: 250 204 21;
+    /* Yellow-400 */
+}
+
+
 html {
-    background-color: #020617;
+    background-color: rgb(var(--surface));
+    transition: background-color 0.3s ease;
 }
 
 body {
-    background-color: #020617;
+    background-color: rgb(var(--surface));
+    color: rgb(var(--on-surface));
     min-height: 100vh;
-    @apply text-slate-200 antialiased;
+    @apply antialiased transition-colors duration-300;
+}
+
+/* Global Placeholder Styles */
+input::placeholder,
+textarea::placeholder {
+    color: rgb(var(--on-surface-variant));
+    opacity: 0.6;
 }
 
 #root {
-    background-color: #020617;
+    background-color: rgb(var(--surface));
     min-height: 100vh;
+    transition: background-color 0.3s ease;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background-color: #020617;
+    background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #334155;
+    background-color: rgba(var(--outline), 0.5);
     border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #475569;
+    background-color: rgb(var(--on-surface-variant));
+}
+
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        display: none;
+        width: 0px;
+        background: transparent;
+    }
+
+    * {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
 }
 
 /* Hide number input spinners */
@@ -52,19 +398,24 @@ input[type=range] {
 /* Webkit (Chrome, Safari, Edge) */
 input[type=range]::-webkit-slider-runnable-track {
     @apply h-2 bg-slate-700 rounded-full;
+    background-color: rgb(var(--outline));
 }
 
 input[type=range]::-webkit-slider-thumb {
-    @apply appearance-none w-5 h-5 bg-indigo-500 rounded-full -mt-1.5 border-2 border-slate-900 transition-transform hover:scale-110 focus:scale-110;
+    @apply appearance-none w-5 h-5 rounded-full -mt-1.5 border-2 transition-transform hover:scale-110 focus:scale-110;
+    background-color: rgb(var(--primary));
+    border-color: rgb(var(--surface));
 }
 
 /* Firefox */
 input[type=range]::-moz-range-track {
-    @apply h-2 bg-slate-700 rounded-full;
+    @apply h-2 rounded-full;
+    background-color: rgb(var(--outline));
 }
 
 input[type=range]::-moz-range-thumb {
-    @apply w-5 h-5 bg-indigo-500 rounded-full border-none transition-transform hover:scale-110 focus:scale-110;
+    @apply w-5 h-5 rounded-full border-none transition-transform hover:scale-110 focus:scale-110;
+    background-color: rgb(var(--primary));
 }
 
 @keyframes stretch-right {

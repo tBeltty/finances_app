@@ -28,12 +28,12 @@ function ReloadPrompt() {
 
     return (
         <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 animate-in slide-in-from-bottom-5 duration-300">
-            <div className="bg-slate-800/90 backdrop-blur-xl border border-slate-700 p-4 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm">
+            <div className="bg-surface-container/90 backdrop-blur-xl border border-outline p-4 rounded-2xl shadow-2xl flex items-center gap-4 max-w-sm">
                 <div className="flex-1">
                     <h3 className="text-sm font-bold text-slate-200 mb-1">
                         {offlineReady ? t('pwa.offlineReady') : t('pwa.newVersion')}
                     </h3>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-secondary">
                         {offlineReady
                             ? t('pwa.offlineDesc')
                             : t('pwa.updateDesc')}
@@ -42,7 +42,7 @@ function ReloadPrompt() {
 
                 {needRefresh && (
                     <button
-                        className="bg-indigo-500 hover:bg-indigo-600 text-white p-2 rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
+                        className="bg-indigo-500 hover:bg-primary text-main p-2 rounded-xl transition-colors shadow-lg shadow-indigo-500/20"
                         onClick={() => updateServiceWorker(true)}
                     >
                         <RefreshCw className="w-5 h-5" />
@@ -50,7 +50,7 @@ function ReloadPrompt() {
                 )}
 
                 <button
-                    className="text-slate-400 hover:text-slate-200 transition-colors"
+                    className="text-secondary hover:text-slate-200 transition-colors"
                     onClick={close}
                 >
                     <X className="w-5 h-5" />
