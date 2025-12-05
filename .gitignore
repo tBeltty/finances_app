@@ -40,3 +40,4 @@ explore_prod.sh
 inspect_prod.sh
 inspect_vite.sh
 *.log
+.secrets/

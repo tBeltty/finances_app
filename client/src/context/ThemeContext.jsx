@@ -34,24 +34,67 @@ export const ThemeProvider = ({ children }) => {
             root.classList.add('dark');
         }
 
-        console.log('THEME DEBUG:', 'theme=', theme, 'mode=', mode, 'classes=', root.className, 'data-theme=', root.getAttribute('data-theme'));
-
         // Apply Theme
         if (theme !== 'cosmic') {
             root.classList.add(`theme-${theme}`);
         }
 
+        // Get theme-specific assets
+        let iconName = 'logo-cosmic.png';
+        let themeColor = '#0f172a'; // Cosmic dark
+
+        if (theme === 'takito') {
+            iconName = 'logo-shiba.png';
+            themeColor = mode === 'dark' ? '#0c0a09' : '#fffbeb';
+        } else if (theme === 'cookie') {
+            iconName = 'logo-ragdoll.png';
+            themeColor = mode === 'dark' ? '#082f49' : '#f0f9ff';
+        } else {
+            themeColor = mode === 'dark' ? '#020617' : '#f8fafc';
+        }
+
         // Update Favicon
         const favicon = document.getElementById('favicon');
         if (favicon) {
-            let iconName = 'icon.png'; // Default Cosmic
-            if (theme === 'takito') iconName = 'logo-shiba.png';
-            if (theme === 'cookie') iconName = 'logo-ragdoll.png';
-            if (theme === 'cosmic') iconName = 'logo-cosmic.png';
-
-            // Use the specific files I downloaded
             favicon.href = `/${iconName}`;
         }
+
+        // Update theme-color meta tag
+        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', themeColor);
+        }
+
+        // Update PWA manifest dynamically
+        const updateManifest = () => {
+            const manifest = {
+                name: 'tBelt Finanzas',
+                short_name: 'Finanzas',
+                description: 'Control de gastos y finanzas personales',
+                start_url: '/',
+                display: 'standalone',
+                background_color: themeColor,
+                theme_color: themeColor,
+                icons: [
+                    { src: `/${iconName}`, sizes: '192x192', type: 'image/png' },
+                    { src: `/${iconName}`, sizes: '512x512', type: 'image/png' }
+                ]
+            };
+
+            const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestUrl = URL.createObjectURL(blob);
+
+            let manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                // Revoke old blob URL to prevent memory leaks
+                if (manifestLink.href.startsWith('blob:')) {
+                    URL.revokeObjectURL(manifestLink.href);
+                }
+                manifestLink.href = manifestUrl;
+            }
+        };
+
+        updateManifest();
 
         // Save to local storage
         localStorage.setItem('theme', theme);
