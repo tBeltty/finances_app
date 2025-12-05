@@ -92,6 +92,24 @@ app.delete('/api/categories/:id', authMiddleware, householdMiddleware, financeCo
 app.get('/api/savings', authMiddleware, householdMiddleware, financeController.getSavings);
 app.post('/api/savings', authMiddleware, householdMiddleware, financeController.updateSavings);
 
+// Backup Status Route (public - for backup notification)
+const fs = require('fs');
+app.get('/api/system/backup-status', (req, res) => {
+    const statusFile = '/tmp/finances_backup_status.json';
+    try {
+        if (fs.existsSync(statusFile)) {
+            const status = JSON.parse(fs.readFileSync(statusFile, 'utf8'));
+            // Only show notification if backup is in progress
+            if (status.status === 'in_progress') {
+                return res.json({ inProgress: true, message: status.message });
+            }
+        }
+        res.json({ inProgress: false });
+    } catch (err) {
+        res.json({ inProgress: false });
+    }
+});
+
 const PORT = process.env.PORT || 3001;
 
 sequelize.sync({ alter: true }).then(() => {

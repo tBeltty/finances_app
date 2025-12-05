@@ -10,6 +10,7 @@ import ResetPassword from './views/Auth/ResetPassword';
 import Dashboard from './views/Dashboard/Dashboard';
 import Onboarding from './views/Onboarding/Onboarding';
 import ThemeDebug from './components/ThemeDebug';
+import BackupNotification from './components/BackupNotification/BackupNotification';
 
 import { APP_VERSION } from './config';
 
@@ -74,6 +75,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
+      <BackupNotification />
     </div>
   );
 }
