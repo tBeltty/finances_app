@@ -562,9 +562,9 @@ export default function SettingsModal({
                                 <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Tema</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     {[
-                                        { id: 'cosmic', name: 'Cosmic Slate', icon: '/logo-cosmic.png', color: 'bg-surface' },
-                                        { id: 'takito', name: 'Takito', icon: '/logo-shiba.png', color: 'bg-amber-950' },
-                                        { id: 'cookie', name: 'Cookie', icon: '/logo-ragdoll.png', color: 'bg-sky-950' }
+                                        { id: 'cosmic', name: 'Cosmic Slate', colors: ['#334155', '#6366f1', '#818cf8'] },
+                                        { id: 'takito', name: 'Warm Amber', colors: ['#78350f', '#f59e0b', '#fbbf24'] },
+                                        { id: 'cookie', name: 'Ocean Blue', colors: ['#0c4a6e', '#0ea5e9', '#38bdf8'] }
                                     ].map((t) => (
                                         <button
                                             key={t.id}
@@ -574,8 +574,14 @@ export default function SettingsModal({
                                                 : 'bg-main border-border hover:border-secondary'
                                                 }`}
                                         >
-                                            <div className={`w-12 h-12 rounded-full ${t.color} flex items-center justify-center overflow-hidden border-2 ${theme === t.id ? 'border-primary' : 'border-border'}`}>
-                                                <img src={t.icon} alt={t.name} className="w-full h-full object-cover" />
+                                            <div className="flex gap-1">
+                                                {t.colors.map((color, i) => (
+                                                    <div
+                                                        key={i}
+                                                        className={`w-8 h-8 rounded-full border-2 ${theme === t.id ? 'border-primary' : 'border-border'}`}
+                                                        style={{ backgroundColor: color }}
+                                                    />
+                                                ))}
                                             </div>
                                             <span className={`font-medium ${theme === t.id ? 'text-main' : 'text-secondary group-hover:text-main'}`}>
                                                 {t.name}
@@ -617,11 +623,11 @@ export default function SettingsModal({
                             </div>
 
                             <div className="space-y-4 pt-4 border-t border-border">
-                                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Logo / Mascota</h3>
+                                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Mascota</h3>
                                 <p className="text-xs text-secondary">El logo se verá en tu inicio y en el icono de la app después de instalar</p>
                                 <div className="grid grid-cols-3 gap-4">
                                     {[
-                                        { id: 'cosmic', name: 'Cosmic', icon: '/logo-cosmic.png' },
+                                        { id: 'cosmic', name: 'Finances Basic', icon: '/logo-cosmic.png' },
                                         { id: 'takito', name: 'Takito', icon: '/logo-shiba.png' },
                                         { id: 'cookie', name: 'Cookie', icon: '/logo-ragdoll.png' }
                                     ].map((l) => (
