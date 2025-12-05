@@ -10,10 +10,10 @@ export default function Navbar() {
     const { logout, user } = useAuth();
     const { openSettings } = useUI();
     const { t } = useTranslation();
-    const { theme } = useTheme();
+    const { logo } = useTheme();
 
     const getLogo = () => {
-        switch (theme) {
+        switch (logo) {
             case 'takito': return '/logo-shiba.png';
             case 'cookie': return '/logo-ragdoll.png';
             default: return '/logo-cosmic.png';
