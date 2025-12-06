@@ -700,115 +700,120 @@ function LoanModal({ onClose, onSave, type, initialData }) {
 
                     {isAdvanced && (
                         <div className="space-y-4 p-4 bg-surface-container-high rounded-xl animate-fade-in">
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-secondary uppercase">{t('loans.installments')}</label>
-                                    <input
-                                        type="number"
-                                        value={formData.installments}
-                                        onChange={(e) => setFormData({ ...formData, installments: e.target.value })}
-                                        className="w-full bg-surface border border-outline rounded-xl px-4 py-3 text-main focus:border-primary focus:outline-none"
-                                        min="1"
-                                    />
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-secondary uppercase">{t('loans.interestRate')} (%)</label>
-                                    <div className="relative">
-                                        <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
-                                        <input
-                                            type="number"
-                                            value={formData.interestRate}
-                                            onChange={(e) => setFormData({ ...formData, interestRate: e.target.value })}
-                                            className="w-full bg-surface border border-outline rounded-xl pl-9 pr-4 py-3 text-main focus:border-primary focus:outline-none"
-                                            min="0"
-                                            step="0.1"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-secondary uppercase">{t('loans.interestType')}</label>
-                                <div className="flex p-1 bg-surface border border-outline rounded-xl">
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData({ ...formData, interestType: 'simple' })}
-                                        className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${formData.interestType === 'simple'
-                                            ? 'bg-primary/10 text-primary'
-                                            : 'text-secondary hover:text-main'
-                                            }`}
-                                    >
-                                        {t('loans.simple')}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData({ ...formData, interestType: 'effective_annual' })}
-                                        className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${formData.interestType === 'effective_annual'
-                                            ? 'bg-primary/10 text-primary'
-                                            : 'text-secondary hover:text-main'
-                                            }`}
-                                    >
-                                        {t('loans.effectiveAnnual')}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-secondary uppercase">{t('loans.paymentFrequency')}</label>
-                                    <select
-                                        value={formData.paymentFrequency}
-                                        onChange={(e) => setFormData({ ...formData, paymentFrequency: e.target.value })}
-                                        className="w-full bg-surface border border-outline rounded-xl px-4 py-3 text-main focus:border-primary focus:outline-none"
-                                    >
-                                        <option value="monthly">{t('loans.monthly')}</option>
-                                        <option value="biweekly">{t('loans.biweekly')}</option>
-                                        <option value="weekly">{t('loans.weekly')}</option>
-                                    </select>
-                                </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-secondary uppercase">
-                                        {isAdvanced ? t('loans.firstPaymentDate') : t('loans.dueDate')}
-                                    </label>
-                                    <DatePicker
-                                        value={formData.dueDate}
-                                        onChange={(val) => setFormData({ ...formData, dueDate: val })}
-                                        className="w-full"
-                                    />
-                                </div>
-                            </div>
-
-                            {paymentSchedule.length > 0 && (
-                                <div className="space-y-2">
-                                    <h3 className="text-sm font-medium text-secondary uppercase">{t('loans.paymentSchedule')}</h3>
-                                    <div className="max-h-32 overflow-y-auto border border-outline rounded-xl p-3 bg-surface">
-                                        {paymentSchedule.map((date, index) => (
-                                            <div key={index} className="flex justify-between text-xs py-1 border-b border-outline/50 last:border-b-0">
-                                                <span className="text-main">{t('loans.installment')} {index + 1}</span>
-                                                <span className="text-secondary">{date.toLocaleDateString()}</span>
+                            {/* Basic advanced fields - hidden when bank credit is enabled */}
+                            {!formData.isBankCredit && (
+                                <>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.installments')}</label>
+                                            <input
+                                                type="number"
+                                                value={formData.installments}
+                                                onChange={(e) => setFormData({ ...formData, installments: e.target.value })}
+                                                className="w-full bg-surface border border-outline rounded-xl px-4 py-3 text-main focus:border-primary focus:outline-none"
+                                                min="1"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.interestRate')} (%)</label>
+                                            <div className="relative">
+                                                <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
+                                                <input
+                                                    type="number"
+                                                    value={formData.interestRate}
+                                                    onChange={(e) => setFormData({ ...formData, interestRate: e.target.value })}
+                                                    className="w-full bg-surface border border-outline rounded-xl pl-9 pr-4 py-3 text-main focus:border-primary focus:outline-none"
+                                                    min="0"
+                                                    step="0.1"
+                                                />
                                             </div>
-                                        ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
 
-                            {/* Summary */}
-                            <div className="pt-2 border-t border-outline/50 space-y-1">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-secondary">{t('loans.totalToPay')}</span>
-                                    <span className="font-bold text-main">
-                                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalWithInterest)}
-                                    </span>
-                                </div>
-                                {formData.installments > 1 && (
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-secondary">{t('loans.monthlyPayment')}</span>
-                                        <span className="text-primary">
-                                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(monthlyPayment)} / {t('loans.month')}
-                                        </span>
+                                    <div className="space-y-1">
+                                        <label className="text-xs font-medium text-secondary uppercase">{t('loans.interestType')}</label>
+                                        <div className="flex p-1 bg-surface border border-outline rounded-xl">
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, interestType: 'simple' })}
+                                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${formData.interestType === 'simple'
+                                                    ? 'bg-primary/10 text-primary'
+                                                    : 'text-secondary hover:text-main'
+                                                    }`}
+                                            >
+                                                {t('loans.simple')}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, interestType: 'effective_annual' })}
+                                                className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${formData.interestType === 'effective_annual'
+                                                    ? 'bg-primary/10 text-primary'
+                                                    : 'text-secondary hover:text-main'
+                                                    }`}
+                                            >
+                                                {t('loans.effectiveAnnual')}
+                                            </button>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.paymentFrequency')}</label>
+                                            <select
+                                                value={formData.paymentFrequency}
+                                                onChange={(e) => setFormData({ ...formData, paymentFrequency: e.target.value })}
+                                                className="w-full bg-surface border border-outline rounded-xl px-4 py-3 text-main focus:border-primary focus:outline-none"
+                                            >
+                                                <option value="monthly">{t('loans.monthly')}</option>
+                                                <option value="biweekly">{t('loans.biweekly')}</option>
+                                                <option value="weekly">{t('loans.weekly')}</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">
+                                                {isAdvanced ? t('loans.firstPaymentDate') : t('loans.dueDate')}
+                                            </label>
+                                            <DatePicker
+                                                value={formData.dueDate}
+                                                onChange={(val) => setFormData({ ...formData, dueDate: val })}
+                                                className="w-full"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {paymentSchedule.length > 0 && (
+                                        <div className="space-y-2">
+                                            <h3 className="text-sm font-medium text-secondary uppercase">{t('loans.paymentSchedule')}</h3>
+                                            <div className="max-h-32 overflow-y-auto border border-outline rounded-xl p-3 bg-surface">
+                                                {paymentSchedule.map((date, index) => (
+                                                    <div key={index} className="flex justify-between text-xs py-1 border-b border-outline/50 last:border-b-0">
+                                                        <span className="text-main">{t('loans.installment')} {index + 1}</span>
+                                                        <span className="text-secondary">{date.toLocaleDateString()}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Summary */}
+                                    <div className="pt-2 border-t border-outline/50 space-y-1">
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-secondary">{t('loans.totalToPay')}</span>
+                                            <span className="font-bold text-main">
+                                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalWithInterest)}
+                                            </span>
+                                        </div>
+                                        {formData.installments > 1 && (
+                                            <div className="flex justify-between text-xs">
+                                                <span className="text-secondary">{t('loans.monthlyPayment')}</span>
+                                                <span className="text-primary">
+                                                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(monthlyPayment)} / {t('loans.month')}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                            )}
 
                             {/* Bank Credit Toggle */}
                             <div className="flex items-center justify-between py-3 border-t border-outline/50">
@@ -1022,16 +1027,14 @@ function LoanModal({ onClose, onSave, type, initialData }) {
 
                     <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.date')}</label>
-                            <div className="relative">
-                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
-                                <input
-                                    type="date"
-                                    value={formData.date}
-                                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                    className="w-full bg-surface border border-outline rounded-xl pl-9 pr-4 py-3 text-main focus:border-primary focus:outline-none"
-                                />
-                            </div>
+                            <label className="text-xs font-medium text-secondary uppercase">
+                                {formData.isBankCredit ? t('loans.bankCredit.paymentDate') : t('loans.date')}
+                            </label>
+                            <DatePicker
+                                value={formData.date}
+                                onChange={(val) => setFormData({ ...formData, date: val })}
+                                className="w-full"
+                            />
                         </div>
                         {!isAdvanced && (
                             <div className="space-y-1">

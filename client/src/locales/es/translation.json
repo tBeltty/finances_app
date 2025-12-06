@@ -459,7 +459,8 @@
             "paymentTooLow": "La cuota es muy baja para cubrir los intereses. Revisa los valores ingresados.",
             "monthlyInsurance": "Seguro Mensual",
             "monthlyCommission": "Comisión Mensual",
-            "currentInstallment": "Cuota Actual"
+            "currentInstallment": "Cuota Actual",
+            "paymentDate": "Fecha de Pago de Cuota"
         },
         "projection": {
             "title": "Proyección de Deuda",

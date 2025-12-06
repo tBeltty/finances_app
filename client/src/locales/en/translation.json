@@ -458,7 +458,8 @@
             "paymentTooLow": "Payment is too low to cover the interest. Please check your values.",
             "monthlyInsurance": "Monthly Insurance",
             "monthlyCommission": "Monthly Commission",
-            "currentInstallment": "Current Installment"
+            "currentInstallment": "Current Installment",
+            "paymentDate": "Payment Due Date"
         },
         "projection": {
             "title": "Debt Projection",
