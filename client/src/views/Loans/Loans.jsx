@@ -599,7 +599,7 @@ function LoanModal({ onClose, onSave, type, initialData }) {
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-surface-container border border-outline rounded-2xl w-full max-w-md shadow-2xl animate-fade-in">
+            <div className="bg-surface-container border border-outline rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in">
                 <div className="flex items-center justify-between p-4 border-b border-outline">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-primary/10 rounded-full">
