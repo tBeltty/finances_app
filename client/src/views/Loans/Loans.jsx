@@ -1087,7 +1087,7 @@ function LoanModal({ onClose, onSave, type, initialData }) {
 
                     <button
                         type="submit"
-                        disabled={loading || !formData.personName || !formData.amount}
+                        disabled={loading || !formData.personName || (formData.isBankCredit ? !formData.monthlyPayment : !formData.amount)}
                         className="w-full bg-primary hover:bg-primary-container text-on-primary py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
                     >
                         {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" /> : t('loans.save')}
