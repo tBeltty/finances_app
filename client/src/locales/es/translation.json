@@ -317,7 +317,8 @@
         "passwordUpdated": "¡Contraseña Actualizada!",
         "passwordUpdatedDesc": "Tu contraseña ha sido restablecida exitosamente. Redirigiendo al login...",
         "resetError": "Error al restablecer contraseña",
-        "resetPassword": "Restablecer Contraseña"
+        "resetPassword": "Restablecer Contraseña",
+        "marketingConsent": "Acepto recibir correos de marketing y actualizaciones."
     },
     "pwa": {
         "offlineReady": "App lista para usar offline",

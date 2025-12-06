@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Wallet, UserPlus, Loader2 } from 'lucide-react';
+import LanguageSelector from '../../components/Auth/LanguageSelector';
 
 export default function Register({ onSwitchToLogin }) {
     const [username, setUsername] = useState('');
@@ -67,6 +68,7 @@ export default function Register({ onSwitchToLogin }) {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
+            <LanguageSelector />
             <div className="bg-surface-container backdrop-blur-md border border-outline p-8 rounded-2xl shadow-xl w-full max-w-md animate-in fade-in zoom-in duration-300">
                 <div className="flex flex-col items-center mb-8">
                     <div className="bg-success/10 p-3 rounded-xl mb-4">

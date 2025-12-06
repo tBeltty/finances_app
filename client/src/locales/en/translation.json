@@ -316,7 +316,8 @@
         "passwordUpdated": "Password Updated!",
         "passwordUpdatedDesc": "Your password has been successfully reset. Redirecting to login...",
         "resetError": "Error resetting password",
-        "resetPassword": "Reset Password"
+        "resetPassword": "Reset Password",
+        "marketingConsent": "I agree to receive marketing emails and updates."
     },
     "pwa": {
         "offlineReady": "App ready to work offline",

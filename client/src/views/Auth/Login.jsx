@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { User, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import LanguageSelector from '../../components/Auth/LanguageSelector';
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -44,6 +45,7 @@ export default function Login() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-surface px-4">
+            <LanguageSelector />
             <div className="max-w-md w-full bg-surface-container backdrop-blur-xl p-8 rounded-2xl border border-outline shadow-2xl">
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-main mb-2">{t('auth.welcome')}</h2>

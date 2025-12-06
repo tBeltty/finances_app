@@ -65,14 +65,18 @@ mkdir -p /var/www/vano.tbelt.online
 mkdir -p $ADMIN_HTML_DIR
 rsync -av --delete $API_DIR/admin_client/dist/ $ADMIN_HTML_DIR/
 
-# 7. Restart Backend
-echo "🔄 Restarting Backend..."
-# Find and kill the process
-pkill -f "node $API_DIR/server/index.js" || echo "No running process found"
-sleep 2
-
-# Start new process
+# 7. Restart Backend (PM2)
+echo "🔄 Restarting Backend with PM2..."
 cd $API_DIR/server
-nohup node index.js > ../server.log 2>&1 &
+
+# Check if process exists in PM2
+if pm2 list | grep -q "finances-server"; then
+    pm2 reload "finances-server"
+else
+    pm2 start index.js --name "finances-server" --log ../server.log
+fi
+
+pm2 save
+
 
 echo "✅ Deployment Complete!"

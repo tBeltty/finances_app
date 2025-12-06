@@ -219,7 +219,7 @@ const cronService = require('./services/cronService');
 sequelize.sync({ alter: true }).then(() => {
     console.log('Database connected!');
     console.log('Models synced!');
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server running on port ${PORT}`);
 
         // Run cleanup on startup (optional, good for verifying it works)
