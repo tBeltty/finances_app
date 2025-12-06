@@ -953,11 +953,11 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                                             </div>
                                                         </div>
                                                         <div className="space-y-1">
-                                                            <label className="text-xs font-medium text-secondary uppercase flex items-center gap-1">
+                                                            <label className="text-xs font-medium text-secondary flex items-center gap-1">
                                                                 {t('loans.bankCredit.extraCosts')}
                                                                 <span className="relative group cursor-help">
-                                                                    <span className="w-3.5 h-3.5 rounded-full bg-secondary/30 text-secondary flex items-center justify-center text-[10px] font-bold">?</span>
-                                                                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-surface-container border border-outline rounded-lg text-xs text-main shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                                                                    <span className="w-4 h-4 rounded-full bg-secondary/20 text-secondary flex items-center justify-center text-[10px]">?</span>
+                                                                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2.5 bg-[#1a1a2e] border border-outline/50 rounded-xl text-xs text-white/90 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 font-normal normal-case leading-relaxed">
                                                                         {t('loans.bankCredit.extraCostsTooltip')}
                                                                     </span>
                                                                 </span>

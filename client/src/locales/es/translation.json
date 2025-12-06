@@ -446,7 +446,7 @@
             "remainingBalance": "Saldo Restante",
             "eaRate": "Tasa de Interés Anual",
             "extraCosts": "Costos Extra/mes",
-            "extraCostsTooltip": "Seguros, comisiones y gastos YA INCLUIDOS en tu cuota mensual. Se resta para calcular la porción real de capital+intereses.",
+            "extraCostsTooltip": "Seguros, comisiones y gastos que ya están incluidos en tu cuota mensual. Se restan para calcular la porción real de capital + intereses.",
             "additionalCosts": "Aprox. Gastos Extra/mes",
             "calculated": "Estimación Calculada",
             "installmentsLeft": "Cuotas Restantes",
