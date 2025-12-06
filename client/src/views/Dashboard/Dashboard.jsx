@@ -270,7 +270,7 @@ export default function Dashboard() {
                                 className="flex items-center gap-2 bg-error hover:bg-error/90 text-white px-4 py-3 rounded-full shadow-lg whitespace-nowrap"
                             >
                                 <CreditCard className="w-5 h-5" />
-                                {t('dashboard.addExpense')}
+                                {t('expenses.addExpense')}
                             </button>
                         </div>
                     )}
