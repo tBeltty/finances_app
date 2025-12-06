@@ -21,6 +21,7 @@ import {
     TrendingDown
 } from 'lucide-react';
 import DebtProjection from './DebtProjection';
+import DatePicker from '../../components/UI/DatePicker';
 
 export default function Loans() {
     const { t } = useTranslation();
@@ -583,9 +584,19 @@ function LoanModal({ onClose, onSave, type, initialData }) {
         }
         setLoading(true);
         try {
+            // Parse amount: remove thousand separators and normalize decimal
+            const curr = user?.currency || 'USD';
+            const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
+            const thousandsSep = isDotThousands ? '.' : ',';
+            const decimalSep = isDotThousands ? ',' : '.';
+
+            let numericAmount = formData.amount.toString();
+            numericAmount = numericAmount.split(thousandsSep).join(''); // Remove thousands
+            numericAmount = numericAmount.replace(decimalSep, '.'); // Normalize decimal
+
             await onSave({
                 ...formData,
-                amount: parseFloat(formData.amount),
+                amount: parseFloat(numericAmount) || 0,
                 dueDate: formData.dueDate ? formData.dueDate : null,
                 installments: parseInt(formData.installments) || 1,
                 interestRate: parseFloat(formData.interestRate) || 0,
@@ -635,13 +646,24 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                         <div className="relative">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
                             <input
-                                type="number"
+                                type="text"
+                                inputMode="decimal"
                                 value={formData.amount}
-                                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    const curr = user?.currency || 'USD';
+                                    const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
+                                    const decimalSep = isDotThousands ? ',' : '.';
+
+                                    // Allow only digits and one decimal separator
+                                    const pattern = isDotThousands ? /^[\d.,]*$/ : /^[\d.,]*$/;
+                                    if (!pattern.test(val) && val !== '') return;
+
+                                    // Store the raw value (will be parsed on submit)
+                                    setFormData({ ...formData, amount: val });
+                                }}
                                 placeholder="0"
                                 className="w-full bg-surface border border-outline rounded-xl pl-10 pr-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none"
-                                min="0"
-                                step="0.01"
                                 required
                             />
                         </div>
@@ -732,15 +754,11 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                     <label className="text-xs font-medium text-secondary uppercase">
                                         {isAdvanced ? t('loans.firstPaymentDate') : t('loans.dueDate')}
                                     </label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
-                                        <input
-                                            type="date"
-                                            value={formData.dueDate}
-                                            onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
-                                            className="w-full bg-surface border border-outline rounded-xl pl-9 pr-4 py-3 text-main focus:border-primary focus:outline-none"
-                                        />
-                                    </div>
+                                    <DatePicker
+                                        value={formData.dueDate}
+                                        onChange={(val) => setFormData({ ...formData, dueDate: val })}
+                                        className="w-full"
+                                    />
                                 </div>
                             </div>
 
