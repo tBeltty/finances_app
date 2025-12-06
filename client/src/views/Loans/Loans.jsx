@@ -703,7 +703,6 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                     }}
                                     placeholder="0"
                                     className="w-full bg-surface border border-outline rounded-xl pl-10 pr-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none"
-                                    required
                                 />
                             </div>
                         </div>
