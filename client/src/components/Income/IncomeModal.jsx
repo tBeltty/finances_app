@@ -30,7 +30,8 @@ export default function IncomeModal({ isOpen, onClose, onSave, currency, formatC
         setLoading(true);
         try {
             // Parse amount: remove thousand separators and normalize decimal
-            const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(currency);
+            const curr = currency || 'USD';
+            const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
             const thousandsSep = isDotThousands ? '.' : ',';
             const decimalSep = isDotThousands ? ',' : '.';
 
@@ -101,8 +102,9 @@ export default function IncomeModal({ isOpen, onClose, onSave, currency, formatC
                                 value={formData.amount}
                                 onChange={(e) => {
                                     const val = e.target.value;
-                                    // Determine separators based on currency
-                                    const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(currency);
+                                    // Determine separators based on currency (default to USD format if no currency)
+                                    const curr = currency || 'USD';
+                                    const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
                                     const thousandsSep = isDotThousands ? '.' : ',';
                                     const decimalSep = isDotThousands ? ',' : '.';
 

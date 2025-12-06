@@ -3,7 +3,6 @@ const Savings = require('../models/Savings');
 const Income = require('../models/Income');
 const { Loan, LoanPayment } = require('../models/Loan');
 const { Parser } = require('json2csv');
-const { sanitizeString, validateAmount, validateDate, validateInterestRate, validateColor } = require('../utils/validators');
 
 exports.getExpenses = async (req, res) => {
     try {
@@ -68,34 +67,23 @@ exports.createExpense = async (req, res) => {
     try {
         const { name, amount, type, categoryId, month, date, payWithSavings } = req.body;
 
-        // Input validation
-        const amountCheck = validateAmount(amount);
-        if (!amountCheck.valid) {
-            return res.status(400).json({ message: amountCheck.error });
-        }
-
-        const sanitizedName = sanitizeString(name, 200);
-        if (!sanitizedName) {
-            return res.status(400).json({ message: 'Name is required' });
-        }
-
         const expense = await Expense.create({
-            name: sanitizedName,
-            amount: amountCheck.value,
-            type: type || 'Variable',
+            name,
+            amount,
+            type,
             categoryId,
             month,
             date,
             userId: req.user.id,
             householdId: req.householdId,
-            paid: req.body.paid !== undefined ? req.body.paid : (payWithSavings ? amountCheck.value : 0),
+            paid: req.body.paid !== undefined ? req.body.paid : (payWithSavings ? amount : 0),
             isPaidWithSavings: payWithSavings || false
         });
 
         if (payWithSavings) {
             let savings = await Savings.findOne({ where: { householdId: req.householdId } });
             if (savings) {
-                savings.balance -= amountCheck.value;
+                savings.balance -= parseFloat(amount);
                 savings.lastUpdated = new Date();
                 await savings.save();
             }
@@ -103,7 +91,7 @@ exports.createExpense = async (req, res) => {
 
         res.status(201).json(expense);
     } catch (error) {
-        res.status(500).json({ message: 'Error creating expense' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -178,29 +166,17 @@ exports.getCategories = async (req, res) => {
 exports.createCategory = async (req, res) => {
     try {
         const { name, color } = req.body;
-
-        // Validation
-        const sanitizedName = sanitizeString(name, 50);
-        if (!sanitizedName) {
-            return res.status(400).json({ message: 'Category name is required' });
-        }
-
-        const colorCheck = validateColor(color || 'slate');
-        if (!colorCheck.valid) {
-            return res.status(400).json({ message: colorCheck.error });
-        }
-
         const id = `cat_${Date.now()}`;
         const category = await Category.create({
             id,
-            name: sanitizedName,
-            color: colorCheck.value,
+            name,
+            color,
             userId: req.user.id,
             householdId: req.householdId
         });
         res.status(201).json(category);
     } catch (error) {
-        res.status(500).json({ message: 'Error creating category' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -341,29 +317,17 @@ exports.getIncomes = async (req, res) => {
 exports.createIncome = async (req, res) => {
     try {
         const { description, amount, date, type, category } = req.body;
-
-        // Validation
-        const amountCheck = validateAmount(amount);
-        if (!amountCheck.valid) {
-            return res.status(400).json({ message: amountCheck.error });
-        }
-
-        const sanitizedDesc = sanitizeString(description, 200);
-        if (!sanitizedDesc) {
-            return res.status(400).json({ message: 'Description is required' });
-        }
-
         const income = await Income.create({
             householdId: req.householdId,
-            description: sanitizedDesc,
-            amount: amountCheck.value,
+            description,
+            amount,
             date: date || new Date(),
             type: type || 'extra',
-            category: sanitizeString(category, 50)
+            category
         });
         res.status(201).json(income);
     } catch (error) {
-        res.status(500).json({ message: 'Error creating income' });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -425,43 +389,22 @@ exports.getLoans = async (req, res) => {
 exports.createLoan = async (req, res) => {
     try {
         const { personName, type, amount, date, dueDate, notes, installments, interestRate, paymentFrequency } = req.body;
-
-        // Validation
-        const amountCheck = validateAmount(amount);
-        if (!amountCheck.valid) {
-            return res.status(400).json({ message: amountCheck.error });
-        }
-
-        const sanitizedName = sanitizeString(personName, 100);
-        if (!sanitizedName) {
-            return res.status(400).json({ message: 'Person name is required' });
-        }
-
-        const rateCheck = validateInterestRate(interestRate || 0);
-        if (!rateCheck.valid) {
-            return res.status(400).json({ message: rateCheck.error });
-        }
-
-        if (!['lent', 'borrowed'].includes(type)) {
-            return res.status(400).json({ message: 'Type must be lent or borrowed' });
-        }
-
         const loan = await Loan.create({
             householdId: req.householdId,
-            personName: sanitizedName,
-            type,
-            amount: amountCheck.value,
+            personName,
+            type, // 'lent' or 'borrowed'
+            amount,
             date: date || new Date(),
             dueDate,
-            notes: sanitizeString(notes, 500),
-            installments: Math.max(1, Math.min(parseInt(installments) || 1, 120)),
-            interestRate: rateCheck.value,
+            notes,
+            installments: installments || 1,
+            interestRate: interestRate || 0,
             interestType: req.body.interestType || 'simple',
             paymentFrequency: paymentFrequency || 'monthly'
         });
         res.status(201).json(loan);
     } catch (error) {
-        res.status(500).json({ message: 'Error creating loan' });
+        res.status(500).json({ message: error.message });
     }
 };
 

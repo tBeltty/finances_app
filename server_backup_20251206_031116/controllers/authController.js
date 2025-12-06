@@ -5,7 +5,6 @@ const otplib = require('otplib');
 const qrcode = require('qrcode');
 const crypto = require('crypto');
 const emailService = require('../services/emailService');
-const { sanitizeString, validatePassword, hashToken } = require('../utils/validators');
 
 const Household = require('../models/Household');
 const HouseholdMember = require('../models/HouseholdMember');
@@ -121,14 +120,6 @@ exports.register = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'El nombre de usuario ya está en uso' });
         }
-
-        // Password complexity validation
-        const passwordCheck = validatePassword(password);
-        if (!passwordCheck.valid) {
-            return res.status(400).json({ message: passwordCheck.error });
-        }
-
-        const sanitizedUsername = sanitizeString(username, 50);
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const emailVerificationToken = crypto.randomBytes(32).toString('hex');
@@ -533,12 +524,6 @@ exports.deleteAccount = async (req, res) => {
         const { password } = req.body;
         const userId = req.user.id;
 
-        // Rate limiting for delete account (prevent brute force)
-        const rateCheck = checkRateLimit(loginAttempts, `delete_${userId}`, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_DURATION);
-        if (rateCheck.blocked) {
-            return res.status(429).json({ message: rateCheck.message });
-        }
-
         if (!password) {
             return res.status(400).json({ message: 'La contraseña es requerida para confirmar.' });
         }
@@ -551,7 +536,6 @@ exports.deleteAccount = async (req, res) => {
         // Verify password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            incrementRateLimit(loginAttempts, `delete_${userId}`, rateCheck.record, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_DURATION);
             return res.status(400).json({ message: 'Contraseña incorrecta.' });
         }
 
