@@ -9,8 +9,9 @@ import ExpenseForm from '../Expenses/ExpenseForm';
 import Controls from '../../components/Dashboard/Controls';
 import PendingExpensesModal from '../../components/Expenses/PendingExpensesModal';
 import { useAuth } from '../../context/AuthContext';
-import { Users, Settings as SettingsIcon, LogOut, Plus, Menu, X } from 'lucide-react';
+import { Users, Settings as SettingsIcon, LogOut, Plus, Menu, X, DollarSign, CreditCard } from 'lucide-react';
 import QuickAddModal from '../../components/Dashboard/QuickAddModal';
+import IncomeModal from '../../components/Income/IncomeModal';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import { useUI } from '../../context/UIContext';
 
@@ -22,6 +23,8 @@ export default function Dashboard() {
     const { t } = useTranslation();
     const { settingsOpen, closeSettings } = useUI();
     const [showQuickAdd, setShowQuickAdd] = useState(false);
+    const [showIncomeModal, setShowIncomeModal] = useState(false);
+    const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [activeView, setActiveView] = useState('overview'); // 'overview' | 'analytics'
 
 
@@ -68,6 +71,24 @@ export default function Dashboard() {
 
     const [showPendingModal, setShowPendingModal] = useState(false);
     const pendingExpenses = expenses.filter(e => (e.paid || 0) < e.amount);
+
+    // Handler for adding extra income from FAB
+    const handleAddIncome = async (incomeData) => {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/incomes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'x-household-id': localStorage.getItem('currentHouseholdId') || ''
+            },
+            body: JSON.stringify(incomeData)
+        });
+        if (res.ok) {
+            // Refresh finances to update income widget
+            window.location.reload();
+        }
+    };
 
     useEffect(() => {
     }, []);
@@ -201,8 +222,8 @@ export default function Dashboard() {
 
 
                 <QuickAddModal
-                    isOpen={showQuickAdd}
-                    onClose={() => setShowQuickAdd(false)}
+                    isOpen={showExpenseModal}
+                    onClose={() => setShowExpenseModal(false)}
                     newExpense={newExpense}
                     setNewExpense={setNewExpense}
                     categories={categories}
@@ -218,13 +239,48 @@ export default function Dashboard() {
                     onPay={handlePayFull}
                 />
 
-                {/* Mobile FAB for Quick Add */}
-                <button
-                    onClick={() => setShowQuickAdd(true)}
-                    className="md:hidden fixed bottom-6 right-6 w-14 h-14 bg-primary hover:bg-primary-hover text-white rounded-full shadow-2xl shadow-primary/30 flex items-center justify-center z-40 transition-transform hover:scale-110 active:scale-95"
-                >
-                    <Plus className="w-8 h-8" />
-                </button>
+                <IncomeModal
+                    isOpen={showIncomeModal}
+                    onClose={() => setShowIncomeModal(false)}
+                    onSave={handleAddIncome}
+                    currency={currency}
+                    formatCurrency={formatCurrency}
+                />
+
+                {/* Mobile FAB for Quick Add with Menu */}
+                <div className="md:hidden fixed bottom-6 right-6 z-40">
+                    {showQuickAdd && (
+                        <div className="absolute bottom-16 right-0 flex flex-col gap-3 mb-2 animate-fade-in">
+                            <button
+                                onClick={() => {
+                                    setShowQuickAdd(false);
+                                    setShowIncomeModal(true);
+                                }}
+                                className="flex items-center gap-2 bg-success hover:bg-success/90 text-white px-4 py-3 rounded-full shadow-lg whitespace-nowrap"
+                            >
+                                <DollarSign className="w-5 h-5" />
+                                {t('income.addTitle')}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    // Close menu and open QuickAddModal for expense
+                                    setShowQuickAdd(false);
+                                    setTimeout(() => setShowExpenseModal(true), 100);
+                                }}
+                                className="flex items-center gap-2 bg-error hover:bg-error/90 text-white px-4 py-3 rounded-full shadow-lg whitespace-nowrap"
+                            >
+                                <CreditCard className="w-5 h-5" />
+                                {t('dashboard.addExpense')}
+                            </button>
+                        </div>
+                    )}
+                    <button
+                        onClick={() => setShowQuickAdd(!showQuickAdd)}
+                        className={`w-14 h-14 bg-primary hover:bg-primary-hover text-white rounded-full shadow-2xl shadow-primary/30 flex items-center justify-center transition-all duration-300 ${showQuickAdd ? 'rotate-45' : ''}`}
+                    >
+                        <Plus className="w-8 h-8" />
+                    </button>
+                </div>
 
 
             </div>

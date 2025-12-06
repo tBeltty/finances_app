@@ -87,13 +87,18 @@ export default function IncomeModal({ isOpen, onClose, onSave, currency, formatC
                         <div className="relative">
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
                             <input
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
                                 value={formData.amount}
-                                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                                onChange={(e) => {
+                                    // Remove non-numeric characters except dots and commas
+                                    const raw = e.target.value.replace(/[^\d.,]/g, '');
+                                    // Convert comma to dot for parsing
+                                    const normalized = raw.replace(',', '.');
+                                    setFormData({ ...formData, amount: normalized });
+                                }}
                                 placeholder="0"
                                 className="w-full bg-surface border border-outline rounded-xl pl-10 pr-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none"
-                                min="0"
-                                step="0.01"
                                 required
                             />
                         </div>
