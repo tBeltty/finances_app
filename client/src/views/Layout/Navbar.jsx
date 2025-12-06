@@ -72,7 +72,8 @@ export default function Navbar() {
                         </button>
                     </div>
 
-                    <div className="md:hidden">
+                    <div className="md:hidden flex items-center gap-2">
+                        <NotificationCenter />
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             className="text-secondary hover:text-main p-2"

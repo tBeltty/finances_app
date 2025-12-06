@@ -1,6 +1,21 @@
 # Changelog
 
-## [1.4.16] - 2025-12-06
+## [Admin 1.0.4] - 2025-12-06
+### Refactor
+- **Architecture**: Refactored `Dashboard.jsx` into "View" and "Controller" (Hooks) layers for MVC compliance.
+- **Hooks**: Introduced `useAdminUsers`, `useAdminStats`, and `useAuditLogs`.
+
+## [Admin 1.0.3] - 2025-12-06
+### Added
+- **Localization Center**: Pagination (50 items/page), Category Filtering, and "Enter to Save" support.
+- **Enforcement**: Added `eslint-plugin-i18next` to Client project to enforce localization.
+
+## [Admin 1.0.2] - 2025-12-06
+### Fixed
+- **Admin Dashboard**: Fixed Localization Center reporting 0% coverage by implementing hybrid file+DB scanning.
+- **Mobile**: Fixed notification dropdown alignment (now fully visible).
+- **Localization**: Added missing keys for Notification Center.
+- **UI**: Improved contrast in Light Mode for notifications.
 ### Added
 - **Notification Center**: Real-time notification system in the navigation bar.
   - **Multilingual Support**: Automatically delivers notifications in English or Spanish based on user preference.

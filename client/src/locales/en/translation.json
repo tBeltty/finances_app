@@ -52,6 +52,12 @@
         "expenses": "Expenses",
         "loans": "Loans"
     },
+    "notifications": {
+        "title": "Notifications",
+        "markAllRead": "Mark all read",
+        "empty": "No notifications yet",
+        "viewDetails": "View Details"
+    },
     "onboarding": {
         "welcome": "Welcome to tBelt Finances",
         "subtitle": "Let's set up your account in a few steps.",

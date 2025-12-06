@@ -52,6 +52,12 @@
         "expenses": "Control de Gastos",
         "loans": "Préstamos"
     },
+    "notifications": {
+        "title": "Notificaciones",
+        "markAllRead": "Marcar todo leído",
+        "empty": "No hay notificaciones aún",
+        "viewDetails": "Ver Detalles"
+    },
     "onboarding": {
         "welcome": "Bienvenido a tBelt Finanzas",
         "subtitle": "Configuremos tu cuenta en unos pocos pasos.",

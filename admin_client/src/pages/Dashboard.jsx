@@ -1,168 +1,41 @@
-import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Activity, Users, FileWarning, Database, Trash2, LogOut, Server } from 'lucide-react';
-import Swal from 'sweetalert2';
+import { Users, FileWarning, Database, LogOut } from 'lucide-react';
 import UserProfileModal from '../components/UserProfileModal';
 import SystemMonitor from '../components/SystemMonitor';
 import AnalyticsDashboard from '../components/AnalyticsDashboard';
 import NotificationCenter from '../components/NotificationCenter';
 import NotificationSender from '../components/NotificationSender';
 import LocalizationCenter from '../components/LocalizationCenter';
+import versionData from '../../public/version.json';
+
+// Hooks
+import { useAdminStats } from '../hooks/useAdminStats';
+import { useAdminUsers } from '../hooks/useAdminUsers';
+import { useAuditLogs } from '../hooks/useAuditLogs';
 
 export default function Dashboard() {
+    const { version } = versionData;
     const { logout, user } = useAuth();
-    const [stats, setStats] = useState(null);
-    const [users, setUsers] = useState([]);
-    const [activeTab, setActiveTab] = useState('analytics'); // Default to analytics for "wow" factor
+    const [activeTab, setActiveTab] = useState('analytics');
     const [selectedUserId, setSelectedUserId] = useState(null);
-    const [selectedIds, setSelectedIds] = useState([]); // For bulk actions
-    const [auditLogs, setAuditLogs] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        fetchStats();
-        fetchUsers();
-    }, []);
+    // Custom Hooks (MVC Controllers)
+    const { stats } = useAdminStats();
+    const {
+        users,
+        loading,
+        error,
+        selectedIds,
+        handlePromote,
+        handleDeleteUser,
+        handleBulkAction,
+        toggleSelectAll,
+        toggleSelect,
+        refetchUsers
+    } = useAdminUsers(activeTab);
 
-    const fetchStats = async () => {
-        try {
-            const { data } = await api.get('/admin/stats');
-            setStats(data);
-        } catch (err) { console.error(err); }
-    };
-
-    const fetchUsers = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const scope = activeTab === 'deleted' ? '?scope=deleted' : '';
-            const { data } = await api.get(`/admin/users${scope}`);
-            setUsers(data);
-            setSelectedIds([]); // Clear selection on refresh
-        } catch (err) {
-            setError(err.response?.data?.message || 'Failed to load users');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchLogs = async () => {
-        try {
-            const { data } = await api.get('/admin/audit-logs');
-            setAuditLogs(data);
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    useEffect(() => {
-        fetchStats();
-    }, []);
-
-    useEffect(() => {
-        if (activeTab === 'users' || activeTab === 'deleted') fetchUsers();
-        if (activeTab === 'logs') fetchLogs();
-    }, [activeTab]);
-
-    const handlePromote = async (id, email) => {
-        const result = await Swal.fire({
-            title: 'Grant Admin Privileges?',
-            text: `User: ${email} - They will have full system access.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#4f46e5', // Indigo-600
-            cancelButtonColor: '#f43f5e', // Rose-500
-            confirmButtonText: 'Confirm Promotion',
-            background: '#1e293b', // Slate-800
-            color: '#f8fafc' // Slate-50
-        });
-
-        if (result.isConfirmed) {
-            try {
-                await api.put(`/admin/users/${id}/promote`);
-                Swal.fire({
-                    title: 'Promoted!',
-                    text: 'User is now an Administrator.',
-                    icon: 'success',
-                    background: '#1e293b',
-                    color: '#f8fafc',
-                    confirmButtonColor: '#4f46e5'
-                });
-                fetchUsers();
-            } catch (err) {
-                Swal.fire('Error', err.response?.data?.message || 'Failed', 'error');
-            }
-        }
-    };
-
-    const handleDeleteUser = async (id, email) => {
-        const result = await Swal.fire({
-            title: 'Delete User?',
-            text: `Target: ${email} - This action is irreversible.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#f43f5e',
-            cancelButtonColor: '#475569',
-            confirmButtonText: 'Delete User',
-            background: '#1e293b',
-            color: '#f8fafc'
-        });
-
-        if (result.isConfirmed) {
-            try {
-                await api.delete(`/admin/users/${id}`);
-                Swal.fire({
-                    title: 'Deleted',
-                    text: 'User has been removed.',
-                    icon: 'success',
-                    background: '#1e293b',
-                    color: '#f8fafc',
-                    confirmButtonColor: '#4f46e5'
-                });
-                fetchUsers();
-                fetchStats();
-            } catch (err) {
-                Swal.fire('Error', err.response?.data?.message || 'Failed', 'error');
-            }
-        }
-    };
-
-    const handleBulkAction = async (actionType) => {
-        const actionName = actionType === 'delete' ? 'Move to Trash' : (actionType === 'restore' ? 'Restore' : 'Permanently Delete');
-
-        const result = await Swal.fire({
-            title: `${actionName} ${selectedIds.length} users?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: actionType === 'forget' ? '#f43f5e' : '#3b82f6',
-            confirmButtonText: 'Yes, proceed',
-            background: '#1e293b',
-            color: '#f8fafc'
-        });
-
-        if (result.isConfirmed) {
-            try {
-                await api.post('/admin/users/bulk-action', { ids: selectedIds, action: actionType });
-                Swal.fire('Success', 'Bulk action completed', 'success');
-                fetchUsers();
-                fetchStats(); // Stats might change if users are deleted/restored
-            } catch (err) {
-                Swal.fire('Error', err.response?.data?.message || 'Failed', 'error');
-            }
-        }
-    };
-
-    const toggleSelectAll = () => {
-        if (selectedIds.length === users.length && users.length > 0) setSelectedIds([]);
-        else setSelectedIds(users.map(u => u.id));
-    };
-
-    const toggleSelect = (id) => {
-        if (selectedIds.includes(id)) setSelectedIds(prev => prev.filter(i => i !== id));
-        else setSelectedIds(prev => [...prev, id]);
-    };
+    const { auditLogs, refetchLogs } = useAuditLogs(activeTab === 'logs');
 
     const isSuperAdmin = user?.isSuperAdmin;
 
@@ -174,7 +47,7 @@ export default function Dashboard() {
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-main flex items-center gap-2">
                             Admin tBelt
-                            <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full border border-primary/20">v1.0.1</span>
+                            <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full border border-primary/20">v{version}</span>
                         </h1>
                         <span className="text-sm font-medium text-secondary">
                             {user?.role === 'admin' ? 'Administrator' : 'User'} • {user?.email}
@@ -201,7 +74,7 @@ export default function Dashboard() {
                 <TabButton active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} label="Analytics" />
                 <TabButton active={activeTab === 'users'} onClick={() => setActiveTab('users')} label="Active Users" />
                 <TabButton active={activeTab === 'deleted'} onClick={() => setActiveTab('deleted')} label="Deleted Users" />
-                <TabButton active={activeTab === 'logs'} onClick={() => { setActiveTab('logs'); fetchLogs(); }} label="Security Logs" />
+                <TabButton active={activeTab === 'logs'} onClick={() => { setActiveTab('logs'); refetchLogs(); }} label="Security Logs" />
                 <TabButton active={activeTab === 'system'} onClick={() => setActiveTab('system')} label="System Hub" />
                 <TabButton active={activeTab === 'localization'} onClick={() => setActiveTab('localization')} label="Localization" />
             </div >
@@ -239,7 +112,7 @@ export default function Dashboard() {
                 {error && activeTab !== 'system' && activeTab !== 'analytics' && activeTab !== 'localization' && (
                     <div className="bg-error/10 text-error p-4 border-b border-error/20 flex items-center justify-between">
                         <span>Error loading data: {error}</span>
-                        <button onClick={fetchUsers} className="underline text-sm">Retry</button>
+                        <button onClick={refetchUsers} className="underline text-sm">Retry</button>
                     </div>
                 )}
                 {loading && (
@@ -294,7 +167,7 @@ export default function Dashboard() {
                                                 </button>
                                             )}
                                             {activeTab === 'users' && (
-                                                <button onClick={() => handleDeleteUser(u.id, u.email)} className="text-error hover:text-error-container hover:bg-error/10 px-3 py-1 rounded transition-colors font-medium">
+                                                <button onClick={() => handleDeleteUser(u.id, u.email, refetchUsers)} className="text-error hover:text-error-container hover:bg-error/10 px-3 py-1 rounded transition-colors font-medium">
                                                     Delete
                                                 </button>
                                             )}
@@ -345,7 +218,7 @@ export default function Dashboard() {
                         userId={selectedUserId}
                         onClose={() => setSelectedUserId(null)}
                         onUserUpdated={() => {
-                            fetchUsers();
+                            refetchUsers();
                         }}
                     />
                 )

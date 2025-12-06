@@ -71,12 +71,31 @@ export default function LocalizationCenter() {
         }
     };
 
+    const [categoryFilter, setCategoryFilter] = useState('all');
+    const [page, setPage] = useState(1);
+    const itemsPerPage = 50;
+
+    // Helper: Extract unique categories (e.g., 'nav' from 'nav.home')
+    const categories = Array.from(new Set(keyList.map(item => item.key.split('.')[0]))).sort();
+
     const filteredList = keyList.filter(item => {
         const matchesSearch = item.key.toLowerCase().includes(search.toLowerCase()) ||
             item.en.toLowerCase().includes(search.toLowerCase());
-        if (filter === 'missing-es') return matchesSearch && !item.es;
-        return matchesSearch;
+        const matchesFilter = filter === 'missing-es' ? !item.es : true;
+
+        let matchesCategory = true;
+        if (categoryFilter !== 'all') {
+            matchesCategory = item.key.startsWith(categoryFilter + '.');
+        }
+
+        return matchesSearch && matchesFilter && matchesCategory;
     });
+
+    const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+    const paginatedList = filteredList.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+    // Reset page on filter change
+    useEffect(() => { setPage(1); }, [search, filter, categoryFilter]);
 
     const completion = keyList.length > 0
         ? Math.round((keyList.filter(i => i.es).length / keyList.length) * 100)
@@ -92,32 +111,48 @@ export default function LocalizationCenter() {
                         <div className="text-3xl font-bold text-main">{completion}%</div>
                     </div>
                 </div>
-                {/* Add more stats if needed */}
+                <div className="glass-panel p-6 rounded-xl flex items-center gap-4">
+                    <div className="p-3 bg-success/20 rounded-full text-success"><Check size={24} /></div>
+                    <div>
+                        <div className="text-secondary text-sm font-bold uppercase">Total Strings</div>
+                        <div className="text-3xl font-bold text-main">{keyList.length}</div>
+                    </div>
+                </div>
             </div>
 
             <div className="glass-panel p-6 rounded-xl">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h3 className="text-lg font-bold text-main flex items-center gap-2">
                         <RefreshCw size={18} className="cursor-pointer hover:rotate-180 transition-all" onClick={fetchAll} />
                         Localization Editor
                     </h3>
-                    <div className="flex gap-4">
-                        <div className="relative">
+                    <div className="flex flex-wrap gap-4 w-full md:w-auto">
+                        <div className="relative flex-1 md:flex-none">
                             <Search className="absolute left-3 top-2.5 text-secondary" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search keys..."
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
-                                className="bg-surface border border-outline/20 rounded-lg pl-10 pr-4 py-2 text-sm text-main focus:ring-2 focus:ring-primary outline-none w-64"
+                                className="w-full md:w-64 bg-surface border border-outline/20 rounded-lg pl-10 pr-4 py-2 text-sm text-main focus:ring-2 focus:ring-primary outline-none"
                             />
                         </div>
+                        <select
+                            value={categoryFilter}
+                            onChange={e => setCategoryFilter(e.target.value)}
+                            className="bg-surface border border-outline/20 rounded-lg px-4 py-2 text-sm text-main focus:ring-2 focus:ring-primary outline-none"
+                        >
+                            <option value="all">All Categories</option>
+                            {categories.map(cat => (
+                                <option key={cat} value={cat}>{cat.toUpperCase()}</option>
+                            ))}
+                        </select>
                         <select
                             value={filter}
                             onChange={e => setFilter(e.target.value)}
                             className="bg-surface border border-outline/20 rounded-lg px-4 py-2 text-sm text-main focus:ring-2 focus:ring-primary outline-none"
                         >
-                            <option value="all">All Keys</option>
+                            <option value="all">All Status</option>
                             <option value="missing-es">Missing Spanish</option>
                         </select>
                     </div>
@@ -134,13 +169,19 @@ export default function LocalizationCenter() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-outline/10">
-                            {filteredList.slice(0, 50).map((item) => (
+                            {paginatedList.map((item) => (
                                 <tr key={item.key} className="hover:bg-white/5 transition-colors">
                                     <td className="p-4 font-mono text-xs text-secondary break-all">{item.key}</td>
                                     <td className="p-4 text-sm text-main">{item.en}</td>
                                     <td className="p-4">
                                         <textarea
                                             defaultValue={item.es}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && !e.shiftKey) {
+                                                    e.preventDefault();
+                                                    e.target.blur();
+                                                }
+                                            }}
                                             onBlur={(e) => {
                                                 if (e.target.value !== item.es) handleSave('es', item.key, e.target.value);
                                             }}
@@ -156,8 +197,29 @@ export default function LocalizationCenter() {
                         </tbody>
                     </table>
                 </div>
-                <div className="mt-4 text-center text-xs text-secondary">
-                    Showing {Math.min(filteredList.length, 50)} of {filteredList.length} keys
+
+                {/* Pagination Controls */}
+                <div className="mt-4 flex justify-between items-center text-xs text-secondary">
+                    <div>
+                        Showing {Math.min((page - 1) * itemsPerPage + 1, filteredList.length)} - {Math.min(page * itemsPerPage, filteredList.length)} of {filteredList.length}
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            disabled={page === 1}
+                            onClick={() => setPage(p => p - 1)}
+                            className="px-3 py-1 rounded bg-surface-container border border-outline/20 disabled:opacity-50 hover:bg-surface-container-high transition-colors"
+                        >
+                            Previous
+                        </button>
+                        <span className="self-center">Page {page} of {totalPages || 1}</span>
+                        <button
+                            disabled={page === totalPages || totalPages === 0}
+                            onClick={() => setPage(p => p + 1)}
+                            className="px-3 py-1 rounded bg-surface-container border border-outline/20 disabled:opacity-50 hover:bg-surface-container-high transition-colors"
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
