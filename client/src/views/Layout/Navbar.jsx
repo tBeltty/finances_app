@@ -100,7 +100,9 @@ export default function Navbar() {
                             onClick={() => setMobileMenuOpen(false)}
                             className={({ isActive }) => `w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium flex items-center gap-3 transition-all ${isActive ? 'bg-primary-container text-on-primary-container' : 'text-secondary hover:text-main hover:bg-surface-container-high'}`}
                         >
-                            <Wallet className="w-4 h-4" />
+                            <div className="p-1.5 rounded-lg flex items-center justify-center">
+                                <Wallet className="w-4 h-4" />
+                            </div>
                             {t('nav.expenses')}
                         </NavLink>
                         {showLoans && (
@@ -109,7 +111,9 @@ export default function Navbar() {
                                 onClick={() => setMobileMenuOpen(false)}
                                 className={({ isActive }) => `w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium flex items-center gap-3 transition-all ${isActive ? 'bg-primary-container text-on-primary-container' : 'text-secondary hover:text-main hover:bg-surface-container-high'}`}
                             >
-                                <div className="w-4 h-4 flex items-center justify-center font-bold">$</div>
+                                <div className="p-1.5 rounded-lg flex items-center justify-center">
+                                    <div className="w-4 h-4 flex items-center justify-center font-bold">$</div>
+                                </div>
                                 {t('nav.loans')}
                             </NavLink>
                         )}
