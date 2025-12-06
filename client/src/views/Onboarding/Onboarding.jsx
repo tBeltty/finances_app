@@ -265,7 +265,7 @@ export default function Onboarding({ onComplete }) {
                 onClick={logout}
                 className="absolute top-4 right-4 text-secondary hover:text-main text-sm font-medium transition-colors"
             >
-                {t('common.logout')}
+                {t('nav.logout')}
             </button>
             <div className="max-w-2xl w-full">
                 {/* Step 0: Language Selection */}
