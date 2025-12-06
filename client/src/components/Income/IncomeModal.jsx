@@ -29,9 +29,18 @@ export default function IncomeModal({ isOpen, onClose, onSave, currency, formatC
 
         setLoading(true);
         try {
+            // Parse amount: remove thousand separators and normalize decimal
+            const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(currency);
+            const thousandsSep = isDotThousands ? '.' : ',';
+            const decimalSep = isDotThousands ? ',' : '.';
+
+            let numericAmount = formData.amount;
+            numericAmount = numericAmount.split(thousandsSep).join(''); // Remove thousands
+            numericAmount = numericAmount.replace(decimalSep, '.'); // Normalize decimal
+
             await onSave({
                 ...formData,
-                amount: parseFloat(formData.amount),
+                amount: parseFloat(numericAmount),
                 type: 'extra'
             });
             setFormData({
@@ -88,14 +97,34 @@ export default function IncomeModal({ isOpen, onClose, onSave, currency, formatC
                             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
                             <input
                                 type="text"
-                                inputMode="numeric"
+                                inputMode="decimal"
                                 value={formData.amount}
                                 onChange={(e) => {
-                                    // Remove non-numeric characters except dots and commas
-                                    const raw = e.target.value.replace(/[^\d.,]/g, '');
-                                    // Convert comma to dot for parsing
-                                    const normalized = raw.replace(',', '.');
-                                    setFormData({ ...formData, amount: normalized });
+                                    const val = e.target.value;
+                                    // Determine separators based on currency
+                                    const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(currency);
+                                    const thousandsSep = isDotThousands ? '.' : ',';
+                                    const decimalSep = isDotThousands ? ',' : '.';
+
+                                    // Remove invalid characters (allow digits and decimal separator)
+                                    let cleanVal = val;
+                                    const allowedPattern = new RegExp(`[^0-9${decimalSep}]`, 'g');
+                                    cleanVal = cleanVal.replace(allowedPattern, '');
+
+                                    // Handle multiple decimal separators (keep only the first one)
+                                    const parts = cleanVal.split(decimalSep);
+                                    if (parts.length > 2) {
+                                        cleanVal = parts[0] + decimalSep + parts.slice(1).join('');
+                                    }
+
+                                    // Format the integer part
+                                    const integerPart = parts[0];
+                                    const decimalPart = parts.length > 1 ? decimalSep + parts[1] : '';
+
+                                    // Add thousands separators to integer part
+                                    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep);
+
+                                    setFormData({ ...formData, amount: formattedInteger + decimalPart });
                                 }}
                                 placeholder="0"
                                 className="w-full bg-surface border border-outline rounded-xl pl-10 pr-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none"
