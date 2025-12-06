@@ -460,7 +460,11 @@
             "monthlyInsurance": "Seguro Mensual",
             "monthlyCommission": "Comisión Mensual",
             "currentInstallment": "Cuota Actual",
-            "paymentDate": "Fecha de Pago de Cuota"
+            "paymentDate": "Fecha de Pago de Cuota",
+            "bankName": "Nombre del Banco",
+            "bankNamePlaceholder": "ej. Bancolombia, BBVA...",
+            "creditNumber": "Número de Crédito",
+            "creditNumberPlaceholder": "Identificador único del crédito"
         },
         "projection": {
             "title": "Proyección de Deuda",

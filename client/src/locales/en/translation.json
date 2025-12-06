@@ -459,7 +459,11 @@
             "monthlyInsurance": "Monthly Insurance",
             "monthlyCommission": "Monthly Commission",
             "currentInstallment": "Current Installment",
-            "paymentDate": "Payment Due Date"
+            "paymentDate": "Payment Due Date",
+            "bankName": "Bank Name",
+            "bankNamePlaceholder": "e.g. Bancolombia, BBVA...",
+            "creditNumber": "Credit Number",
+            "creditNumberPlaceholder": "Unique credit identifier"
         },
         "projection": {
             "title": "Debt Projection",

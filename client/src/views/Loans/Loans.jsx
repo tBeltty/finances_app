@@ -586,8 +586,11 @@ function LoanModal({ onClose, onSave, type, initialData }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // alert('Submit clicked. Name: ' + formData.personName + ', Amount: ' + formData.amount); // DEBUG
-        if (!formData.personName || !formData.amount) {
+
+        // For bank credit, use monthlyPayment as the amount
+        const amountSource = formData.isBankCredit ? formData.monthlyPayment : formData.amount;
+
+        if (!formData.personName || !amountSource) {
             alert('Please fill in all required fields');
             return;
         }
@@ -599,7 +602,7 @@ function LoanModal({ onClose, onSave, type, initialData }) {
             const thousandsSep = isDotThousands ? '.' : ',';
             const decimalSep = isDotThousands ? ',' : '.';
 
-            let numericAmount = formData.amount.toString();
+            let numericAmount = amountSource.toString();
             numericAmount = numericAmount.split(thousandsSep).join(''); // Remove thousands
             numericAmount = numericAmount.replace(decimalSep, '.'); // Normalize decimal
 
@@ -643,47 +646,68 @@ function LoanModal({ onClose, onSave, type, initialData }) {
 
                 <form onSubmit={handleSubmit} className="p-4 space-y-4">
                     <div className="space-y-1">
-                        <label className="text-xs font-medium text-secondary uppercase">{t('loans.person')}</label>
+                        <label className="text-xs font-medium text-secondary">
+                            {formData.isBankCredit ? t('loans.bankCredit.bankName') : t('loans.person')}
+                        </label>
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
                             <input
                                 type="text"
                                 value={formData.personName}
                                 onChange={(e) => setFormData({ ...formData, personName: e.target.value })}
-                                placeholder={type === 'lent' ? t('loans.personPlaceholderLent') : t('loans.personPlaceholderBorrowed')}
+                                placeholder={formData.isBankCredit ? t('loans.bankCredit.bankNamePlaceholder') : (type === 'lent' ? t('loans.personPlaceholderLent') : t('loans.personPlaceholderBorrowed'))}
                                 className="w-full bg-surface border border-outline rounded-xl pl-10 pr-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none"
                                 required
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-xs font-medium text-secondary uppercase">{t('loans.amount')}</label>
-                        <div className="relative">
-                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
-                            <input
-                                type="text"
-                                inputMode="decimal"
-                                value={formData.amount}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    const curr = user?.currency || 'USD';
-                                    const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
-                                    const decimalSep = isDotThousands ? ',' : '.';
-
-                                    // Allow only digits and one decimal separator
-                                    const pattern = isDotThousands ? /^[\d.,]*$/ : /^[\d.,]*$/;
-                                    if (!pattern.test(val) && val !== '') return;
-
-                                    // Store the raw value (will be parsed on submit)
-                                    setFormData({ ...formData, amount: val });
-                                }}
-                                placeholder="0"
-                                className="w-full bg-surface border border-outline rounded-xl pl-10 pr-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none"
-                                required
-                            />
+                    {/* Credit Number - only for bank credit */}
+                    {formData.isBankCredit && (
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-secondary">{t('loans.bankCredit.creditNumber')}</label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={formData.creditNumber || ''}
+                                    onChange={(e) => setFormData({ ...formData, creditNumber: e.target.value })}
+                                    placeholder={t('loans.bankCredit.creditNumberPlaceholder')}
+                                    className="w-full bg-surface border border-outline rounded-xl px-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none font-mono"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
+
+                    {/* Amount - hidden for bank credit (uses monthlyPayment instead) */}
+                    {!formData.isBankCredit && (
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-secondary">{t('loans.amount')}</label>
+                            <div className="relative">
+                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-secondary" />
+                                <input
+                                    type="text"
+                                    inputMode="decimal"
+                                    value={formData.amount}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        const curr = user?.currency || 'USD';
+                                        const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
+                                        const decimalSep = isDotThousands ? ',' : '.';
+
+                                        // Allow only digits and one decimal separator
+                                        const pattern = isDotThousands ? /^[\d.,]*$/ : /^[\d.,]*$/;
+                                        if (!pattern.test(val) && val !== '') return;
+
+                                        // Store the raw value (will be parsed on submit)
+                                        setFormData({ ...formData, amount: val });
+                                    }}
+                                    placeholder="0"
+                                    className="w-full bg-surface border border-outline rounded-xl pl-10 pr-4 py-3 text-main placeholder:text-secondary/50 focus:border-primary focus:outline-none"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    )}
 
 
                     {/* Advanced Mode Toggle */}
