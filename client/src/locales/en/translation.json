@@ -456,20 +456,20 @@
     },
     "whatsNew": {
         "title": "What's New in",
-        "subtitle": "Check out the latest features we've added for you.",
+        "subtitle": "Your Loans module just got a major upgrade!",
         "button": "Awesome, let's go!",
         "features": {
             "income": {
-                "title": "Multiple Incomes",
-                "desc": "Now you can add extra income sources like freelance work, sales, or dividends to your monthly total."
+                "title": "Overdue Tracking",
+                "desc": "Loans past their due date now show a red badge and border so you never miss a payment."
             },
             "loans": {
-                "title": "Personal Loans",
-                "desc": "Keep track of money you lend to friends or borrow from family. Simple and informal."
+                "title": "Payment Reminders",
+                "desc": "Get notified 3 days and 1 day before a loan is due—right in the app."
             },
             "ui": {
-                "title": "Visual Improvements",
-                "desc": "A refreshed look with better themes and smoother interactions."
+                "title": "Debt Projection",
+                "desc": "Use the new 'What If?' tool to see how extra payments can speed up your payoff."
             }
         }
     },

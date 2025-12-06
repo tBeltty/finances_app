@@ -457,20 +457,20 @@
     },
     "whatsNew": {
         "title": "Novedades en",
-        "subtitle": "Mira las nuevas funcionalidades que hemos agregado para ti.",
+        "subtitle": "¡Tu módulo de Préstamos acaba de mejorar!",
         "button": "¡Genial, vamos!",
         "features": {
             "income": {
-                "title": "Ingresos Múltiples",
-                "desc": "Ahora puedes agregar ingresos extra como freelance, ventas o dividendos a tu total mensual."
+                "title": "Seguimiento de Vencidos",
+                "desc": "Los préstamos pasados de fecha ahora muestran una insignia y borde rojo para que no olvides ningún pago."
             },
             "loans": {
-                "title": "Préstamos Personales",
-                "desc": "Gestiona el dinero que prestas a amigos o pides prestado a familiares. Simple e informal."
+                "title": "Recordatorios de Pago",
+                "desc": "Recibe notificaciones 3 días y 1 día antes del vencimiento—directamente en la app."
             },
             "ui": {
-                "title": "Mejoras Visuales",
-                "desc": "Un look renovado con mejores temas e interacciones más fluidas."
+                "title": "Proyección de Deuda",
+                "desc": "Usa la herramienta '¿Qué pasa si pago más?' para ver cómo pagos extra aceleran tu liquidación."
             }
         }
     },
