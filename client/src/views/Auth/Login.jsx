@@ -25,6 +25,23 @@ export default function Login() {
         }
     };
 
+    React.useEffect(() => {
+        const securityLogout = localStorage.getItem('security_logout');
+        if (securityLogout) {
+            import('sweetalert2').then((Swal) => {
+                Swal.default.fire({
+                    title: 'Sesión Cerrada',
+                    text: 'Por motivos de seguridad, tu sesión ha sido cerrada. Por favor, inicia sesión nuevamente.',
+                    icon: 'info',
+                    confirmButtonColor: '#3b82f6',
+                    background: '#1e293b',
+                    color: '#f8fafc'
+                });
+            });
+            localStorage.removeItem('security_logout');
+        }
+    }, []);
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-surface px-4">
             <div className="max-w-md w-full bg-surface-container backdrop-blur-xl p-8 rounded-2xl border border-outline shadow-2xl">

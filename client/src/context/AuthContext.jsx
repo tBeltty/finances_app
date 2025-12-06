@@ -18,6 +18,10 @@ export const AuthProvider = ({ children }) => {
                     const userDetails = await userRes.json();
                     setUser({ ...userDetails, token });
                 } else {
+                    const err = await userRes.json();
+                    if (err.code === 'SESSION_REVOKED') {
+                        localStorage.setItem('security_logout', 'true');
+                    }
                     // Token is invalid, clear it
                     localStorage.removeItem('token');
                     localStorage.removeItem('username');
@@ -71,12 +75,12 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (username, password, email) => {
+    const register = async (username, password, email, marketingConsent = false) => {
         try {
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, email }),
+                body: JSON.stringify({ username, password, email, marketingConsent }),
             });
 
             const data = await response.json();

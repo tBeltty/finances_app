@@ -184,6 +184,17 @@ export default function useFinances() {
                     fetch(`/api/expenses?month=${selectedMonth}`, { headers })
                 ]);
 
+                if (catRes.status === 401 || expRes.status === 401) {
+                    // Check if it's a revocation (we'd need to parse body, but 401 usually means logout)
+                    // Let's safe bet:
+                    const data = await (catRes.ok ? expRes : catRes).json();
+                    if (data.code === 'SESSION_REVOKED') {
+                        localStorage.setItem('security_logout', 'true');
+                        window.location.href = '/login';
+                        return;
+                    }
+                }
+
                 if (catRes.ok) {
                     const cats = await catRes.json();
                     setCategories(cats);

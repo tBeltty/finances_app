@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useUI } from '../../context/UIContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import NotificationCenter from '../../components/NotificationCenter';
 
 export default function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -54,6 +55,7 @@ export default function Navbar() {
                         <div className="text-secondary text-sm">
                             {t('nav.hello')} <span className="text-main font-medium">{user?.username}</span>
                         </div>
+                        <NotificationCenter />
                         <button
                             onClick={openSettings}
                             className="flex items-center gap-2 text-secondary hover:text-main transition-colors cursor-pointer mr-4"

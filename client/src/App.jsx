@@ -77,13 +77,16 @@ function App() {
         if (res.ok) {
           const data = await res.json();
           if (data.version !== APP_VERSION) {
-            console.log(`New version found: ${data.version}. Updating...`);
+            // Unregister SWs to ensure fresh load
             if ('serviceWorker' in navigator) {
               const registrations = await navigator.serviceWorker.getRegistrations();
               for (const registration of registrations) {
                 await registration.unregister();
               }
             }
+
+            // Reload to fetch new version (Server headers now prevent caching loop)
+            console.log('Reloading for update...');
             window.location.reload(true);
           }
         }

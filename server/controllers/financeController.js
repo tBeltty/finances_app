@@ -68,6 +68,17 @@ exports.createExpense = async (req, res) => {
     try {
         const { name, amount, type, categoryId, month, date, payWithSavings } = req.body;
 
+        // RESOURCE LIMIT: Max 2000 expenses per month per household
+        const expenseCount = await Expense.count({
+            where: {
+                householdId: req.householdId,
+                month
+            }
+        });
+        if (expenseCount >= 2000) {
+            return res.status(429).json({ message: 'Límite de gastos excedido para este mes (Max 2000).' });
+        }
+
         // Input validation
         const amountCheck = validateAmount(amount);
         if (!amountCheck.valid) {
@@ -186,6 +197,12 @@ exports.getCategories = async (req, res) => {
 exports.createCategory = async (req, res) => {
     try {
         const { name, color } = req.body;
+
+        // RESOURCE LIMIT: Max 50 categories per household
+        const categoryCount = await Category.count({ where: { householdId: req.householdId } });
+        if (categoryCount >= 50) {
+            return res.status(429).json({ message: 'Límite de categorías excedido (Max 50).' });
+        }
 
         // Validation
         const sanitizedName = sanitizeString(name, 50);
@@ -350,6 +367,27 @@ exports.createIncome = async (req, res) => {
     try {
         const { description, amount, date, type, category } = req.body;
 
+        // RESOURCE LIMIT: Max 100 incomes per month (approx)
+        // Since we don't strictly bind incomes to a "month" string field like expenses, we check creation in current window or just total?
+        // Let's check total for now or better, check arbitrary limit. A household shouldn't need > 5000 incomes ever.
+        // Let's do a monthly check based on the incoming date.
+        const incomeDate = new Date(date || new Date());
+        const startOfMonth = new Date(incomeDate.getFullYear(), incomeDate.getMonth(), 1);
+        const endOfMonth = new Date(incomeDate.getFullYear(), incomeDate.getMonth() + 1, 0);
+
+        const incomeCount = await Income.count({
+            where: {
+                householdId: req.householdId,
+                date: {
+                    [require('sequelize').Op.between]: [startOfMonth, endOfMonth]
+                }
+            }
+        });
+
+        if (incomeCount >= 100) {
+            return res.status(429).json({ message: 'Límite de ingresos excedido para este mes (Max 100).' });
+        }
+
         // Validation
         const amountCheck = validateAmount(amount);
         if (!amountCheck.valid) {
@@ -433,6 +471,18 @@ exports.getLoans = async (req, res) => {
 exports.createLoan = async (req, res) => {
     try {
         const { personName, type, amount, date, dueDate, notes, installments, interestRate, paymentFrequency } = req.body;
+
+        // RESOURCE LIMIT: Max 50 active loans
+        const loanCount = await Loan.count({
+            where: {
+                householdId: req.householdId,
+                status: 'active'
+            }
+        });
+
+        if (loanCount >= 50) {
+            return res.status(429).json({ message: 'Límite de préstamos activos excedido (Max 50).' });
+        }
 
         // Validation
         const amountCheck = validateAmount(amount);

@@ -460,8 +460,6 @@ function LoanModal({ onClose, onSave, type, initialData }) {
         notes: initialData?.notes || '',
         installments: initialData?.installments || 1,
         interestRate: initialData?.interestRate || 0,
-        installments: initialData?.installments || 1,
-        interestRate: initialData?.interestRate || 0,
         interestType: initialData?.interestType || user?.defaultInterestType || 'simple',
         paymentFrequency: initialData?.paymentFrequency || 'monthly'
     });

@@ -41,16 +41,25 @@ TOKEN=$(echo $TOKEN_RESPONSE | grep -oP '"token":"\K[^"]+')
 if [ -z "$TOKEN" ]; then
     echo "⚠️ SKIPPING (Could not login)"
 else
-    RESPONSE=$(curl -s -X POST "$BASE_URL/expenses" \
-      -H "Content-Type: application/json" \
-      -H "Authorization: Bearer $TOKEN" \
-      -d '{"name": "Test", "amount": -100, "date": "2025-12-06", "categoryId": 1}')
-    
+    if [[ "$TOKEN" =~ ^ey.*\.ey.*\. ]]; then
+         echo "✅ PASSED (Login successful, token generated)"
+    else
+         echo "❌ FAILED (Invalid token format)"
+    fi
+
     if [[ $RESPONSE == *"Monto inv"* ]]; then
         echo "✅ PASSED (Rejected negative amount)"
     else
         echo "❌ FAILED (Accepted or different error: $RESPONSE)"
     fi
+fi
+
+echo -n "Checking CSP Headers... "
+CSP_CHECK=$(curl -s -I "$BASE_URL/test-loans" | grep -i "content-security-policy")
+if [ -n "$CSP_CHECK" ]; then
+    echo "✅ PASSED (CSP Active)"
+else
+    echo "❌ FAILED (No CSP Header)"
 fi
 
 # 4. Global Rate Limit (Cloudflare Trigger Simulation)

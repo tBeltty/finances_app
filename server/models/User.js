@@ -24,6 +24,10 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    lastLogin: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
     emailVerified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
@@ -44,11 +48,19 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    tokenVersion: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
     isTwoFactorEnabled: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
     },
     hasCompletedOnboarding: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    marketingConsent: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
@@ -83,9 +95,15 @@ const User = sequelize.define('User', {
     defaultInterestType: {
         type: DataTypes.ENUM('simple', 'effective_annual'),
         defaultValue: 'simple'
+    },
+    role: {
+        type: DataTypes.ENUM('user', 'admin'),
+        defaultValue: 'user'
     }
 }, {
+    tableName: 'Users',
     timestamps: true,
+    paranoid: true // Enable Soft Deletes
 });
 
 module.exports = User;

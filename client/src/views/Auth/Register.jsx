@@ -11,6 +11,7 @@ export default function Register({ onSwitchToLogin }) {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [marketingConsent, setMarketingConsent] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [isValidatingEmail, setIsValidatingEmail] = useState(false);
     const { register, validateEmail } = useAuth();
@@ -51,7 +52,8 @@ export default function Register({ onSwitchToLogin }) {
         }
 
         setLoading(true);
-        const result = await register(username, password, email);
+        setLoading(true);
+        const result = await register(username, password, email, marketingConsent);
         if (result.success) {
             setSuccess(result.message || t('auth.accountCreated'));
             setTimeout(() => {
@@ -147,6 +149,19 @@ export default function Register({ onSwitchToLogin }) {
                             placeholder="••••••••"
                             required
                         />
+                    </div>
+
+                    <div className="flex items-center gap-2 px-1">
+                        <input
+                            type="checkbox"
+                            checked={marketingConsent}
+                            onChange={(e) => setMarketingConsent(e.target.checked)}
+                            className="w-4 h-4 text-success bg-surface-container border-slate-600 rounded focus:ring-success/50 focus:ring-2"
+                            id="marketingConsent"
+                        />
+                        <label htmlFor="marketingConsent" className="text-secondary text-xs">
+                            {t('auth.marketingConsent') || 'I want to receive news and updates'}
+                        </label>
                     </div>
 
                     <button

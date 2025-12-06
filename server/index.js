@@ -16,14 +16,29 @@ const app = express();
 
 // Security middleware
 app.use(helmet({
-    contentSecurityPolicy: false, // Disable CSP for now (SPA compatibility)
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            // IMPORTANT: If you add external scripts (e.g. Analytics, Stripe), add them here!
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            // data: required for 2FA QR codes and some images
+            imgSrc: ["'self'", "data:"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'", "data:"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+        },
+    },
     crossOriginEmbedderPolicy: false
 }));
 
 // CORS - Restrict to allowed origins
 const allowedOrigins = [
     'https://finances.tbelt.online',
+    'https://vano.tbelt.online', // Admin Dashboard
     'http://localhost:5173', // Dev frontend
+    'http://localhost:5174', // Dev Admin frontend
     'http://localhost:3002'  // Dev backend
 ];
 app.use(cors({
@@ -38,24 +53,13 @@ app.use(cors({
     credentials: true
 }));
 
+app.use(express.json());
+
 // Custom Security Middleware
 const sanitizer = require('./middleware/sanitizer');
 const globalLimiter = require('./middleware/globalRateLimiter');
 
 // Apply Global Rate Limiter (Auto-Cloudflare Trigger)
-app.use(globalLimiter);
-
-// Apply Global Input Sanitization (XSS Protection)
-app.use(sanitizer);
-
-// Body parser with size limit (prevent DoS)
-app.use(express.json({ limit: '10kb' }));
-
-// Test Route
-app.get('/api/test-loans', (req, res) => res.send('Test Loans Route Working'));
-
-// Loan Routes (Moved up for debugging)
-app.get('/api/loans', authMiddleware, householdMiddleware, financeController.getLoans);
 app.post('/api/loans', authMiddleware, householdMiddleware, financeController.createLoan);
 app.put('/api/loans/:id', authMiddleware, householdMiddleware, financeController.updateLoan);
 app.delete('/api/loans/:id', authMiddleware, householdMiddleware, financeController.deleteLoan);
@@ -70,6 +74,9 @@ const Savings = require('./models/Savings');
 const HouseholdInvite = require('./models/HouseholdInvite');
 const Income = require('./models/Income');
 const { Loan, LoanPayment } = require('./models/Loan');
+const AuditLog = require('./models/AuditLog');
+const Notification = require('./models/Notification');
+const Translation = require('./models/Translation');
 
 // User <-> Household
 User.belongsToMany(Household, { through: HouseholdMember, foreignKey: 'userId' });
@@ -97,9 +104,13 @@ HouseholdInvite.belongsTo(Household, { foreignKey: 'householdId' });
 Household.hasMany(Income, { foreignKey: 'householdId' });
 Income.belongsTo(Household, { foreignKey: 'householdId' });
 
-// Household <-> Loans
+// Loan <-> Household
 Household.hasMany(Loan, { foreignKey: 'householdId' });
 Loan.belongsTo(Household, { foreignKey: 'householdId' });
+
+// AuditLog Associations
+AuditLog.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(AuditLog, { foreignKey: 'userId' });
 
 // Auth Routes
 app.post('/api/auth/register', authController.register);
@@ -109,6 +120,13 @@ app.post('/api/auth/forgot-password', authController.forgotPassword);
 app.post('/api/auth/reset-password/:token', authController.resetPassword);
 app.post('/api/auth/resend-verification', authController.resendVerification);
 app.post('/api/auth/validate-email', authController.validateEmailEndpoint);
+
+const notificationRoutes = require('./routes/notificationRoutes');
+const translationRoutes = require('./routes/translationRoutes');
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/translations', translationRoutes);
+
+app.use(express.static(path.join(__dirname, '../dist')));
 
 // 2FA Routes
 app.post('/api/auth/2fa/enable', authMiddleware, authController.generate2FA);
@@ -157,6 +175,23 @@ app.get('/api/incomes', authMiddleware, householdMiddleware, financeController.g
 app.post('/api/incomes', authMiddleware, householdMiddleware, financeController.createIncome);
 app.put('/api/incomes/:id', authMiddleware, householdMiddleware, financeController.updateIncome);
 app.delete('/api/incomes/:id', authMiddleware, householdMiddleware, financeController.deleteIncome);
+
+// Admin Routes
+const adminController = require('./controllers/adminController');
+const adminMonitor = require('./controllers/adminMonitor');
+const adminMiddleware = require('./middleware/adminMiddleware');
+
+app.get('/api/admin/system-health', authMiddleware, adminMiddleware, adminMonitor.getSystemHealth);
+app.get('/api/admin/stats', authMiddleware, adminMiddleware, adminController.getStats);
+app.get('/api/admin/analytics', authMiddleware, adminMiddleware, adminController.getAnalytics);
+app.get('/api/admin/users', authMiddleware, adminMiddleware, adminController.getUsers);
+app.get('/api/admin/audit-logs', authMiddleware, adminMiddleware, adminController.getAuditLogs);
+app.get('/api/admin/users/:id', authMiddleware, adminMiddleware, adminController.getUserDetails);
+app.post('/api/admin/users/bulk-action', authMiddleware, adminMiddleware, adminController.bulkDelete);
+app.post('/api/admin/users/:id/restore', authMiddleware, adminMiddleware, adminController.restoreUser);
+app.put('/api/admin/users/:id/status', authMiddleware, adminMiddleware, adminController.updateUserStatus);
+app.put('/api/admin/users/:id/promote', authMiddleware, adminMiddleware, adminController.promoteUser);
+app.delete('/api/admin/users/:id', authMiddleware, adminMiddleware, adminController.deleteUser);
 
 
 

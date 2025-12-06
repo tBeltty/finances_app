@@ -14,6 +14,7 @@ dist/
 
 # Misc
 .DS_Store
+
 .env
 .env.local
 .env.development.local
@@ -35,9 +36,12 @@ postgres_data/
 *.dump
 
 # Scripts
-deploy_prod.sh
+
 explore_prod.sh
 inspect_prod.sh
 inspect_vite.sh
 *.log
 .secrets/
+
+
+docs/internal/

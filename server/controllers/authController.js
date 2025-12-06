@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const AuditLog = require('../models/AuditLog');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const otplib = require('otplib');
@@ -118,7 +119,8 @@ exports.register = async (req, res) => {
             emailVerified: false,
             language: language || 'en',
             theme: theme || 'cosmic',
-            mode: mode || 'dark'
+            mode: mode || 'dark',
+            marketingConsent: req.body.marketingConsent || false
         });
 
         // Create default Personal Household
@@ -252,6 +254,17 @@ exports.login = async (req, res) => {
         if (!user) {
             // Increment failed attempts even for non-existent users (prevents enumeration)
             incrementRateLimit(loginAttempts, identifier, rateLimitCheck.record, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_DURATION);
+
+            // AUDIT: Failed Login (User not found)
+            const ip = req.headers['cf-connecting-ip'] || req.ip;
+            await AuditLog.create({
+                userId: null,
+                action: 'LOGIN_FAIL',
+                ipAddress: ip,
+                details: { reason: 'User not found', identifier },
+                severity: 'WARNING'
+            }).catch(console.error);
+
             return res.status(400).json({ message: 'Credenciales inválidas' });
         }
 
@@ -263,6 +276,17 @@ exports.login = async (req, res) => {
         if (!isMatch) {
             // Increment failed attempts
             incrementRateLimit(loginAttempts, identifier, rateLimitCheck.record, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_DURATION);
+
+            // AUDIT: Failed Login (Bad Password)
+            const ip = req.headers['cf-connecting-ip'] || req.ip;
+            await AuditLog.create({
+                userId: user.id,
+                action: 'LOGIN_FAIL',
+                ipAddress: ip,
+                details: { reason: 'Invalid password' },
+                severity: 'WARNING'
+            }).catch(console.error);
+
             return res.status(400).json({ message: 'Credenciales inválidas' });
         }
 
@@ -277,11 +301,37 @@ exports.login = async (req, res) => {
 
             const isValid = otplib.authenticator.check(twoFactorToken, user.twoFactorSecret);
             if (!isValid) {
+                // AUDIT: Failed Login (Bad 2FA)
+                const ip = req.headers['cf-connecting-ip'] || req.ip;
+                await AuditLog.create({
+                    userId: user.id,
+                    action: 'LOGIN_FAIL',
+                    ipAddress: ip,
+                    details: { reason: 'Invalid 2FA' },
+                    severity: 'WARNING'
+                }).catch(console.error);
                 return res.status(400).json({ message: 'Código 2FA inválido' });
             }
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+        const token = jwt.sign(
+            { id: user.id, role: user.role, v: user.tokenVersion || 0 },
+            process.env.JWT_SECRET,
+            { expiresIn: '30d' }
+        );
+
+        user.lastLogin = new Date();
+        await user.save();
+
+        // AUDIT: Success Login
+        const ip = req.headers['cf-connecting-ip'] || req.ip;
+        await AuditLog.create({
+            userId: user.id,
+            action: 'LOGIN',
+            ipAddress: ip,
+            details: { method: user.isTwoFactorEnabled ? '2FA' : 'Standard' },
+            severity: 'INFO'
+        }).catch(console.error);
 
         res.json({
             token,
@@ -294,7 +344,8 @@ exports.login = async (req, res) => {
                 hasCompletedOnboarding: user.username === 'testuser2' ? false : user.hasCompletedOnboarding,
                 language: user.language,
                 theme: user.theme,
-                mode: user.mode
+                mode: user.mode,
+                isSuperAdmin: user.email === process.env.SUPER_ADMIN_EMAIL
             }
         });
     } catch (error) {
@@ -383,7 +434,18 @@ exports.resetPassword = async (req, res) => {
         user.password = await bcrypt.hash(password, 10);
         user.resetPasswordToken = null;
         user.resetPasswordExpires = null;
+        user.tokenVersion = (user.tokenVersion || 0) + 1;
         await user.save();
+
+        // AUDIT: Password Reset
+        const ip = req.headers['cf-connecting-ip'] || req.ip;
+        await AuditLog.create({
+            userId: user.id,
+            action: 'PASSWORD_RESET',
+            ipAddress: ip,
+            details: { method: 'Token' },
+            severity: 'CRITICAL'
+        }).catch(console.error);
 
         res.json({ message: 'Contraseña restablecida exitosamente' });
     } catch (error) {
@@ -447,7 +509,7 @@ exports.disable2FA = async (req, res) => {
 exports.getMe = async (req, res) => {
     try {
         const user = await User.findByPk(req.user.id, {
-            attributes: ['id', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'incomeFrequency', 'currency', 'language', 'theme', 'mode', 'logo', 'defaultInterestType'],
+            attributes: ['id', 'role', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'incomeFrequency', 'currency', 'language', 'theme', 'mode', 'logo', 'defaultInterestType'],
             include: [{
                 model: Household,
                 through: { attributes: ['role', 'isDefault'] }
@@ -456,7 +518,12 @@ exports.getMe = async (req, res) => {
         if (user && user.username === 'testuser2') {
             user.hasCompletedOnboarding = false;
         }
-        res.json(user);
+
+        // Convert to JSON to add virtual property
+        const userData = user.toJSON();
+        userData.isSuperAdmin = user.email === process.env.SUPER_ADMIN_EMAIL;
+
+        res.json(userData);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

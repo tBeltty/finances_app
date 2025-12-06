@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Default Theme (Cosmic - Dark Mode by default for Admin) */
+    --surface: 2 6 23;
+    /* Slate-950 */
+    --surface-container: 30 41 59;
+    /* Slate-800 */
+    --surface-container-high: 51 65 85;
+    /* Slate-700 */
+    --on-surface: 226 232 240;
+    /* Slate-200 */
+    --on-surface-variant: 148 163 184;
+    /* Slate-400 */
+    --primary: 99 102 241;
+    /* Indigo-500 */
+    --on-primary: 255 255 255;
+    --primary-container: 55 48 163;
+    /* Indigo-800 */
+    --on-primary-container: 224 231 255;
+    --outline: 51 65 85;
+    /* Slate-700 */
+    --success: 52 211 153;
+    /* Emerald-400 */
+    --error: 244 63 94;
+    /* Rose-500 */
+    --warning: 251 191 36;
+    /* Amber-400 */
+  }
+
+  body {
+    @apply bg-surface text-main antialiased;
+  }
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background-color: rgb(var(--surface-container) / 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgb(var(--outline) / 0.5);
+}
+
+.btn-primary {
+  @apply bg-primary text-on-primary px-4 py-2 rounded-lg hover:brightness-110 transition-all font-medium;
+}
+
+.btn-danger {
+  @apply bg-error/10 text-error border border-error/50 px-3 py-1 rounded hover:bg-error/20 transition-colors;
+}
+
+.table-header {
+  @apply text-left text-xs font-semibold text-secondary uppercase tracking-wider border-b border-outline pb-2;
+}
+
+.table-row {
+  @apply border-b border-outline/30 hover:bg-surface-container transition-colors;
+}

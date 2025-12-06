@@ -5,46 +5,72 @@ const { Op } = require('sequelize');
 
 exports.cleanupUnverifiedUsers = async () => {
     try {
-        console.log('Running daily cleanup of unverified users...');
-        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        console.log('Running daily cleanup...');
 
+        // 1. Unverified Users (24h)
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         const usersToDelete = await User.findAll({
             where: {
                 emailVerified: false,
                 createdAt: { [Op.lt]: twentyFourHoursAgo }
             }
         });
+        await hardDeleteUsers(usersToDelete, 'Unverified');
 
-        if (usersToDelete.length === 0) {
-            console.log('No unverified users to cleanup.');
-            return;
+        // 2. Soft Deleted Users (30 Days Retention)
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const expiredDeletedUsers = await User.findAll({
+            where: {
+                deletedAt: { [Op.lt]: thirtyDaysAgo }
+            },
+            paranoid: false // Find soft-deleted users
+        });
+
+        if (expiredDeletedUsers.length > 0) {
+            console.log(`Found ${expiredDeletedUsers.length} expired soft-deleted users. Purging...`);
+            await hardDeleteUsers(expiredDeletedUsers, 'Expired Soft-Delete');
         }
 
-        console.log(`Found ${usersToDelete.length} unverified users to clean up.`);
-
-        for (const user of usersToDelete) {
-            try {
-                // 1. Delete HouseholdMemberships of this user
-                await HouseholdMember.destroy({ where: { userId: user.id } });
-
-                // 2. Find Households owned by this user
-                const households = await Household.findAll({ where: { ownerId: user.id } });
-                for (const household of households) {
-                    // Delete members of this household
-                    await HouseholdMember.destroy({ where: { householdId: household.id } });
-                    // Delete the household
-                    await Household.destroy({ where: { id: household.id } });
-                }
-
-                // 3. Delete User
-                await User.destroy({ where: { id: user.id } });
-                console.log(`Cleaned up user ${user.id} (${user.username})`);
-            } catch (err) {
-                console.error(`Failed to delete user ${user.id}:`, err);
-            }
-        }
         console.log('Cleanup complete.');
     } catch (error) {
         console.error('Error during user cleanup:', error);
     }
 };
+
+async function hardDeleteUsers(users, reason) {
+    if (users.length === 0) return;
+
+    // Lazy load models to avoid circular deps if any
+    const Expense = require('../models/Finance').Expense;
+    const Category = require('../models/Finance').Category;
+    const Income = require('../models/Income'); // Ensure correct import path
+    const Loan = require('../models/Loan').Loan;
+    const Savings = require('../models/Savings');
+
+    for (const user of users) {
+        try {
+            // Delete HouseholdMemberships
+            await HouseholdMember.destroy({ where: { userId: user.id } });
+
+            // Find Households owned
+            const households = await Household.findAll({ where: { ownerId: user.id } });
+            const householdIds = households.map(h => h.id);
+
+            if (householdIds.length > 0) {
+                await Expense.destroy({ where: { householdId: householdIds } });
+                await Category.destroy({ where: { householdId: householdIds } });
+                await Savings.destroy({ where: { householdId: householdIds } });
+                await Income.destroy({ where: { householdId: householdIds } });
+                await Loan.destroy({ where: { householdId: householdIds } });
+                await HouseholdMember.destroy({ where: { householdId: householdIds } });
+                await Household.destroy({ where: { id: householdIds } });
+            }
+
+            // Hard Delete User
+            await User.destroy({ where: { id: user.id }, force: true });
+            console.log(`[${reason}] Perm-deleted user ${user.id} (${user.email})`);
+        } catch (err) {
+            console.error(`Failed to delete user ${user.id}:`, err);
+        }
+    }
+}
