@@ -55,10 +55,25 @@ pm2 restart finances-api && pm2 save
 sleep 3 && pm2 status finances-api && curl -s https://finances.tbelt.online/api/auth/me -H "Authorization: Bearer test"
 ```
 
-## Create GitHub Release (optional)
+### 8. Create GitHub Release (REQUIRED for major versions)
+For any version bump (especially major/minor like 1.5.0), create a proper GitHub Release:
 ```bash
-cd /root/.gemini/antigravity/scratch/finances_app && git tag -a v<version> -m "v<version>: <description>" && git push origin v<version>
+cd /root/.gemini/antigravity/scratch/finances_app && gh release create v<version> --title "v<version> - <Title>" --notes "## Features
+- Feature 1
+- Feature 2
+
+## Bug Fixes
+- Fix 1"
 ```
+This creates a release at https://github.com/tBeltty/finances_app/releases
+
+### 9. Update version constants (CRITICAL to avoid reload loop)
+**IMPORTANT**: Always update ALL version references:
+1. `client/package.json` → `"version": "<version>"`
+2. `client/public/version.json` → `{ "version": "<version>" }`
+3. `client/src/config.js` → `export const APP_VERSION = '<version>';`
+
+Mismatch between `config.js` and `version.json` causes infinite reload loops!
 
 ## Rollback
 If something goes wrong, restore from backup:
