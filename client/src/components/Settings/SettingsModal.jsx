@@ -394,7 +394,7 @@ export default function SettingsModal({
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-border overflow-x-auto overflow-y-hidden no-scrollbar px-2">
+                <div className="flex border-b border-border overflow-x-auto overflow-y-hidden no-scrollbar px-2 pb-0.5">
                     <button
                         onClick={() => setActiveTab('general')}
                         className={`flex-1 min-w-fit px-4 py-4 text-sm font-medium transition-colors flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'general'
