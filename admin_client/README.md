@@ -16,6 +16,21 @@ The administrative control panel for the tBelt Finances ecosystem.
 - **Architecture**: Component-Based with Separation of Concerns (View/Logic)
 - **Pattern**: Custom Hooks for Business Logic (e.g., `useAdminUsers`)
 
+## Project Structure
+```
+admin_client/
+├── src/
+│   ├── components/     # UI Components (Modals, Stats, Tables)
+│   ├── context/        # Global State (AuthContext)
+│   ├── hooks/          # Business Logic (Controllers)
+│   │   ├── useAdminStats.js
+│   │   ├── useAdminUsers.js
+│   │   └── useAuditLogs.js
+│   └── pages/          # View Layer (Dashboard.jsx)
+├── public/             # Static Assets
+└── vite.config.js      # Build Configuration
+```
+
 ## Development
 ```bash
 npm install
