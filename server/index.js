@@ -38,6 +38,16 @@ app.use(cors({
     credentials: true
 }));
 
+// Custom Security Middleware
+const sanitizer = require('./middleware/sanitizer');
+const globalLimiter = require('./middleware/globalRateLimiter');
+
+// Apply Global Rate Limiter (Auto-Cloudflare Trigger)
+app.use(globalLimiter);
+
+// Apply Global Input Sanitization (XSS Protection)
+app.use(sanitizer);
+
 // Body parser with size limit (prevent DoS)
 app.use(express.json({ limit: '10kb' }));
 
@@ -98,6 +108,7 @@ app.get('/api/auth/verify-email/:token', authController.verifyEmail);
 app.post('/api/auth/forgot-password', authController.forgotPassword);
 app.post('/api/auth/reset-password/:token', authController.resetPassword);
 app.post('/api/auth/resend-verification', authController.resendVerification);
+app.post('/api/auth/validate-email', authController.validateEmailEndpoint);
 
 // 2FA Routes
 app.post('/api/auth/2fa/enable', authMiddleware, authController.generate2FA);
@@ -167,12 +178,22 @@ app.get('/api/system/backup-status', (req, res) => {
     }
 });
 
-const PORT = 3002; // Hardcoded to avoid conflict with prod on 3001
+const PORT = process.env.PORT || 3001;
+const cronService = require('./services/cronService');
 
 sequelize.sync({ alter: true }).then(() => {
     console.log('Database connected!');
     console.log('Models synced!');
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
+
+        // Run cleanup on startup (optional, good for verifying it works)
+        cronService.cleanupUnverifiedUsers();
+
+        // Schedule cleanup every 24 hours
+        setInterval(() => {
+            cronService.cleanupUnverifiedUsers();
+        }, 24 * 60 * 60 * 1000);
     });
 }).catch(err => console.log(err));
+

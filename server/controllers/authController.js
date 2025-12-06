@@ -5,20 +5,13 @@ const otplib = require('otplib');
 const qrcode = require('qrcode');
 const crypto = require('crypto');
 const emailService = require('../services/emailService');
-const { sanitizeString, validatePassword, hashToken } = require('../utils/validators');
+const { sanitizeString, validatePassword, hashToken, validateEmail } = require('../utils/validators');
 
 const Household = require('../models/Household');
 const HouseholdMember = require('../models/HouseholdMember');
 
 // Increase window to allow for slight time drift (30s before/after)
 otplib.authenticator.options = { window: 1 };
-
-// Blocked email domains (disposable/test emails)
-const BLOCKED_DOMAINS = [
-    'test.com', 'example.com', 'mailinator.com', 'guerrillamail.com',
-    'tempmail.com', 'throwaway.email', '10minutemail.com', 'fakeinbox.com',
-    'trashmail.com', 'yopmail.com', 'getnada.com', 'temp-mail.org'
-];
 
 // ============ RATE LIMITING CONFIGURATION ============
 // In production, consider using Redis for distributed rate limiting
@@ -89,28 +82,12 @@ exports.register = async (req, res) => {
         attempts.count++;
         registrationAttempts.set(clientIP, attempts);
 
-        // Validate email is provided
-        if (!email) {
-            return res.status(400).json({ message: 'El email es obligatorio' });
+        // Validate email
+        const emailCheck = await validateEmail(email);
+        if (!emailCheck.valid) {
+            return res.status(400).json({ message: emailCheck.error });
         }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({ message: 'Formato de email inválido' });
-        }
-
-        // Block disposable/test email domains
-        const emailDomain = email.split('@')[1]?.toLowerCase();
-        if (BLOCKED_DOMAINS.includes(emailDomain)) {
-            return res.status(400).json({ message: 'Por favor usa un email real, no temporal.' });
-        }
-
-        // Block suspicious patterns (intruder_, qa_, test_, etc.)
-        const suspiciousPatterns = /^(intruder_|qa_|test_|spam_|bot_|fake_)/i;
-        if (suspiciousPatterns.test(email.split('@')[0])) {
-            return res.status(400).json({ message: 'Email no permitido.' });
-        }
+        email = emailCheck.value;
 
         const existingEmail = await User.findOne({ where: { email } });
         if (existingEmail) {
@@ -184,35 +161,63 @@ exports.resendVerification = async (req, res) => {
             return res.status(400).json({ message: 'Email requerido' });
         }
 
-        // Rate limiting by email (prevent spam)
-        const emailKey = email.toLowerCase().trim();
-        const now = Date.now();
-        const lastAttempt = emailActionAttempts.get(`resend:${emailKey}`);
-
-        if (lastAttempt && now - lastAttempt < EMAIL_ACTION_COOLDOWN) {
-            const remainingSec = Math.ceil((EMAIL_ACTION_COOLDOWN - (now - lastAttempt)) / 1000);
-            return res.status(429).json({ message: `Espera ${remainingSec} segundos antes de reenviar.` });
-        }
-
-        emailActionAttempts.set(`resend:${emailKey}`, now);
-
         const user = await User.findOne({ where: { email } });
-
-        // Always respond with success message to prevent email enumeration
-        if (!user || user.emailVerified) {
-            return res.json({ message: 'Si el email existe y no está verificado, recibirás un correo.' });
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        // Generate new token
+        if (user.emailVerified) {
+            return res.status(400).json({ message: 'El email ya está verificado' });
+        }
+
+        // Rate limit
+        const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+        const rateLimit = checkRateLimit(emailActionAttempts, email, 1, EMAIL_ACTION_COOLDOWN);
+        if (rateLimit.blocked) {
+            return res.status(429).json({ message: rateLimit.message });
+        }
+        // Assuming updateRateLimit is meant to be incrementRateLimit with the record from checkRateLimit
+        // Or a simpler map.set(key, now) if it's just a timestamp.
+        // Given the existing helpers, we'll use incrementRateLimit if it fits, otherwise a direct map.set
+        // The original code used emailActionAttempts.set(`resend:${emailKey}`, now);
+        // The provided change uses updateRateLimit(emailActionAttempts, email, 1); which is not defined.
+        // For faithfulness, I will assume a simple timestamp update as in the original, but for the new logic.
+        emailActionAttempts.set(email, Date.now());
+
+
         const emailVerificationToken = crypto.randomBytes(32).toString('hex');
         user.emailVerificationToken = emailVerificationToken;
         await user.save();
 
         await emailService.sendVerificationEmail(user, emailVerificationToken);
 
-        res.json({ message: 'Si el email existe y no está verificado, recibirás un correo.' });
+        res.json({ message: 'Email de verificación reenviado' });
     } catch (error) {
         res.status(500).json({ message: 'Error procesando solicitud' });
+    }
+};
+
+exports.validateEmailEndpoint = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ message: 'Email required' });
+
+        const check = await validateEmail(email);
+        if (!check.valid) {
+            return res.status(400).json({ valid: false, message: check.error });
+        }
+
+        // Also check if email exists in DB
+        const existingUser = await User.findOne({ where: { email: check.value } });
+        if (existingUser) {
+            return res.status(400).json({ valid: false, message: 'El email ya está registrado' });
+        }
+
+        res.json({ valid: true });
+    } catch (error) {
+        console.error('Email validation error:', error);
+        // Return valid true on error to avoid blocking user if DNS fails
+        res.json({ valid: true });
     }
 };
 
@@ -344,7 +349,8 @@ exports.forgotPassword = async (req, res) => {
         }
 
         const resetToken = crypto.randomBytes(32).toString('hex');
-        user.resetPasswordToken = resetToken;
+        // Store hashed version in DB
+        user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
         await user.save();
 
@@ -361,9 +367,11 @@ exports.resetPassword = async (req, res) => {
         const { token } = req.params;
         const { password } = req.body;
 
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
         const user = await User.findOne({
             where: {
-                resetPasswordToken: token,
+                resetPasswordToken: hashedToken,
                 resetPasswordExpires: { [require('sequelize').Op.gt]: Date.now() }
             }
         });

@@ -11,11 +11,37 @@ export default function Register({ onSwitchToLogin }) {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
-    const { register } = useAuth();
+    const [emailError, setEmailError] = useState('');
+    const [isValidatingEmail, setIsValidatingEmail] = useState(false);
+    const { register, validateEmail } = useAuth();
     const { t } = useTranslation();
+
+    const handleEmailBlur = async () => {
+        if (!email) {
+            setEmailError('');
+            return;
+        }
+        // Basic regex check first to avoid API call if obviously invalid
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setEmailError('Formato de email inválido');
+            return;
+        }
+
+        setIsValidatingEmail(true);
+        const result = await validateEmail(email);
+        if (!result.valid) {
+            setEmailError(result.message);
+        } else {
+            setEmailError('');
+        }
+        setIsValidatingEmail(false);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (emailError) return;
+
         setError('');
         setSuccess('');
 
@@ -75,14 +101,28 @@ export default function Register({ onSwitchToLogin }) {
 
                     <div>
                         <label className="block text-xs font-bold text-secondary uppercase tracking-wider mb-1.5">{t('auth.email')}</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-surface-container border border-slate-600 rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-success/50 focus:border-success transition-all"
-                            placeholder="tu@email.com"
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => {
+                                    setEmail(e.target.value);
+                                    if (emailError) setEmailError('');
+                                }}
+                                onBlur={handleEmailBlur}
+                                className={`w-full bg-surface-container border ${emailError ? 'border-error focus:border-error focus:ring-error/50' : 'border-slate-600 focus:border-success focus:ring-success/50'} rounded-xl px-4 py-3 text-main placeholder:text-secondary focus:outline-none focus:ring-2 transition-all`}
+                                placeholder="tu@email.com"
+                                required
+                            />
+                            {isValidatingEmail && (
+                                <div className="absolute right-3 top-3.5">
+                                    <Loader2 className="w-5 h-5 animate-spin text-secondary" />
+                                </div>
+                            )}
+                        </div>
+                        {emailError && (
+                            <p className="text-error text-xs mt-1 ml-1">{emailError}</p>
+                        )}
                     </div>
 
                     <div>
@@ -111,7 +151,7 @@ export default function Register({ onSwitchToLogin }) {
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={loading || isValidatingEmail || !!emailError}
                         className="w-full bg-success hover:opacity-80 text-main font-bold py-3 rounded-xl shadow-lg shadow-success/20 hover:shadow-success/40 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                     >
                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>{t('auth.register')} <UserPlus className="w-5 h-5" /></>}

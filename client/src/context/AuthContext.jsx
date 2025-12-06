@@ -111,6 +111,21 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const validateEmail = async (email) => {
+        try {
+            const response = await fetch('/api/auth/validate-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const data = await response.json();
+            return { valid: data.valid, message: data.message };
+        } catch (error) {
+            console.error('Validation error:', error);
+            return { valid: true }; // Fail open
+        }
+    };
+
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
@@ -118,7 +133,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading, refreshUser, updateTheme }}>
+        <AuthContext.Provider value={{ user, login, register, logout, loading, refreshUser, updateTheme, validateEmail }}>
             {children}
         </AuthContext.Provider>
     );

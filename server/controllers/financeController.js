@@ -78,6 +78,14 @@ exports.createExpense = async (req, res) => {
         if (!sanitizedName) {
             return res.status(400).json({ message: 'Name is required' });
         }
+        if (!date || !amount || !categoryId) { // Changed categoryName to categoryId as per existing code
+            return res.status(400).json({ message: 'Missing fields' });
+        }
+
+        const numAmount = parseFloat(amount);
+        if (isNaN(numAmount) || numAmount <= 0 || numAmount > 999999999) {
+            return res.status(400).json({ message: 'Monto inválido' });
+        }
 
         const expense = await Expense.create({
             name: sanitizedName,
