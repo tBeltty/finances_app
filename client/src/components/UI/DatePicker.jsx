@@ -52,7 +52,9 @@ export default function DatePicker({ value, onChange, className = '' }) {
     const formatDate = (dateStr) => {
         if (!dateStr) return t('components.selectDate');
         const [y, m, d] = dateStr.split('-');
-        return new Date(y, m - 1, d).toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric' });
+        // Format as DD/MM/YY
+        const year = y.slice(-2);
+        return `${d}/${m}/${year}`;
     };
 
     const monthName = viewDate.toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' });
@@ -70,20 +72,20 @@ export default function DatePicker({ value, onChange, className = '' }) {
             </div>
 
             {isOpen && (
-                <div className="absolute top-full left-0 mt-2 w-72 bg-surface-container border border-outline rounded-xl shadow-2xl z-50 p-4">
+                <div className="absolute top-full left-0 mt-2 w-72 bg-[#1a1a2e]/95 backdrop-blur-xl border border-outline/50 rounded-xl shadow-2xl z-50 p-4">
                     <div className="flex items-center justify-between mb-4">
-                        <button onClick={handlePrevMonth} className="p-1 text-secondary hover:text-main hover:bg-surface-container rounded">
+                        <button onClick={handlePrevMonth} className="p-1 text-white/60 hover:text-white hover:bg-white/10 rounded">
                             <ChevronLeft className="h-5 w-5" />
                         </button>
-                        <span className="text-main font-bold capitalize">{monthName}</span>
-                        <button onClick={handleNextMonth} className="p-1 text-secondary hover:text-main hover:bg-surface-container rounded">
+                        <span className="text-white font-bold capitalize">{monthName}</span>
+                        <button onClick={handleNextMonth} className="p-1 text-white/60 hover:text-white hover:bg-white/10 rounded">
                             <ChevronRight className="h-5 w-5" />
                         </button>
                     </div>
 
                     <div className="grid grid-cols-7 gap-1 mb-2 text-center">
                         {(t('common.daysShort', { returnObjects: true }) || []).map(d => (
-                            <div key={d} className="text-xs font-medium text-slate-500">{d}</div>
+                            <div key={d} className="text-xs font-medium text-white/50">{d}</div>
                         ))}
                     </div>
 
@@ -102,8 +104,8 @@ export default function DatePicker({ value, onChange, className = '' }) {
                                     onClick={() => handleDayClick(day)}
                                     className={`
                                         h-8 w-8 rounded-lg text-sm font-medium flex items-center justify-center transition-colors
-                                        ${isSelected ? 'bg-primary text-main' : 'text-main hover:bg-surface-container'}
-                                        ${isToday && !isSelected ? 'border border-primary/50 text-primary' : ''}
+                                        ${isSelected ? 'bg-primary text-white' : 'text-white/90 hover:bg-white/10'}
+                                        ${isToday && !isSelected ? 'border border-primary text-primary' : ''}
                                     `}
                                 >
                                     {day}
