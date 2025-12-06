@@ -1,16 +1,27 @@
-# React + Vite
+# tBelt Admin Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The administrative control panel for the tBelt Finances ecosystem.
 
-Currently, two official plugins are available:
+## Features
+- **User Management**: View, promote, and delete users.
+- **Analytics**: Real-time stats on users, loans, and system usage.
+- **Security Logs**: Audit trail of all critical actions (login, delete, promote).
+- **Localization Center**: Manage EN/ES translations dynamically (Database + File overrides).
+- **System Hub**: Monitor server health and send global broadcasts.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
+- **Framework**: React 19 + Vite
+- **Styling**: TailwindCSS v4 + Glassmorphism
+- **State**: React Context (Auth)
+- **Architecture**: MVC-style (Hooks as Controllers)
 
-## React Compiler
+## Development
+```bash
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Release Protocol
+- Versioning is independent of the main `finances-client`.
+- Tags: `admin-vX.Y.Z`
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

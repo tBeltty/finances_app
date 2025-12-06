@@ -107,22 +107,29 @@ FRONTEND_URL=http://localhost:5173
 
 ```
 .
-├── client/                 # Frontend (React + Vite)
-│   ├── public/             # Static assets (PWA icons, themes)
+├── client/                 # Finances App (End User)
+│   ├── public/             # Static assets
 │   ├── src/
 │   │   ├── components/     # UI Components
-│   │   ├── context/        # Global State (Auth, Theme)
+│   │   ├── context/        # Global State
 │   │   ├── hooks/          # Custom Hooks
-│   │   ├── locales/        # i18n translations (en, es)
-│   │   └── views/          # Page Views
-│   └── tailwind.config.js  # TailwindCSS Configuration
-├── server/                 # Backend (Node.js + Express)
+│   │   ├── locales/        # i18n translations
+│   │   └── views/          # Pages (Dashboard, Settings, etc.)
+│   └── vite.config.js
+├── admin_client/           # Admin Dashboard (Project Vano)
+│   ├── src/
+│   │   ├── components/     # Admin Details, Stats, Modals
+│   │   ├── hooks/          # Logic Controllers (MVC)
+│   │   └── pages/          # Dashboard View
+│   └── vite.config.js
+├── server/                 # Shared Backend
 │   ├── controllers/        # API Logic
-│   ├── middleware/         # Auth & Validation
-│   ├── models/             # Sequelize Models
-│   └── services/           # External Services
-├── setup_wizard.cjs        # Interactive Setup Script
-└── package.json            # Monorepo Orchestration
+│   ├── middleware/         # Security & Auth
+│   ├── models/             # Database Schema
+│   └── services/           # Email, Jobs
+├── scripts/                # Utility Scripts (Backup, Broadcast)
+├── deploy_prod.sh          # Deployment Script
+└── package.json            # Monorepo Root
 ```
 
 ## Version History

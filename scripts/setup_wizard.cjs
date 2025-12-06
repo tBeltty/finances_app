@@ -163,6 +163,10 @@ FRONTEND_URL=${frontendUrl}
             console.log(t('installingClient'));
             execSync('cd client && npm install', { stdio: 'inherit' });
 
+            // Install admin_client deps
+            console.log("   - Admin Client (Dashboard)...");
+            execSync('cd admin_client && npm install', { stdio: 'inherit' });
+
             console.log(t('depsInstalled'));
         } catch (error) {
             console.error(t('depsError'), error.message);

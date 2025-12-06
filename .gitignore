@@ -37,9 +37,9 @@ postgres_data/
 
 # Scripts
 
-explore_prod.sh
-inspect_prod.sh
-inspect_vite.sh
+deploy_prod.sh
+verify_security.sh
+scripts/backup.sh
 *.log
 .secrets/
 
