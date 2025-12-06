@@ -5,9 +5,10 @@
   "author": "tBelt",
   "scripts": {
     "install:all": "npm install && cd client && npm install && cd ../server && npm install",
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:admin\"",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
+    "dev:admin": "cd admin_client && npm run dev",
     "build": "cd client && npm run build",
     "start": "cd server && npm start"
   },

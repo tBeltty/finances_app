@@ -26,6 +26,7 @@ const translations = {
         appPort: "App Port (default: 3001): ",
         jwtSecret: "JWT Secret (leave empty to generate random): ",
         frontendUrl: "Frontend URL (e.g., https://finances.tbelt.online): ",
+        adminUrl: "Admin URL (e.g., https://vano.tbelt.online): ",
         emailConfig: "\n--- Email Configuration (Resend) ---",
         resendApiKey: "Resend API Key (re_...): ",
         fromEmail: "From Email (e.g., noreply@finances.tbelt.online): ",
@@ -47,7 +48,7 @@ const translations = {
         userCreated: "[✓] User created successfully!",
         userError: "Error creating user:",
         dbError: "[X] Database error:",
-        complete: "\nSetup complete! You can now run 'npm run dev' or 'npm start'."
+        complete: "\nSetup complete! Run 'npm run dev' to start Client, Server, and Admin Dashboard."
     },
     es: {
         title: "   Finances App - Asistente de Configuración",
@@ -61,6 +62,7 @@ const translations = {
         appPort: "Puerto de la App (defecto: 3001): ",
         jwtSecret: "Secreto JWT (dejar vacío para generar aleatorio): ",
         frontendUrl: "URL del Frontend (ej., https://finances.tbelt.online): ",
+        adminUrl: "URL del Admin (ej., https://vano.tbelt.online): ",
         emailConfig: "\n--- Configuración de Email (Resend) ---",
         resendApiKey: "API Key de Resend (re_...): ",
         fromEmail: "Email Remitente (ej., noreply@finances.tbelt.online): ",
@@ -82,7 +84,7 @@ const translations = {
         userCreated: "[✓] Usuario creado exitosamente!",
         userError: "Error creando usuario:",
         dbError: "[X] Error de base de datos:",
-        complete: "\n¡Configuración completa! Ahora puedes ejecutar 'npm run dev' o 'npm start'."
+        complete: "\n¡Configuración completa! Ejecuta 'npm run dev' para iniciar Cliente, Servidor y Admin Dashboard."
     }
 };
 
@@ -112,6 +114,7 @@ async function main() {
     const port = await question(t('appPort')) || "3001";
     const jwtSecret = await question(t('jwtSecret')) || crypto.randomBytes(32).toString('hex');
     const frontendUrl = await question(t('frontendUrl'));
+    const adminUrl = await question(t('adminUrl'));
 
     // 3. Email Configuration (Resend)
     console.log(t('emailConfig'));
@@ -129,6 +132,7 @@ JWT_SECRET=${jwtSecret}
 RESEND_API_KEY=${resendApiKey}
 FROM_EMAIL=${fromEmail}
 FRONTEND_URL=${frontendUrl}
+ADMIN_URL=${adminUrl}
 `;
 
     const envPath = path.join(__dirname, 'server', '.env');
@@ -184,7 +188,8 @@ FRONTEND_URL=${frontendUrl}
             twoFactorSecret: { type: DataTypes.STRING, allowNull: true },
             isTwoFactorEnabled: { type: DataTypes.BOOLEAN, defaultValue: false },
             hasCompletedOnboarding: { type: DataTypes.BOOLEAN, defaultValue: false },
-            language: { type: DataTypes.STRING, defaultValue: 'en' }
+            language: { type: DataTypes.STRING, defaultValue: 'en' },
+            role: { type: DataTypes.ENUM('user', 'admin'), defaultValue: 'user' }
         });
 
         // Also define Expense and Category to ensure tables exist
@@ -228,7 +233,8 @@ FRONTEND_URL=${frontendUrl}
                     emailVerified: true, // Auto-verify admin created via wizard
                     emailVerificationToken: null,
                     hasCompletedOnboarding: false,
-                    language: lang // Set language based on wizard selection
+                    language: lang, // Set language based on wizard selection
+                    role: 'admin' // Explicitly make this user an admin
                 });
                 console.log(`${t('userCreated').replace('User', username)}`);
             } catch (error) {
