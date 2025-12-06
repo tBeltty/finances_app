@@ -844,24 +844,38 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                 // Amortization calculation
                                 const calculateAmortization = () => {
                                     const balance = parseCurrency(formData.remainingBalance);
-                                    const payment = parseCurrency(formData.monthlyPayment);
+                                    const totalPayment = parseCurrency(formData.monthlyPayment);
+                                    const extraCosts = parseCurrency(formData.additionalCosts);
                                     const eaRate = parseFloat(formData.interestRate) || 0;
 
-                                    if (balance <= 0 || payment <= 0 || eaRate <= 0) return null;
+                                    // Subtract extra costs (insurance, etc.) from total payment
+                                    // to get effective payment towards principal + interest
+                                    const effectivePayment = totalPayment - extraCosts;
+
+                                    if (balance <= 0 || effectivePayment <= 0 || eaRate <= 0) return null;
 
                                     // Convert EA to monthly rate: r = (1 + EA)^(1/12) - 1
                                     const monthlyRate = Math.pow(1 + (eaRate / 100), 1 / 12) - 1;
 
                                     // Number of payments: n = -log(1 - (P * r / PMT)) / log(1 + r)
-                                    // Check if payment covers at least the interest
+                                    // Check if effective payment covers at least the interest
                                     const interestOnly = balance * monthlyRate;
-                                    if (payment <= interestOnly) return { error: 'paymentTooLow' };
+                                    if (effectivePayment <= interestOnly) return { error: 'paymentTooLow' };
 
-                                    const n = Math.ceil(-Math.log(1 - (balance * monthlyRate / payment)) / Math.log(1 + monthlyRate));
-                                    const totalToPay = n * payment;
-                                    const totalInterest = totalToPay - balance;
+                                    const n = Math.ceil(-Math.log(1 - (balance * monthlyRate / effectivePayment)) / Math.log(1 + monthlyRate));
+                                    const totalPrincipalInterest = n * effectivePayment;
+                                    const totalExtraCosts = n * extraCosts;
+                                    const totalToPay = n * totalPayment; // Total using full payment
+                                    const totalInterest = totalPrincipalInterest - balance;
 
-                                    return { installments: n, totalToPay, totalInterest, monthlyRate: monthlyRate * 100 };
+                                    return {
+                                        installments: n,
+                                        totalToPay,
+                                        totalInterest,
+                                        totalExtraCosts,
+                                        effectivePayment,
+                                        monthlyRate: monthlyRate * 100
+                                    };
                                 };
 
                                 const calc = calculateAmortization();
@@ -958,47 +972,41 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                         })()}
 
                                         {/* Calculated Summary */}
-                                        {calc && !calc.error && (() => {
-                                            const additionalCostsPerMonth = parseCurrency(formData.additionalCosts);
-                                            const totalAdditionalCosts = additionalCostsPerMonth * calc.installments;
-                                            const grandTotal = calc.totalToPay + totalAdditionalCosts;
-
-                                            return (
-                                                <div className="mt-3 p-3 bg-primary/5 border border-primary/20 rounded-xl space-y-2">
-                                                    <h4 className="text-xs font-bold text-primary uppercase">{t('loans.bankCredit.calculated')}</h4>
-                                                    <div className="space-y-1.5 text-xs">
-                                                        <div className="flex justify-between">
-                                                            <span className="text-secondary">{t('loans.bankCredit.installmentsLeft')}</span>
-                                                            <span className="text-main font-medium">{calc.installments} {t('loans.bankCredit.months')}</span>
-                                                        </div>
-                                                        <div className="flex justify-between">
-                                                            <span className="text-secondary">{t('loans.bankCredit.totalInterest')}</span>
-                                                            <span className="text-warning font-medium">
-                                                                {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(calc.totalInterest)}
-                                                            </span>
-                                                        </div>
-                                                        {additionalCostsPerMonth > 0 && (
-                                                            <div className="flex justify-between">
-                                                                <span className="text-secondary">{t('loans.bankCredit.totalAdditionalCosts')}</span>
-                                                                <span className="text-warning font-medium">
-                                                                    {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(totalAdditionalCosts)}
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                        <div className="flex justify-between pt-1.5 border-t border-outline/30">
-                                                            <span className="text-main font-bold">{t('loans.bankCredit.grandTotal')}</span>
-                                                            <span className="text-main font-bold">
-                                                                {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(grandTotal)}
-                                                            </span>
-                                                        </div>
+                                        {calc && !calc.error && (
+                                            <div className="mt-3 p-3 bg-primary/5 border border-primary/20 rounded-xl space-y-2">
+                                                <h4 className="text-xs font-bold text-primary uppercase">{t('loans.bankCredit.calculated')}</h4>
+                                                <div className="space-y-1.5 text-xs">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-secondary">{t('loans.bankCredit.installmentsLeft')}</span>
+                                                        <span className="text-main font-medium">{calc.installments} {t('loans.bankCredit.months')}</span>
                                                     </div>
-                                                    {/* Disclaimer */}
-                                                    <p className="text-[10px] text-secondary/70 mt-2 italic">
-                                                        {t('loans.bankCredit.disclaimer')}
-                                                    </p>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-secondary">{t('loans.bankCredit.totalInterest')}</span>
+                                                        <span className="text-warning font-medium">
+                                                            {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(calc.totalInterest)}
+                                                        </span>
+                                                    </div>
+                                                    {calc.totalExtraCosts > 0 && (
+                                                        <div className="flex justify-between">
+                                                            <span className="text-secondary">{t('loans.bankCredit.totalAdditionalCosts')}</span>
+                                                            <span className="text-warning font-medium">
+                                                                {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(calc.totalExtraCosts)}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex justify-between pt-1.5 border-t border-outline/30">
+                                                        <span className="text-main font-bold">{t('loans.bankCredit.grandTotal')}</span>
+                                                        <span className="text-main font-bold">
+                                                            {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(calc.totalToPay)}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            );
-                                        })()}
+                                                {/* Disclaimer */}
+                                                <p className="text-[10px] text-secondary/70 mt-2 italic">
+                                                    {t('loans.bankCredit.disclaimer')}
+                                                </p>
+                                            </div>
+                                        )}
 
                                         {/* Error: Payment too low */}
                                         {calc && calc.error === 'paymentTooLow' && (
