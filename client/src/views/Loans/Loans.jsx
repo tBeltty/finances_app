@@ -532,6 +532,7 @@ function LoanModal({ onClose, onSave, type, initialData }) {
         // Bank Credit fields
         isBankCredit: initialData?.isBankCredit || false,
         monthlyPayment: initialData?.monthlyPayment || '',
+        additionalCosts: initialData?.additionalCosts || '',
         monthlyInsurance: initialData?.monthlyInsurance || 0,
         monthlyCommission: initialData?.monthlyCommission || 0,
         lateInterestRate: initialData?.lateInterestRate || 0,
@@ -884,50 +885,77 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                         </div>
 
                                         {/* Row 2: EA Rate (uses existing interestRate field) */}
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.eaRate')}</label>
-                                            <div className="relative">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.eaRate')}</label>
+                                                <div className="relative">
+                                                    <input
+                                                        type="number"
+                                                        value={formData.interestRate}
+                                                        onChange={(e) => setFormData({ ...formData, interestRate: e.target.value })}
+                                                        placeholder="20"
+                                                        className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 pr-16 text-sm text-main focus:border-primary focus:outline-none"
+                                                        min="0"
+                                                        step="0.01"
+                                                    />
+                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary text-xs">% E.A.</span>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.additionalCosts')}</label>
                                                 <input
-                                                    type="number"
-                                                    value={formData.interestRate}
-                                                    onChange={(e) => setFormData({ ...formData, interestRate: e.target.value })}
-                                                    placeholder="20"
-                                                    className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 pr-10 text-sm text-main focus:border-primary focus:outline-none"
-                                                    min="0"
-                                                    step="0.01"
+                                                    type="text"
+                                                    inputMode="decimal"
+                                                    value={formData.additionalCosts || ''}
+                                                    onChange={(e) => setFormData({ ...formData, additionalCosts: e.target.value })}
+                                                    placeholder="200,000"
+                                                    className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 text-sm text-main focus:border-primary focus:outline-none"
                                                 />
-                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary text-sm">% E.A.</span>
                                             </div>
                                         </div>
 
                                         {/* Calculated Summary */}
-                                        {calc && !calc.error && (
-                                            <div className="mt-3 p-3 bg-primary/5 border border-primary/20 rounded-xl space-y-2">
-                                                <h4 className="text-xs font-bold text-primary uppercase">{t('loans.bankCredit.calculated')}</h4>
-                                                <div className="space-y-1.5 text-xs">
-                                                    <div className="flex justify-between">
-                                                        <span className="text-secondary">{t('loans.bankCredit.installmentsLeft')}</span>
-                                                        <span className="text-main font-medium">{calc.installments} {t('loans.bankCredit.months')}</span>
+                                        {calc && !calc.error && (() => {
+                                            const additionalCostsPerMonth = parseFloat(formData.additionalCosts) || 0;
+                                            const totalAdditionalCosts = additionalCostsPerMonth * calc.installments;
+                                            const grandTotal = calc.totalToPay + totalAdditionalCosts;
+
+                                            return (
+                                                <div className="mt-3 p-3 bg-primary/5 border border-primary/20 rounded-xl space-y-2">
+                                                    <h4 className="text-xs font-bold text-primary uppercase">{t('loans.bankCredit.calculated')}</h4>
+                                                    <div className="space-y-1.5 text-xs">
+                                                        <div className="flex justify-between">
+                                                            <span className="text-secondary">{t('loans.bankCredit.installmentsLeft')}</span>
+                                                            <span className="text-main font-medium">{calc.installments} {t('loans.bankCredit.months')}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-secondary">{t('loans.bankCredit.totalInterest')}</span>
+                                                            <span className="text-warning font-medium">
+                                                                {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(calc.totalInterest)}
+                                                            </span>
+                                                        </div>
+                                                        {additionalCostsPerMonth > 0 && (
+                                                            <div className="flex justify-between">
+                                                                <span className="text-secondary">{t('loans.bankCredit.totalAdditionalCosts')}</span>
+                                                                <span className="text-warning font-medium">
+                                                                    {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(totalAdditionalCosts)}
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        <div className="flex justify-between pt-1.5 border-t border-outline/30">
+                                                            <span className="text-main font-bold">{t('loans.bankCredit.grandTotal')}</span>
+                                                            <span className="text-main font-bold">
+                                                                {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(grandTotal)}
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-secondary">{t('loans.bankCredit.totalToPay')}</span>
-                                                        <span className="text-main font-medium">
-                                                            {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(calc.totalToPay)}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex justify-between">
-                                                        <span className="text-secondary">{t('loans.bankCredit.totalInterest')}</span>
-                                                        <span className="text-warning font-medium">
-                                                            {new Intl.NumberFormat(locales[curr] || 'en-US', { style: 'currency', currency: curr, maximumFractionDigits: 0 }).format(calc.totalInterest)}
-                                                        </span>
-                                                    </div>
+                                                    {/* Disclaimer */}
+                                                    <p className="text-[10px] text-secondary/70 mt-2 italic">
+                                                        {t('loans.bankCredit.disclaimer')}
+                                                    </p>
                                                 </div>
-                                                {/* Disclaimer */}
-                                                <p className="text-[10px] text-secondary/70 mt-2 italic">
-                                                    {t('loans.bankCredit.disclaimer')}
-                                                </p>
-                                            </div>
-                                        )}
+                                            );
+                                        })()}
 
                                         {/* Error: Payment too low */}
                                         {calc && calc.error === 'paymentTooLow' && (
