@@ -12,13 +12,61 @@ const HouseholdMember = require('../models/HouseholdMember');
 // Increase window to allow for slight time drift (30s before/after)
 otplib.authenticator.options = { window: 1 };
 
+// Blocked email domains (disposable/test emails)
+const BLOCKED_DOMAINS = [
+    'test.com', 'example.com', 'mailinator.com', 'guerrillamail.com',
+    'tempmail.com', 'throwaway.email', '10minutemail.com', 'fakeinbox.com',
+    'trashmail.com', 'yopmail.com', 'getnada.com', 'temp-mail.org'
+];
+
+// Rate limiting map (in production, use Redis)
+const registrationAttempts = new Map();
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+const MAX_ATTEMPTS_PER_IP = 5;
+
 exports.register = async (req, res) => {
     try {
         const { username, email, password, language, theme, mode } = req.body;
 
+        // Rate limiting by IP
+        const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+        const now = Date.now();
+        const attempts = registrationAttempts.get(clientIP) || { count: 0, firstAttempt: now };
+
+        if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW) {
+            // Reset window
+            attempts.count = 0;
+            attempts.firstAttempt = now;
+        }
+
+        if (attempts.count >= MAX_ATTEMPTS_PER_IP) {
+            return res.status(429).json({ message: 'Demasiados intentos. Intenta más tarde.' });
+        }
+
+        attempts.count++;
+        registrationAttempts.set(clientIP, attempts);
+
         // Validate email is provided
         if (!email) {
             return res.status(400).json({ message: 'El email es obligatorio' });
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Formato de email inválido' });
+        }
+
+        // Block disposable/test email domains
+        const emailDomain = email.split('@')[1]?.toLowerCase();
+        if (BLOCKED_DOMAINS.includes(emailDomain)) {
+            return res.status(400).json({ message: 'Por favor usa un email real, no temporal.' });
+        }
+
+        // Block suspicious patterns (intruder_, qa_, test_, etc.)
+        const suspiciousPatterns = /^(intruder_|qa_|test_|spam_|bot_|fake_)/i;
+        if (suspiciousPatterns.test(email.split('@')[0])) {
+            return res.status(400).json({ message: 'Email no permitido.' });
         }
 
         const existingEmail = await User.findOne({ where: { email } });
