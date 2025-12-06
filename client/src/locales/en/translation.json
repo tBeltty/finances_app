@@ -440,10 +440,17 @@
         "bankCredit": {
             "title": "Bank Credit",
             "desc": "Enable additional fields for bank loans (insurance, commissions)",
+            "simpleDesc": "Enter your monthly payment and remaining balance to calculate the rest.",
+            "monthlyPayment": "Monthly Payment",
+            "monthlyPaymentPlaceholder": "e.g. 1,957,868",
+            "remainingBalance": "Remaining Balance",
+            "remainingBalancePlaceholder": "e.g. 65,022,803",
+            "calculated": "Calculated Summary",
+            "installmentsLeft": "Installments Left",
+            "totalToPay": "Total to Pay",
             "monthlyInsurance": "Monthly Insurance",
             "monthlyCommission": "Monthly Commission",
-            "currentInstallment": "Current Installment",
-            "remainingBalance": "Remaining Balance"
+            "currentInstallment": "Current Installment"
         },
         "projection": {
             "title": "Debt Projection",

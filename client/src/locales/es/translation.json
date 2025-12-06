@@ -441,10 +441,17 @@
         "bankCredit": {
             "title": "Crédito Bancario",
             "desc": "Habilitar campos adicionales para créditos bancarios (seguro, comisiones)",
+            "simpleDesc": "Ingresa tu cuota mensual y el saldo restante para calcular el resto.",
+            "monthlyPayment": "Cuota Mensual",
+            "monthlyPaymentPlaceholder": "Ej: 1.957.868",
+            "remainingBalance": "Saldo Restante",
+            "remainingBalancePlaceholder": "Ej: 65.022.803",
+            "calculated": "Resumen Calculado",
+            "installmentsLeft": "Cuotas Restantes",
+            "totalToPay": "Total a Pagar",
             "monthlyInsurance": "Seguro Mensual",
             "monthlyCommission": "Comisión Mensual",
-            "currentInstallment": "Cuota Actual",
-            "remainingBalance": "Saldo Restante"
+            "currentInstallment": "Cuota Actual"
         },
         "projection": {
             "title": "Proyección de Deuda",
