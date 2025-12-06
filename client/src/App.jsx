@@ -49,8 +49,19 @@ function App() {
   React.useEffect(() => {
     // Check for version update to show What's New
     const lastSeenVersion = localStorage.getItem('lastSeenVersion');
+
     if (user && lastSeenVersion !== APP_VERSION) {
-      setShowWhatsNew(true);
+      // Only show for major or minor updates (not patches)
+      // e.g. 1.4.0 -> 1.4.1 (Hidden), 1.4.1 -> 1.5.0 (Shown)
+      const [currentMajor, currentMinor] = APP_VERSION.split('.');
+      const [lastMajor, lastMinor] = (lastSeenVersion || '0.0.0').split('.');
+
+      if (currentMajor !== lastMajor || currentMinor !== lastMinor) {
+        setShowWhatsNew(true);
+      } else {
+        // If it's just a patch update, silently update the lastSeenVersion
+        localStorage.setItem('lastSeenVersion', APP_VERSION);
+      }
     }
   }, [user]);
 
