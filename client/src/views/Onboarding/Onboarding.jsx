@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import CustomSelect from '../../components/Inputs/CustomSelect';
 
 export default function Onboarding({ onComplete }) {
-    const { user, refreshUser } = useAuth();
+    const { user, refreshUser, logout } = useAuth();
     const { theme, setTheme, mode, setMode, logo, setLogo } = useTheme();
     const { setShowLoans } = useUI();
     const { t, i18n } = useTranslation();
@@ -259,7 +259,14 @@ export default function Onboarding({ onComplete }) {
     };
 
     return (
-        <div className="min-h-screen bg-surface flex items-center justify-center p-6">
+        <div className="min-h-screen bg-surface flex items-center justify-center p-6 relative">
+            {/* Logout button */}
+            <button
+                onClick={logout}
+                className="absolute top-4 right-4 text-secondary hover:text-main text-sm font-medium transition-colors"
+            >
+                {t('common.logout')}
+            </button>
             <div className="max-w-2xl w-full">
                 {/* Step 0: Language Selection */}
                 {step === 0 && (
