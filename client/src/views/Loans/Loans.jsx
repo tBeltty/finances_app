@@ -839,20 +839,22 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                 </>
                             )}
 
-                            {/* Bank Credit Toggle */}
-                            <div className="flex items-center justify-between py-3 border-t border-outline/50">
-                                <div>
-                                    <span className="text-sm font-medium text-main">{t('loans.bankCredit.title')}</span>
-                                    <p className="text-xs text-secondary">{t('loans.bankCredit.desc')}</p>
+                            {/* Bank Credit Toggle - only for borrowed loans */}
+                            {type === 'borrowed' && (
+                                <div className="flex items-center justify-between py-3 border-t border-outline/50">
+                                    <div>
+                                        <span className="text-sm font-medium text-main">{t('loans.bankCredit.title')}</span>
+                                        <p className="text-xs text-secondary">{t('loans.bankCredit.desc')}</p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, isBankCredit: !formData.isBankCredit })}
+                                        className={`w-12 h-6 rounded-full transition-colors ${formData.isBankCredit ? 'bg-primary' : 'bg-outline'}`}
+                                    >
+                                        <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${formData.isBankCredit ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                                    </button>
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, isBankCredit: !formData.isBankCredit })}
-                                    className={`w-12 h-6 rounded-full transition-colors ${formData.isBankCredit ? 'bg-primary' : 'bg-outline'}`}
-                                >
-                                    <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${formData.isBankCredit ? 'translate-x-6' : 'translate-x-0.5'}`} />
-                                </button>
-                            </div>
+                            )}
 
                             {/* Bank Credit Specific Fields */}
                             {formData.isBankCredit && (() => {
