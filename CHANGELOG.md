@@ -1,5 +1,15 @@
 # Changelog
 
+## [Client 1.5.0] - 2025-12-06
+### Added (Loans Enhancement - Debt Management Center)
+- **Overdue Tracking**: Red border and badge for past-due loans. Added `overdue`/`forgiven` statuses.
+- **Payment Reminders**: In-app notifications 3 days and 1 day before due date.
+- **Debt Projection Tool**: "What If?" modal shows impact of extra payments on payoff time and interest.
+- **Forgive Loan**: Ability to forgive/write-off lent loans.
+- **Dashboard Enhancements**: Overdue count in summary KPI.
+### Localization
+- Added ~20 new translation keys for loans.projection and overdue/forgive features.
+
 ## [Admin 1.0.4] - 2025-12-06
 ### Refactor
 - **Architecture**: Refactored `Dashboard.jsx` into "View" and "Controller" (Hooks) layers for MVC compliance.

@@ -432,7 +432,28 @@
         "schedulePreview": "Cronograma de Pagos",
         "installment": "Cuota",
         "paymentPerInstallment": "Pago por Cuota",
-        "frequency": "Frecuencia"
+        "frequency": "Frecuencia",
+        "overdue": "Vencido",
+        "forgiven": "Perdonado",
+        "forgive": "Perdonar",
+        "confirmForgive": "¿Estás seguro de perdonar este préstamo? Esta acción no se puede deshacer.",
+        "netDebt": "Deuda Neta",
+        "projection": {
+            "title": "Proyección de Deuda",
+            "whatIf": "¿Qué pasa si pago más?",
+            "currentStatus": "Estado Actual",
+            "remaining": "Saldo Restante",
+            "monthlyPayment": "Pago Mensual",
+            "remainingMonths": "Meses para Liquidar",
+            "months": "meses",
+            "extraPayment": "Pago Extra Mensual",
+            "extraPaymentDesc": "¿Cuánto extra puedes pagar al mes?",
+            "savings": "Tu Ahorro",
+            "newPayoff": "Nuevo Tiempo de Pago",
+            "timeSaved": "Tiempo Ahorrado",
+            "interestSaved": "Interés Ahorrado (est.)",
+            "noImpact": "Ingresa un monto de pago extra para ver proyecciones."
+        }
     },
     "whatsNew": {
         "title": "Novedades en",

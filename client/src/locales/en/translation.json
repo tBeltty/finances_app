@@ -431,7 +431,28 @@
         "schedulePreview": "Payment Schedule",
         "installment": "Installment",
         "paymentPerInstallment": "Payment per Installment",
-        "frequency": "Frequency"
+        "frequency": "Frequency",
+        "overdue": "Overdue",
+        "forgiven": "Forgiven",
+        "forgive": "Forgive",
+        "confirmForgive": "Are you sure you want to forgive this loan? This cannot be undone.",
+        "netDebt": "Net Debt",
+        "projection": {
+            "title": "Debt Projection",
+            "whatIf": "What If I Pay Extra?",
+            "currentStatus": "Current Status",
+            "remaining": "Remaining Balance",
+            "monthlyPayment": "Monthly Payment",
+            "remainingMonths": "Months to Payoff",
+            "months": "months",
+            "extraPayment": "Extra Monthly Payment",
+            "extraPaymentDesc": "How much extra can you pay per month?",
+            "savings": "Your Savings",
+            "newPayoff": "New Payoff Time",
+            "timeSaved": "Time Saved",
+            "interestSaved": "Interest Saved (est.)",
+            "noImpact": "Enter an extra payment amount to see projections."
+        }
     },
     "whatsNew": {
         "title": "What's New in",

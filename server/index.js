@@ -222,12 +222,14 @@ sequelize.sync({ alter: true }).then(() => {
     app.listen(PORT, '0.0.0.0', () => {
         console.log(`Server running on port ${PORT}`);
 
-        // Run cleanup on startup (optional, good for verifying it works)
+        // Run cleanup and reminders on startup
         cronService.cleanupUnverifiedUsers();
+        cronService.checkLoanReminders();
 
-        // Schedule cleanup every 24 hours
+        // Schedule jobs every 24 hours
         setInterval(() => {
             cronService.cleanupUnverifiedUsers();
+            cronService.checkLoanReminders();
         }, 24 * 60 * 60 * 1000);
     });
 }).catch(err => console.log(err));

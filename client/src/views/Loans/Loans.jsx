@@ -17,8 +17,10 @@ import {
     Calculator,
     Percent,
     CalendarClock,
-    Repeat
+    Repeat,
+    TrendingDown
 } from 'lucide-react';
+import DebtProjection from './DebtProjection';
 
 export default function Loans() {
     const { t } = useTranslation();
@@ -53,6 +55,7 @@ export default function Loans() {
     const [showPaymentModal, setShowPaymentModal] = useState(null);
     const [expandedLoan, setExpandedLoan] = useState(null);
     const [editingLoan, setEditingLoan] = useState(null);
+    const [showProjection, setShowProjection] = useState(null);
 
     const token = localStorage.getItem('token');
 
@@ -190,6 +193,22 @@ export default function Loans() {
         }
     };
 
+    const handleForgive = async (id) => {
+        if (!confirm(t('loans.confirmForgive'))) return;
+        const res = await fetch(`/api/loans/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'x-household-id': householdId
+            },
+            body: JSON.stringify({ status: 'forgiven' })
+        });
+        if (res.ok) {
+            setLoans(loans.map(l => l.id === id ? { ...l, status: 'forgiven' } : l));
+        }
+    };
+
     const getBalance = (loan) => {
         const paid = (loan.payments || []).reduce((sum, p) => sum + parseFloat(p.amount), 0);
 
@@ -256,7 +275,7 @@ export default function Loans() {
                 </div>
 
                 {/* Summary KPI */}
-                <div className="bg-surface-container border border-outline rounded-xl p-4">
+                <div className="bg-surface-container border border-outline rounded-xl p-4 space-y-3">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-xs text-secondary uppercase font-medium">
@@ -269,6 +288,11 @@ export default function Loans() {
                         <div className="text-right">
                             <p className="text-xs text-secondary">{activeLoans.length} {t('loans.active')}</p>
                             <p className="text-xs text-secondary">{paidLoans.length} {t('loans.completed')}</p>
+                            {loans.filter(l => !['paid', 'forgiven'].includes(l.status) && l.dueDate && new Date(l.dueDate) < new Date()).length > 0 && (
+                                <p className="text-xs text-error font-medium">
+                                    {loans.filter(l => !['paid', 'forgiven'].includes(l.status) && l.dueDate && new Date(l.dueDate) < new Date()).length} {t('loans.overdue')}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -285,12 +309,13 @@ export default function Loans() {
                         loans.map((loan) => {
                             const balance = getBalance(loan);
                             const isExpanded = expandedLoan === loan.id;
-                            const isPaid = loan.status === 'paid';
+                            const isPaid = loan.status === 'paid' || loan.status === 'forgiven';
+                            const isOverdue = !isPaid && loan.dueDate && new Date(loan.dueDate) < new Date();
 
                             return (
                                 <div
                                     key={loan.id}
-                                    className={`bg-surface-container border border-outline rounded-xl overflow-hidden transition-opacity ${isPaid ? 'opacity-60' : ''}`}
+                                    className={`bg-surface-container border ${isOverdue ? 'border-error/50' : 'border-outline'} rounded-xl overflow-hidden transition-opacity ${isPaid ? 'opacity-60' : ''}`}
                                 >
                                     {/* Loan Header */}
                                     <button
@@ -298,11 +323,23 @@ export default function Loans() {
                                         className="w-full flex items-center justify-between p-4 hover:bg-surface-container-high transition-colors"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className={`p-2 rounded-full ${isPaid ? 'bg-success/10' : 'bg-primary/10'}`}>
-                                                <User className={`w-5 h-5 ${isPaid ? 'text-success' : 'text-primary'}`} />
+                                            <div className={`p-2 rounded-full ${isOverdue ? 'bg-error/10' : isPaid ? 'bg-success/10' : 'bg-primary/10'}`}>
+                                                <User className={`w-5 h-5 ${isOverdue ? 'text-error' : isPaid ? 'text-success' : 'text-primary'}`} />
                                             </div>
                                             <div className="text-left">
-                                                <p className="font-semibold text-main">{loan.personName}</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-semibold text-main">{loan.personName}</p>
+                                                    {isOverdue && (
+                                                        <span className="px-1.5 py-0.5 text-[10px] font-bold bg-error/20 text-error rounded-md uppercase">
+                                                            {t('loans.overdue')}
+                                                        </span>
+                                                    )}
+                                                    {loan.status === 'forgiven' && (
+                                                        <span className="px-1.5 py-0.5 text-[10px] font-bold bg-secondary/20 text-secondary rounded-md uppercase">
+                                                            {t('loans.forgiven')}
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <p className="text-xs text-secondary">
                                                     {new Date(loan.date).toLocaleDateString()}
                                                     {loan.dueDate && ` → ${new Date(loan.dueDate).toLocaleDateString()}`}
@@ -342,6 +379,17 @@ export default function Loans() {
                                                 </div>
                                             )}
 
+                                            {/* What If? Projection Button */}
+                                            {!isPaid && loan.installments > 1 && (
+                                                <button
+                                                    onClick={() => setShowProjection(loan)}
+                                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 text-primary hover:bg-primary/5 transition-colors border-b border-outline"
+                                                >
+                                                    <TrendingDown className="w-4 h-4" />
+                                                    <span className="text-sm font-medium">{t('loans.projection.whatIf')}</span>
+                                                </button>
+                                            )}
+
                                             {/* Payments History */}
                                             {loan.payments && loan.payments.length > 0 && (
                                                 <div className="px-4 py-2">
@@ -376,6 +424,15 @@ export default function Loans() {
                                                         <CheckCircle2 className="w-4 h-4" />
                                                         <span className="text-sm font-medium">{t('loans.markPaid')}</span>
                                                     </button>
+                                                    {activeTab === 'lent' && (
+                                                        <button
+                                                            onClick={() => handleForgive(loan.id)}
+                                                            className="flex items-center justify-center gap-1 px-3 py-3 text-secondary hover:bg-secondary/5 transition-colors border-l border-outline"
+                                                            title={t('loans.forgive')}
+                                                        >
+                                                            <X className="w-4 h-4" />
+                                                        </button>
+                                                    )}
                                                     <button
                                                         onClick={() => setEditingLoan(loan)}
                                                         className="flex items-center justify-center px-4 py-3 text-secondary hover:bg-secondary/5 transition-colors border-l border-outline"
@@ -441,6 +498,15 @@ export default function Loans() {
                     onClose={() => setShowPaymentModal(null)}
                     onSave={(data) => handleAddPayment(showPaymentModal, data)}
                     type={activeTab}
+                />
+            )}
+
+            {/* Debt Projection Modal */}
+            {showProjection && (
+                <DebtProjection
+                    loan={showProjection}
+                    onClose={() => setShowProjection(null)}
+                    formatCurrency={formatCurrency}
                 />
             )}
         </div>
