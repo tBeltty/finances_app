@@ -13,7 +13,8 @@ The administrative control panel for the tBelt Finances ecosystem.
 - **Framework**: React 19 + Vite
 - **Styling**: TailwindCSS v4 + Glassmorphism
 - **State**: React Context (Auth)
-- **Architecture**: MVC-style (Hooks as Controllers)
+- **Architecture**: Component-Based with Separation of Concerns (View/Logic)
+- **Pattern**: Custom Hooks for Business Logic (e.g., `useAdminUsers`)
 
 ## Development
 ```bash
