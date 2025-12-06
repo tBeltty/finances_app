@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
 const path = require('path');
 const { sequelize } = require('./config/db');
@@ -12,8 +13,33 @@ const householdMiddleware = require('./middleware/householdMiddleware');
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+// Security middleware
+app.use(helmet({
+    contentSecurityPolicy: false, // Disable CSP for now (SPA compatibility)
+    crossOriginEmbedderPolicy: false
+}));
+
+// CORS - Restrict to allowed origins
+const allowedOrigins = [
+    'https://finances.tbelt.online',
+    'http://localhost:5173', // Dev frontend
+    'http://localhost:3002'  // Dev backend
+];
+app.use(cors({
+    origin: (origin, callback) => {
+        // Allow requests with no origin (mobile apps, curl, etc.)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('CORS not allowed'), false);
+    },
+    credentials: true
+}));
+
+// Body parser with size limit (prevent DoS)
+app.use(express.json({ limit: '10kb' }));
 
 // Test Route
 app.get('/api/test-loans', (req, res) => res.send('Test Loans Route Working'));

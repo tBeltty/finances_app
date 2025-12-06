@@ -19,10 +19,52 @@ const BLOCKED_DOMAINS = [
     'trashmail.com', 'yopmail.com', 'getnada.com', 'temp-mail.org'
 ];
 
-// Rate limiting map (in production, use Redis)
+// ============ RATE LIMITING CONFIGURATION ============
+// In production, consider using Redis for distributed rate limiting
+
+// Registration: 5 attempts per IP per hour
 const registrationAttempts = new Map();
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
-const MAX_ATTEMPTS_PER_IP = 5;
+const REGISTRATION_WINDOW = 60 * 60 * 1000; // 1 hour
+const MAX_REGISTRATION_ATTEMPTS = 5;
+
+// Login: 5 failed attempts per identifier, then 15 min lockout
+const loginAttempts = new Map();
+const LOGIN_LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+const MAX_LOGIN_ATTEMPTS = 5;
+
+// Email actions (forgot password, resend verification): 1 per email per 2 minutes
+const emailActionAttempts = new Map();
+const EMAIL_ACTION_COOLDOWN = 2 * 60 * 1000; // 2 minutes
+
+// Helper function to check rate limit
+const checkRateLimit = (map, key, maxAttempts, windowMs) => {
+    const now = Date.now();
+    const record = map.get(key) || { count: 0, firstAttempt: now, lockedUntil: 0 };
+
+    // Check if currently locked out
+    if (record.lockedUntil > now) {
+        const remainingMs = record.lockedUntil - now;
+        const remainingMin = Math.ceil(remainingMs / 60000);
+        return { blocked: true, message: `Demasiados intentos. Espera ${remainingMin} minutos.` };
+    }
+
+    // Reset if window expired
+    if (now - record.firstAttempt > windowMs) {
+        record.count = 0;
+        record.firstAttempt = now;
+    }
+
+    return { blocked: false, record };
+};
+
+const incrementRateLimit = (map, key, record, maxAttempts, lockoutMs) => {
+    record.count++;
+    if (record.count >= maxAttempts && lockoutMs) {
+        record.lockedUntil = Date.now() + lockoutMs;
+    }
+    map.set(key, record);
+};
+
 
 exports.register = async (req, res) => {
     try {
@@ -33,13 +75,13 @@ exports.register = async (req, res) => {
         const now = Date.now();
         const attempts = registrationAttempts.get(clientIP) || { count: 0, firstAttempt: now };
 
-        if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW) {
+        if (now - attempts.firstAttempt > REGISTRATION_WINDOW) {
             // Reset window
             attempts.count = 0;
             attempts.firstAttempt = now;
         }
 
-        if (attempts.count >= MAX_ATTEMPTS_PER_IP) {
+        if (attempts.count >= MAX_REGISTRATION_ATTEMPTS) {
             return res.status(429).json({ message: 'Demasiados intentos. Intenta más tarde.' });
         }
 
@@ -128,14 +170,28 @@ exports.register = async (req, res) => {
 exports.resendVerification = async (req, res) => {
     try {
         const { email } = req.body;
-        const user = await User.findOne({ where: { email } });
 
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+        if (!email) {
+            return res.status(400).json({ message: 'Email requerido' });
         }
 
-        if (user.emailVerified) {
-            return res.status(400).json({ message: 'El email ya está verificado' });
+        // Rate limiting by email (prevent spam)
+        const emailKey = email.toLowerCase().trim();
+        const now = Date.now();
+        const lastAttempt = emailActionAttempts.get(`resend:${emailKey}`);
+
+        if (lastAttempt && now - lastAttempt < EMAIL_ACTION_COOLDOWN) {
+            const remainingSec = Math.ceil((EMAIL_ACTION_COOLDOWN - (now - lastAttempt)) / 1000);
+            return res.status(429).json({ message: `Espera ${remainingSec} segundos antes de reenviar.` });
+        }
+
+        emailActionAttempts.set(`resend:${emailKey}`, now);
+
+        const user = await User.findOne({ where: { email } });
+
+        // Always respond with success message to prevent email enumeration
+        if (!user || user.emailVerified) {
+            return res.json({ message: 'Si el email existe y no está verificado, recibirás un correo.' });
         }
 
         // Generate new token
@@ -145,9 +201,9 @@ exports.resendVerification = async (req, res) => {
 
         await emailService.sendVerificationEmail(user, emailVerificationToken);
 
-        res.json({ message: 'Email de verificación reenviado' });
+        res.json({ message: 'Si el email existe y no está verificado, recibirás un correo.' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error procesando solicitud' });
     }
 };
 
@@ -158,10 +214,16 @@ exports.login = async (req, res) => {
         const { email, username, password, twoFactorToken } = req.body;
 
         // Determine the identifier provided (frontend sends 'username' but it might be an email)
-        const identifier = email || username;
+        const identifier = (email || username || '').toLowerCase().trim();
 
         if (!identifier) {
             return res.status(400).json({ message: 'Usuario o Email requerido' });
+        }
+
+        // Check rate limiting for this identifier
+        const rateLimitCheck = checkRateLimit(loginAttempts, identifier, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_DURATION);
+        if (rateLimitCheck.blocked) {
+            return res.status(429).json({ message: rateLimitCheck.message });
         }
 
         const user = await User.findOne({
@@ -174,6 +236,8 @@ exports.login = async (req, res) => {
         });
 
         if (!user) {
+            // Increment failed attempts even for non-existent users (prevents enumeration)
+            incrementRateLimit(loginAttempts, identifier, rateLimitCheck.record, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_DURATION);
             return res.status(400).json({ message: 'Credenciales inválidas' });
         }
 
@@ -183,8 +247,13 @@ exports.login = async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            // Increment failed attempts
+            incrementRateLimit(loginAttempts, identifier, rateLimitCheck.record, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_DURATION);
             return res.status(400).json({ message: 'Credenciales inválidas' });
         }
+
+        // Successful login - clear rate limit for this identifier
+        loginAttempts.delete(identifier);
 
         // 2FA Check
         if (user.isTwoFactorEnabled) {
@@ -241,10 +310,28 @@ exports.verifyEmail = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: 'Email requerido' });
+        }
+
+        // Rate limiting by email (prevent spam)
+        const emailKey = email.toLowerCase().trim();
+        const now = Date.now();
+        const lastAttempt = emailActionAttempts.get(`reset:${emailKey}`);
+
+        if (lastAttempt && now - lastAttempt < EMAIL_ACTION_COOLDOWN) {
+            const remainingSec = Math.ceil((EMAIL_ACTION_COOLDOWN - (now - lastAttempt)) / 1000);
+            return res.status(429).json({ message: `Espera ${remainingSec} segundos antes de solicitar otro reset.` });
+        }
+
+        emailActionAttempts.set(`reset:${emailKey}`, now);
+
         const user = await User.findOne({ where: { email } });
 
+        // Always respond with success to prevent email enumeration
         if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+            return res.json({ message: 'Si el email existe, recibirás instrucciones para restablecer tu contraseña.' });
         }
 
         const resetToken = crypto.randomBytes(32).toString('hex');
@@ -254,9 +341,9 @@ exports.forgotPassword = async (req, res) => {
 
         await emailService.sendPasswordResetEmail(user, resetToken);
 
-        res.json({ message: 'Email de restablecimiento enviado' });
+        res.json({ message: 'Si el email existe, recibirás instrucciones para restablecer tu contraseña.' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error procesando solicitud' });
     }
 };
 
