@@ -387,6 +387,8 @@
         "markPaid": "Mark as Paid",
         "addLent": "New Loan Given",
         "addBorrowed": "New Loan Received",
+        "edit": "Edit Loan",
+        "editTooltip": "Edit loan details",
         "person": "Person",
         "personPlaceholderLent": "Who did you lend to?",
         "personPlaceholderBorrowed": "Who lent you money?",

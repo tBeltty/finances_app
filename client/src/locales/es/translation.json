@@ -388,6 +388,8 @@
         "markPaid": "Marcar Pagado",
         "addLent": "Nuevo Préstamo Dado",
         "addBorrowed": "Nuevo Préstamo Recibido",
+        "edit": "Editar Préstamo",
+        "editTooltip": "Editar detalles del préstamo",
         "person": "Persona",
         "personPlaceholderLent": "¿A quién le prestaste?",
         "personPlaceholderBorrowed": "¿Quién te prestó?",

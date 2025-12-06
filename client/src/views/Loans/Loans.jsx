@@ -452,6 +452,7 @@ export default function Loans() {
                                                 <div className="flex border-t border-outline">
                                                     <button
                                                         onClick={() => setEditingLoan(loan)}
+                                                        title={t('loans.editTooltip')}
                                                         className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-secondary hover:bg-secondary/5 transition-colors"
                                                     >
                                                         <StickyNote className="w-4 h-4" />
