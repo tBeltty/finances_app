@@ -59,6 +59,36 @@ const Loan = sequelize.define('Loan', {
         type: DataTypes.ENUM('monthly', 'biweekly', 'weekly'),
         defaultValue: 'monthly',
         allowNull: false
+    },
+    // Bank Credit specific fields
+    isBankCredit: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+    },
+    monthlyInsurance: {
+        type: DataTypes.DECIMAL(15, 2),
+        defaultValue: 0,
+        allowNull: false
+    },
+    monthlyCommission: {
+        type: DataTypes.DECIMAL(15, 2),
+        defaultValue: 0,
+        allowNull: false
+    },
+    lateInterestRate: {
+        type: DataTypes.DECIMAL(5, 2),
+        defaultValue: 0,
+        allowNull: false
+    },
+    currentInstallment: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false
+    },
+    remainingBalance: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: true // If null, calculated from amount - payments
     }
 }, {
     tableName: 'Loans',

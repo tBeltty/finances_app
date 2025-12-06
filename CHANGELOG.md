@@ -1,5 +1,13 @@
 # Changelog
 
+## [Client 1.5.1] - 2025-12-06
+### Added
+- **Advanced Bank Credits**: New fields for bank loans (monthly insurance, commissions, current installment, remaining balance).
+- **Bank Credit Toggle**: Enable additional fields in advanced mode when dealing with bank credits.
+### Fixed
+- **Loan Modal**: DatePicker for date selection instead of native input.
+- **Amount Field**: Currency-aware number formatting.
+
 ## [Client 1.5.0] - 2025-12-06
 ### Added (Loans Enhancement - Debt Management Center)
 - **Overdue Tracking**: Red border and badge for past-due loans. Added `overdue`/`forgiven` statuses.

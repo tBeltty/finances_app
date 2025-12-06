@@ -528,7 +528,14 @@ function LoanModal({ onClose, onSave, type, initialData }) {
         installments: initialData?.installments || 1,
         interestRate: initialData?.interestRate || 0,
         interestType: initialData?.interestType || user?.defaultInterestType || 'simple',
-        paymentFrequency: initialData?.paymentFrequency || 'monthly'
+        paymentFrequency: initialData?.paymentFrequency || 'monthly',
+        // Bank Credit fields
+        isBankCredit: initialData?.isBankCredit || false,
+        monthlyInsurance: initialData?.monthlyInsurance || 0,
+        monthlyCommission: initialData?.monthlyCommission || 0,
+        lateInterestRate: initialData?.lateInterestRate || 0,
+        currentInstallment: initialData?.currentInstallment || 0,
+        remainingBalance: initialData?.remainingBalance || ''
     });
     const [loading, setLoading] = useState(false);
     const [isAdvanced, setIsAdvanced] = useState(!!initialData?.installments && initialData.installments > 1);
@@ -601,7 +608,14 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                 installments: parseInt(formData.installments) || 1,
                 interestRate: parseFloat(formData.interestRate) || 0,
                 interestType: formData.interestType || 'simple',
-                paymentFrequency: formData.paymentFrequency || 'monthly'
+                paymentFrequency: formData.paymentFrequency || 'monthly',
+                // Bank Credit fields
+                isBankCredit: formData.isBankCredit || false,
+                monthlyInsurance: parseFloat(formData.monthlyInsurance) || 0,
+                monthlyCommission: parseFloat(formData.monthlyCommission) || 0,
+                lateInterestRate: parseFloat(formData.lateInterestRate) || 0,
+                currentInstallment: parseInt(formData.currentInstallment) || 0,
+                remainingBalance: formData.remainingBalance ? parseFloat(formData.remainingBalance) : null
             });
         } finally {
             setLoading(false);
@@ -793,6 +807,75 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Bank Credit Toggle */}
+                            <div className="flex items-center justify-between py-3 border-t border-outline/50">
+                                <div>
+                                    <span className="text-sm font-medium text-main">{t('loans.bankCredit.title')}</span>
+                                    <p className="text-xs text-secondary">{t('loans.bankCredit.desc')}</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, isBankCredit: !formData.isBankCredit })}
+                                    className={`w-12 h-6 rounded-full transition-colors ${formData.isBankCredit ? 'bg-primary' : 'bg-outline'}`}
+                                >
+                                    <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${formData.isBankCredit ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                                </button>
+                            </div>
+
+                            {/* Bank Credit Specific Fields */}
+                            {formData.isBankCredit && (
+                                <div className="space-y-3 p-3 bg-surface/50 border border-outline/50 rounded-xl animate-fade-in">
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.monthlyInsurance')}</label>
+                                            <input
+                                                type="number"
+                                                value={formData.monthlyInsurance}
+                                                onChange={(e) => setFormData({ ...formData, monthlyInsurance: e.target.value })}
+                                                placeholder="0"
+                                                className="w-full bg-surface border border-outline rounded-xl px-3 py-2 text-sm text-main focus:border-primary focus:outline-none"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.monthlyCommission')}</label>
+                                            <input
+                                                type="number"
+                                                value={formData.monthlyCommission}
+                                                onChange={(e) => setFormData({ ...formData, monthlyCommission: e.target.value })}
+                                                placeholder="0"
+                                                className="w-full bg-surface border border-outline rounded-xl px-3 py-2 text-sm text-main focus:border-primary focus:outline-none"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.currentInstallment')}</label>
+                                            <input
+                                                type="number"
+                                                value={formData.currentInstallment}
+                                                onChange={(e) => setFormData({ ...formData, currentInstallment: e.target.value })}
+                                                placeholder="0"
+                                                className="w-full bg-surface border border-outline rounded-xl px-3 py-2 text-sm text-main focus:border-primary focus:outline-none"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.remainingBalance')}</label>
+                                            <input
+                                                type="number"
+                                                value={formData.remainingBalance}
+                                                onChange={(e) => setFormData({ ...formData, remainingBalance: e.target.value })}
+                                                placeholder="0"
+                                                className="w-full bg-surface border border-outline rounded-xl px-3 py-2 text-sm text-main focus:border-primary focus:outline-none"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 

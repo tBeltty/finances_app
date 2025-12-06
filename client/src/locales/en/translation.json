@@ -437,6 +437,14 @@
         "forgive": "Forgive",
         "confirmForgive": "Are you sure you want to forgive this loan? This cannot be undone.",
         "netDebt": "Net Debt",
+        "bankCredit": {
+            "title": "Bank Credit",
+            "desc": "Enable additional fields for bank loans (insurance, commissions)",
+            "monthlyInsurance": "Monthly Insurance",
+            "monthlyCommission": "Monthly Commission",
+            "currentInstallment": "Current Installment",
+            "remainingBalance": "Remaining Balance"
+        },
         "projection": {
             "title": "Debt Projection",
             "whatIf": "What If I Pay Extra?",

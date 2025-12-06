@@ -438,6 +438,14 @@
         "forgive": "Perdonar",
         "confirmForgive": "¿Estás seguro de perdonar este préstamo? Esta acción no se puede deshacer.",
         "netDebt": "Deuda Neta",
+        "bankCredit": {
+            "title": "Crédito Bancario",
+            "desc": "Habilitar campos adicionales para créditos bancarios (seguro, comisiones)",
+            "monthlyInsurance": "Seguro Mensual",
+            "monthlyCommission": "Comisión Mensual",
+            "currentInstallment": "Cuota Actual",
+            "remainingBalance": "Saldo Restante"
+        },
         "projection": {
             "title": "Proyección de Deuda",
             "whatIf": "¿Qué pasa si pago más?",
