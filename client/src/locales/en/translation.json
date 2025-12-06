@@ -444,6 +444,8 @@
             "monthlyPayment": "Monthly Payment",
             "remainingBalance": "Remaining Balance",
             "eaRate": "Annual Interest Rate",
+            "extraCosts": "Extra Costs/mo",
+            "extraCostsTooltip": "Monthly insurance, commissions, and other bank fees not included in the payment amount.",
             "additionalCosts": "Approx. Extra Costs/mo",
             "calculated": "Calculated Estimate",
             "installmentsLeft": "Installments Left",

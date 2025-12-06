@@ -827,10 +827,24 @@ function LoanModal({ onClose, onSave, type, initialData }) {
 
                             {/* Bank Credit Specific Fields */}
                             {formData.isBankCredit && (() => {
+                                const curr = user?.currency || 'USD';
+                                const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
+                                const thousandsSep = isDotThousands ? '.' : ',';
+                                const decimalSep = isDotThousands ? ',' : '.';
+
+                                // Parse formatted currency string to number
+                                const parseCurrency = (val) => {
+                                    if (!val) return 0;
+                                    let numericVal = val.toString();
+                                    numericVal = numericVal.split(thousandsSep).join(''); // Remove thousands
+                                    numericVal = numericVal.replace(decimalSep, '.'); // Normalize decimal
+                                    return parseFloat(numericVal) || 0;
+                                };
+
                                 // Amortization calculation
                                 const calculateAmortization = () => {
-                                    const balance = parseFloat(formData.remainingBalance) || 0;
-                                    const payment = parseFloat(formData.monthlyPayment) || 0;
+                                    const balance = parseCurrency(formData.remainingBalance);
+                                    const payment = parseCurrency(formData.monthlyPayment);
                                     const eaRate = parseFloat(formData.interestRate) || 0;
 
                                     if (balance <= 0 || payment <= 0 || eaRate <= 0) return null;
@@ -851,72 +865,101 @@ function LoanModal({ onClose, onSave, type, initialData }) {
                                 };
 
                                 const calc = calculateAmortization();
-                                const curr = user?.currency || 'USD';
                                 const locales = { 'USD': 'en-US', 'EUR': 'de-DE', 'COP': 'es-CO', 'MXN': 'es-MX', 'HNL': 'es-HN' };
 
                                 return (
                                     <div className="space-y-3 p-3 bg-surface/50 border border-outline/50 rounded-xl animate-fade-in">
                                         <p className="text-xs text-secondary">{t('loans.bankCredit.simpleDesc')}</p>
 
-                                        {/* Row 1: Remaining Balance + Monthly Payment */}
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="space-y-1">
-                                                <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.remainingBalance')}</label>
-                                                <input
-                                                    type="text"
-                                                    inputMode="decimal"
-                                                    value={formData.remainingBalance}
-                                                    onChange={(e) => setFormData({ ...formData, remainingBalance: e.target.value })}
-                                                    placeholder="50,000,000"
-                                                    className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 text-sm text-main focus:border-primary focus:outline-none"
-                                                />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.monthlyPayment')}</label>
-                                                <input
-                                                    type="text"
-                                                    inputMode="decimal"
-                                                    value={formData.monthlyPayment || ''}
-                                                    onChange={(e) => setFormData({ ...formData, monthlyPayment: e.target.value })}
-                                                    placeholder="1,500,000"
-                                                    className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 text-sm text-main focus:border-primary focus:outline-none"
-                                                />
-                                            </div>
-                                        </div>
+                                        {/* Currency formatting helper */}
+                                        {(() => {
+                                            const isDotThousands = ['COP', 'EUR', 'HNL', 'CLP', 'ARS'].includes(curr);
+                                            const thousandsSep = isDotThousands ? '.' : ',';
+                                            const decimalSep = isDotThousands ? ',' : '.';
 
-                                        {/* Row 2: EA Rate (uses existing interestRate field) */}
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="space-y-1">
-                                                <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.eaRate')}</label>
-                                                <div className="relative">
-                                                    <input
-                                                        type="number"
-                                                        value={formData.interestRate}
-                                                        onChange={(e) => setFormData({ ...formData, interestRate: e.target.value })}
-                                                        placeholder="20"
-                                                        className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 pr-16 text-sm text-main focus:border-primary focus:outline-none"
-                                                        min="0"
-                                                        step="0.01"
-                                                    />
-                                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary text-xs">% E.A.</span>
-                                                </div>
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.additionalCosts')}</label>
-                                                <input
-                                                    type="text"
-                                                    inputMode="decimal"
-                                                    value={formData.additionalCosts || ''}
-                                                    onChange={(e) => setFormData({ ...formData, additionalCosts: e.target.value })}
-                                                    placeholder="200,000"
-                                                    className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 text-sm text-main focus:border-primary focus:outline-none"
-                                                />
-                                            </div>
-                                        </div>
+                                            const formatCurrency = (val) => {
+                                                const allowedPattern = new RegExp(`[^0-9${decimalSep}]`, 'g');
+                                                let cleanVal = val.replace(allowedPattern, '');
+                                                const parts = cleanVal.split(decimalSep);
+                                                if (parts.length > 2) cleanVal = parts[0] + decimalSep + parts.slice(1).join('');
+                                                const integerPart = parts[0];
+                                                const decimalPart = parts.length > 1 ? decimalSep + parts[1] : '';
+                                                const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep);
+                                                return formattedInteger + decimalPart;
+                                            };
+
+                                            return (
+                                                <>
+                                                    {/* Row 1: Remaining Balance + Monthly Payment */}
+                                                    <div className="grid grid-cols-2 gap-3">
+                                                        <div className="space-y-1">
+                                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.remainingBalance')}</label>
+                                                            <input
+                                                                type="text"
+                                                                inputMode="decimal"
+                                                                value={formData.remainingBalance}
+                                                                onChange={(e) => setFormData({ ...formData, remainingBalance: formatCurrency(e.target.value) })}
+                                                                placeholder={isDotThousands ? '50.000.000' : '50,000,000'}
+                                                                className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 text-sm text-main focus:border-primary focus:outline-none font-mono"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.monthlyPayment')}</label>
+                                                            <input
+                                                                type="text"
+                                                                inputMode="decimal"
+                                                                value={formData.monthlyPayment || ''}
+                                                                onChange={(e) => setFormData({ ...formData, monthlyPayment: formatCurrency(e.target.value) })}
+                                                                placeholder={isDotThousands ? '1.500.000' : '1,500,000'}
+                                                                className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 text-sm text-main focus:border-primary focus:outline-none font-mono"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Row 2: EA Rate + Additional Costs */}
+                                                    <div className="grid grid-cols-2 gap-3">
+                                                        <div className="space-y-1">
+                                                            <label className="text-xs font-medium text-secondary uppercase">{t('loans.bankCredit.eaRate')}</label>
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="number"
+                                                                    value={formData.interestRate}
+                                                                    onChange={(e) => setFormData({ ...formData, interestRate: e.target.value })}
+                                                                    placeholder="20"
+                                                                    className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 pr-16 text-sm text-main focus:border-primary focus:outline-none"
+                                                                    min="0"
+                                                                    step="0.01"
+                                                                />
+                                                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary text-xs">% E.A.</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <label className="text-xs font-medium text-secondary uppercase flex items-center gap-1">
+                                                                {t('loans.bankCredit.extraCosts')}
+                                                                <span className="relative group cursor-help">
+                                                                    <span className="w-3.5 h-3.5 rounded-full bg-secondary/30 text-secondary flex items-center justify-center text-[10px] font-bold">?</span>
+                                                                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-surface-container border border-outline rounded-lg text-xs text-main shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                                                                        {t('loans.bankCredit.extraCostsTooltip')}
+                                                                    </span>
+                                                                </span>
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                inputMode="decimal"
+                                                                value={formData.additionalCosts || ''}
+                                                                onChange={(e) => setFormData({ ...formData, additionalCosts: formatCurrency(e.target.value) })}
+                                                                placeholder={isDotThousands ? '200.000' : '200,000'}
+                                                                className="w-full bg-surface border border-outline rounded-xl px-3 py-2.5 text-sm text-main focus:border-primary focus:outline-none font-mono"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
 
                                         {/* Calculated Summary */}
                                         {calc && !calc.error && (() => {
-                                            const additionalCostsPerMonth = parseFloat(formData.additionalCosts) || 0;
+                                            const additionalCostsPerMonth = parseCurrency(formData.additionalCosts);
                                             const totalAdditionalCosts = additionalCostsPerMonth * calc.installments;
                                             const grandTotal = calc.totalToPay + totalAdditionalCosts;
 

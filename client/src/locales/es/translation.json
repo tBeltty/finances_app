@@ -445,6 +445,8 @@
             "monthlyPayment": "Cuota Mensual",
             "remainingBalance": "Saldo Restante",
             "eaRate": "Tasa de Interés Anual",
+            "extraCosts": "Costos Extra/mes",
+            "extraCostsTooltip": "Seguros mensuales, comisiones y otros gastos bancarios no incluidos en la cuota.",
             "additionalCosts": "Aprox. Gastos Extra/mes",
             "calculated": "Estimación Calculada",
             "installmentsLeft": "Cuotas Restantes",
