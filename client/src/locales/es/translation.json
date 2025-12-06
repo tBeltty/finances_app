@@ -1,4 +1,7 @@
 {
+    "app": {
+        "title": "tBelt Finanzas"
+    },
     "common": {
         "loading": "Cargando...",
         "save": "Guardar",
@@ -43,20 +46,23 @@
     },
     "nav": {
         "hello": "Hola,",
-        "settings": "Ajustes",
+        "settings": "Configuración",
         "logout": "Cerrar Sesión",
-        "connectedAs": "Conectado como"
+        "connectedAs": "Conectado como",
+        "expenses": "Control de Gastos",
+        "loans": "Préstamos"
     },
     "onboarding": {
-        "welcome": "Bienvenido a Finances App",
+        "welcome": "Bienvenido a tBelt Finanzas",
         "subtitle": "Configuremos tu cuenta en unos pocos pasos.",
         "steps": {
             "language": "Idioma",
             "currency": "Moneda",
-            "savings": "Ahorros Iniciales",
+            "savings": "Ahorros",
             "autoSavings": "Ahorro Automático",
             "categories": "Categorías",
-            "fixedExpenses": "Gastos Fijos"
+            "fixedExpenses": "Gastos Fijos",
+            "loans": "Préstamos"
         },
         "languageSelect": "Selecciona tu idioma",
         "languageSelectSubtitle": "Por favor selecciona tu idioma preferido",
@@ -94,10 +100,17 @@
             "theme": "Tema",
             "mode": "Modo",
             "logo": "Logo"
-        }
+        },
+        "loansTitle": "Préstamos y Deudas",
+        "loansDesc": "¿Deseas habilitar el módulo de Préstamos? Puedes rastrear dinero que prestas o te prestan.",
+        "enableLoans": "Sí, habilitar Préstamos",
+        "disableLoans": "No, no lo necesito"
     },
     "settings": {
         "title": "Configuración",
+        "features": "Funcionalidades",
+        "loansFeature": "Gestión de Préstamos",
+        "loansFeatureDesc": "Habilita la sección de préstamos para gestionar deudas y créditos.",
         "general": "General",
         "categories": "Categorías",
         "household": "Hogar",
@@ -331,5 +344,113 @@
         "phone": "Celular",
         "transport": "Transporte",
         "food": "Alimentación"
+    },
+    "income": {
+        "title": "Ingresos del Mes",
+        "mainSalary": "Salario Principal",
+        "addExtra": "Agregar Ingreso Extra",
+        "addTitle": "Nuevo Ingreso",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Ej: Proyecto freelance",
+        "amount": "Monto",
+        "category": "Categoría",
+        "date": "Fecha",
+        "add": "Agregar Ingreso",
+        "categories": {
+            "freelance": "Freelance",
+            "sale": "Venta",
+            "rent": "Renta",
+            "dividend": "Dividendo",
+            "cashback": "Cashback",
+            "other": "Otro"
+        }
+    },
+    "loans": {
+        "title": "Préstamos",
+        "add": "Nuevo Préstamo",
+        "lent": "Me Deben",
+        "borrowed": "Debo",
+        "totalOwedToYou": "Total que Te Deben",
+        "totalYouOwe": "Total que Debes",
+        "active": "activos",
+        "completed": "completados",
+        "empty": "No hay préstamos aún. ¡Crea el primero!",
+        "of": "de",
+        "payments": "Pagos",
+        "addPayment": "Agregar Pago",
+        "markPaid": "Marcar Pagado",
+        "addLent": "Nuevo Préstamo Dado",
+        "addBorrowed": "Nuevo Préstamo Recibido",
+        "person": "Persona",
+        "personPlaceholderLent": "¿A quién le prestaste?",
+        "personPlaceholderBorrowed": "¿Quién te prestó?",
+        "amount": "Monto",
+        "date": "Fecha",
+        "dueDate": "Fecha Límite",
+        "notes": "Notas",
+        "notesPlaceholder": "Detalles opcionales...",
+        "save": "Guardar",
+        "registerPayment": "Registrar Pago",
+        "confirmDelete": "¿Estás seguro de eliminar este préstamo?",
+        "advancedMode": "Modo Avanzado",
+        "simpleMode": "Modo Simple",
+        "destination": "Destino del Dinero",
+        "destNone": "Ninguno (Solo registrar pago)",
+        "destIncome": "Ingresos",
+        "destSavings": "Ahorros",
+        "destNoneDesc": "Solo actualiza el saldo del préstamo.",
+        "destIncomeDesc": "Crea un registro en Ingresos.",
+        "destSavingsDesc": "Suma el monto a tus Ahorros.",
+        "payFrom": "Pagar Desde",
+        "sourceNone": "Ninguno (Solo registrar pago)",
+        "sourceExpense": "Gasto",
+        "sourceSavings": "Ahorros",
+        "sourceNoneDesc": "Solo actualiza el saldo del préstamo.",
+        "sourceExpenseDesc": "Crea un Gasto (Categoría: Deudas).",
+        "sourceSavingsDesc": "Resta el monto de tus Ahorros.",
+        "interestType": "Tipo de Interés",
+        "simple": "Simple",
+        "effectiveAnnual": "Efectivo Anual",
+        "defaultInterestType": "Tipo de Interés por Defecto",
+        "installments": "Cuotas",
+        "interestRate": "Tasa de Interés",
+        "totalToPay": "Total a Pagar",
+        "monthlyPayment": "Pago Mensual",
+        "month": "mes",
+        "paymentFrequency": "Frecuencia de Pago",
+        "monthly": "Mensual",
+        "biweekly": "Quincenal",
+        "weekly": "Semanal",
+        "firstPaymentDate": "Fecha Primera Cuota",
+        "schedulePreview": "Cronograma de Pagos",
+        "installment": "Cuota",
+        "paymentPerInstallment": "Pago por Cuota",
+        "frequency": "Frecuencia"
+    },
+    "whatsNew": {
+        "title": "Novedades en",
+        "subtitle": "Mira las nuevas funcionalidades que hemos agregado para ti.",
+        "button": "¡Genial, vamos!",
+        "features": {
+            "income": {
+                "title": "Ingresos Múltiples",
+                "desc": "Ahora puedes agregar ingresos extra como freelance, ventas o dividendos a tu total mensual."
+            },
+            "loans": {
+                "title": "Préstamos Personales",
+                "desc": "Gestiona el dinero que prestas a amigos o pides prestado a familiares. Simple e informal."
+            },
+            "ui": {
+                "title": "Mejoras Visuales",
+                "desc": "Un look renovado con mejores temas e interacciones más fluidas."
+            }
+        }
+    },
+    "frequency": {
+        "monthly": "Mensual",
+        "biweekly": "Quincenal",
+        "weekly": "Semanal",
+        "placeholder": "Frecuencia",
+        "month": "mes"
     }
 }

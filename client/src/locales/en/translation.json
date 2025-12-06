@@ -1,4 +1,7 @@
 {
+    "app": {
+        "title": "tBelt Finances"
+    },
     "common": {
         "loading": "Loading...",
         "save": "Save",
@@ -45,18 +48,18 @@
         "hello": "Hello,",
         "settings": "Settings",
         "logout": "Logout",
-        "connectedAs": "Connected as"
+        "connectedAs": "Connected as",
+        "expenses": "Expenses",
+        "loans": "Loans"
     },
     "onboarding": {
-        "welcome": "Welcome to Finances App",
+        "welcome": "Welcome to tBelt Finances",
         "subtitle": "Let's set up your account in a few steps.",
         "steps": {
-            "language": "Language",
             "currency": "Currency",
-            "savings": "Initial Savings",
-            "autoSavings": "Auto Savings",
-            "categories": "Categories",
-            "fixedExpenses": "Fixed Expenses"
+            "savings": "Savings",
+            "fixedExpenses": "Fixed Expenses",
+            "loans": "Loans"
         },
         "languageSelect": "Select your language",
         "languageSelectSubtitle": "Please select your preferred language",
@@ -94,10 +97,17 @@
             "theme": "Theme",
             "mode": "Mode",
             "logo": "Logo"
-        }
+        },
+        "loansTitle": "Loans & Debts",
+        "loansDesc": "Do you want to enable the Loans module? You can track money you lend or borrow.",
+        "enableLoans": "Yes, enable Loans",
+        "disableLoans": "No, I don't need it"
     },
     "settings": {
         "title": "Settings",
+        "features": "Features",
+        "loansFeature": "Loans Management",
+        "loansFeatureDesc": "Enable the loans section to manage debts and credits.",
         "general": "General",
         "categories": "Categories",
         "household": "Household",
@@ -221,6 +231,8 @@
         "select": "Select...",
         "date": "Date",
         "paid": "Paid",
+        "language": "Language",
+        "autoSavings": "Auto Savings",
         "pending": "Pending",
         "savings": "Savings",
         "payWithSavings": "Pay with Savings",
@@ -331,5 +343,113 @@
         "phone": "Phone",
         "transport": "Transport",
         "food": "Food"
+    },
+    "income": {
+        "title": "Monthly Income",
+        "mainSalary": "Main Salary",
+        "addExtra": "Add Extra Income",
+        "addTitle": "New Income",
+        "description": "Description",
+        "descriptionPlaceholder": "Ex: Freelance project",
+        "amount": "Amount",
+        "category": "Category",
+        "date": "Date",
+        "add": "Add Income",
+        "categories": {
+            "freelance": "Freelance",
+            "sale": "Sale",
+            "rent": "Rent",
+            "dividend": "Dividend",
+            "cashback": "Cashback",
+            "other": "Other"
+        }
+    },
+    "loans": {
+        "title": "Loans",
+        "add": "New Loan",
+        "lent": "Owed to Me",
+        "borrowed": "I Owe",
+        "totalOwedToYou": "Total Owed to You",
+        "totalYouOwe": "Total You Owe",
+        "active": "active",
+        "completed": "completed",
+        "empty": "No loans yet. Create your first one!",
+        "of": "of",
+        "payments": "Payments",
+        "addPayment": "Add Payment",
+        "markPaid": "Mark as Paid",
+        "addLent": "New Loan Given",
+        "addBorrowed": "New Loan Received",
+        "person": "Person",
+        "personPlaceholderLent": "Who did you lend to?",
+        "personPlaceholderBorrowed": "Who lent you money?",
+        "amount": "Amount",
+        "date": "Date",
+        "dueDate": "Due Date",
+        "notes": "Notes",
+        "notesPlaceholder": "Optional details...",
+        "save": "Save",
+        "registerPayment": "Register Payment",
+        "confirmDelete": "Are you sure you want to delete this loan?",
+        "advancedMode": "Advanced Mode",
+        "simpleMode": "Simple Mode",
+        "destination": "Destination",
+        "destNone": "None (Just register payment)",
+        "destIncome": "Income",
+        "destSavings": "Savings",
+        "destNoneDesc": "Only updates the loan balance.",
+        "destIncomeDesc": "Creates an Income record.",
+        "destSavingsDesc": "Adds amount to Savings balance.",
+        "payFrom": "Pay From",
+        "sourceNone": "None (Just register payment)",
+        "sourceExpense": "Expense",
+        "sourceSavings": "Savings",
+        "sourceNoneDesc": "Only updates the loan balance.",
+        "sourceExpenseDesc": "Creates an Expense record (Category: Deudas).",
+        "sourceSavingsDesc": "Deducts amount from Savings balance.",
+        "interestType": "Interest Type",
+        "simple": "Simple",
+        "effectiveAnnual": "Effective Annual",
+        "defaultInterestType": "Default Interest Type",
+        "installments": "Installments",
+        "interestRate": "Interest Rate",
+        "totalToPay": "Total to Pay",
+        "monthlyPayment": "Monthly Payment",
+        "month": "month",
+        "paymentFrequency": "Payment Frequency",
+        "monthly": "Monthly",
+        "biweekly": "Bi-weekly",
+        "weekly": "Weekly",
+        "firstPaymentDate": "First Payment Date",
+        "schedulePreview": "Payment Schedule",
+        "installment": "Installment",
+        "paymentPerInstallment": "Payment per Installment",
+        "frequency": "Frequency"
+    },
+    "whatsNew": {
+        "title": "What's New in",
+        "subtitle": "Check out the latest features we've added for you.",
+        "button": "Awesome, let's go!",
+        "features": {
+            "income": {
+                "title": "Multiple Incomes",
+                "desc": "Now you can add extra income sources like freelance work, sales, or dividends to your monthly total."
+            },
+            "loans": {
+                "title": "Personal Loans",
+                "desc": "Keep track of money you lend to friends or borrow from family. Simple and informal."
+            },
+            "ui": {
+                "title": "Visual Improvements",
+                "desc": "A refreshed look with better themes and smoother interactions."
+            }
+        }
+    },
+    "frequency": {
+        "monthly": "Monthly",
+        "biweekly": "Bi-weekly",
+        "weekly": "Weekly",
+        "placeholder": "Frequency",
+        "month": "mo"
     }
 }

@@ -86,7 +86,6 @@ app.put('/api/auth/currency', authMiddleware, authController.updateCurrency);
 app.put('/api/auth/update-currency', authMiddleware, authController.updateCurrency); // Alias
 app.put('/api/auth/update-language', authMiddleware, authController.updateLanguage);
 app.put('/api/auth/update-theme', authMiddleware, authController.updateTheme);
-app.put('/api/auth/loan-settings', authMiddleware, authController.updateLoanSettings);
 app.delete('/api/auth/me', authMiddleware, authController.deleteAccount);
 
 

@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import useFinances from '../../hooks/useFinances';
 import KPIs from './KPIs';
 import ExpenseList from '../Expenses/ExpenseList';
-import ExpenseForm from '../Expenses/ExpenseForm';
 import SavingsWidget from '../../components/Dashboard/SavingsWidget';
+import IncomeWidget from '../../components/Income/IncomeWidget';
+import ExpenseForm from '../Expenses/ExpenseForm';
 import Controls from '../../components/Dashboard/Controls';
-import SettingsModal from '../../components/Settings/SettingsModal';
 import PendingExpensesModal from '../../components/Expenses/PendingExpensesModal';
 import { useAuth } from '../../context/AuthContext';
 import { Users, Settings as SettingsIcon, LogOut, Plus, Menu, X } from 'lucide-react';
@@ -173,6 +173,12 @@ export default function Dashboard() {
                                     />
                                 </div>
                                 <div className="space-y-6">
+                                    <IncomeWidget
+                                        mainIncome={income}
+                                        formatCurrency={formatCurrency}
+                                        selectedMonth={selectedMonth}
+                                        token={localStorage.getItem('token')}
+                                    />
                                     <SavingsWidget
                                         savings={savings}
                                         updateSavings={updateSavings}
@@ -192,19 +198,7 @@ export default function Dashboard() {
                     )}
                 </div>
 
-                <SettingsModal
-                    isOpen={settingsOpen}
-                    onClose={closeSettings}
-                    categories={categories}
-                    handleAddCategory={handleAddCategory}
-                    handleDeleteCategory={handleDeleteCategory}
-                    handleEditCategory={handleEditCategory}
-                    handleAddTemplateCategories={addTemplateCategories}
-                    user={user}
-                    refreshUser={refreshUser}
-                    household={household}
-                    updateHouseholdSettings={updateHouseholdSettings}
-                />
+
 
                 <QuickAddModal
                     isOpen={showQuickAdd}

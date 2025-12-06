@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, DollarSign, Plus, ArrowRight, Check, Loader2, Globe, Languages, Palette, Moon, Sun } from 'lucide-react';
+import { Sparkles, DollarSign, Plus, ArrowRight, Check, Loader2, Globe, Languages, Palette, Moon, Sun, HandCoins } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useUI } from '../../context/UIContext';
 import { useTranslation } from 'react-i18next';
 import CustomSelect from '../../components/Inputs/CustomSelect';
 
 export default function Onboarding({ onComplete }) {
     const { user, refreshUser } = useAuth();
     const { theme, setTheme, mode, setMode, logo, setLogo } = useTheme();
+    const { setShowLoans } = useUI();
     const { t, i18n } = useTranslation();
     const [step, setStep] = useState(0); // Start at 0 for Language Selection
     const [income, setIncome] = useState('');
@@ -22,6 +24,9 @@ export default function Onboarding({ onComplete }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [uiMode, setUiMode] = useState(3); // 1=Dropdowns, 2=Cards, 3=Builder
+    const [enableLoans, setEnableLoans] = useState(true);
+    const [incomeFrequency, setIncomeFrequency] = useState('monthly');
+    const [defaultInterestType, setDefaultInterestType] = useState('simple');
 
     const getCurrencySymbol = (code) => {
         switch (code) {
@@ -65,7 +70,7 @@ export default function Onboarding({ onComplete }) {
     };
 
     useEffect(() => {
-        if (step === 6 && fixedExpenses.length === 0) {
+        if (step === 7 && fixedExpenses.length === 0) {
             const timer = setTimeout(() => {
                 setShowSuggestion(true);
             }, 1000); // Delay slightly for effect
@@ -135,7 +140,19 @@ export default function Onboarding({ onComplete }) {
                 await fetch('/api/auth/update-income', {
                     method: 'PUT',
                     headers,
-                    body: JSON.stringify({ income: parseFloat(income) })
+                    body: JSON.stringify({
+                        income: parseFloat(income),
+                        frequency: incomeFrequency
+                    })
+                });
+            }
+
+            // 2.5 Update Loan Settings
+            if (enableLoans) {
+                await fetch('/api/auth/loan-settings', {
+                    method: 'PUT',
+                    headers,
+                    body: JSON.stringify({ defaultInterestType })
                 });
             }
 
@@ -232,6 +249,7 @@ export default function Onboarding({ onComplete }) {
             if (!onboardingRes.ok) throw new Error('Error completing onboarding');
 
             await refreshUser();
+            setShowLoans(enableLoans);
             onComplete();
         } catch (error) {
             console.error('Error completing onboarding:', error);
@@ -309,23 +327,13 @@ export default function Onboarding({ onComplete }) {
                             >
                                 {t('common.back')}
                             </button>
-                            <div className="relative flex-1">
-                                <button
-                                    onClick={() => setStep(2)}
-                                    className="w-full bg-primary hover:bg-primary-container text-main py-3 px-6 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
-                                >
-                                    {t('onboarding.getStarted')}
-                                    <ArrowRight className="h-5 w-5" />
-                                </button>
-                                {showStartSuggestion && (
-                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 animate-in fade-in slide-in-from-bottom-2 z-50">
-                                        <div className="bg-primary text-main text-sm font-bold py-2 px-4 rounded-xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 relative">
-                                            <span>{t('onboarding.suggestion.letsStart')}</span>
-                                            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rotate-45"></div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                            <button
+                                onClick={() => setStep(2)}
+                                className="flex-1 bg-primary hover:bg-primary-container text-main py-3 px-6 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                            >
+                                {t('onboarding.getStarted')}
+                                <ArrowRight className="h-5 w-5" />
+                            </button>
                         </div>
                     </div>
                 )}
@@ -448,16 +456,40 @@ export default function Onboarding({ onComplete }) {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-secondary">{t('onboarding.monthlyIncome')}</label>
-                                <div className="flex items-center gap-4 bg-surface border border-outline rounded-xl px-5 py-4">
-                                    <span className="text-secondary text-xl font-bold w-6 text-center">{getCurrencySymbol(currency)}</span>
-                                    <input
-                                        type="number"
-                                        value={income}
-                                        onChange={(e) => setIncome(e.target.value)}
-                                        placeholder={t('onboarding.incomePlaceholder')}
-                                        className="flex-1 bg-transparent text-main text-xl font-bold focus:outline-none placeholder:text-slate-600"
-                                    />
+                                <div className="flex gap-2">
+                                    <div className="flex-1 flex items-center gap-4 bg-surface border border-outline rounded-xl px-5 py-4">
+                                        <span className="text-secondary text-xl font-bold w-6 text-center">{getCurrencySymbol(currency)}</span>
+                                        <input
+                                            type="number"
+                                            value={income}
+                                            onChange={(e) => setIncome(e.target.value)}
+                                            placeholder={t('onboarding.incomePlaceholder')}
+                                            className="flex-1 bg-transparent text-main text-xl font-bold focus:outline-none placeholder:text-slate-600"
+                                        />
+                                    </div>
+                                    <div className="w-1/3">
+                                        <CustomSelect
+                                            value={incomeFrequency}
+                                            onChange={setIncomeFrequency}
+                                            options={[
+                                                { value: 'monthly', label: t('frequency.monthly') },
+                                                { value: 'biweekly', label: t('frequency.biweekly') },
+                                                { value: 'weekly', label: t('frequency.weekly') }
+                                            ]}
+                                            placeholder={t('frequency.placeholder')}
+                                        />
+                                    </div>
                                 </div>
+                                {incomeFrequency === 'biweekly' && income && (
+                                    <p className="text-xs text-secondary ml-1">
+                                        ≈ {getCurrencySymbol(currency)} {(parseFloat(income) * 2).toFixed(2)} / {t('frequency.month')}
+                                    </p>
+                                )}
+                                {incomeFrequency === 'weekly' && income && (
+                                    <p className="text-xs text-secondary ml-1">
+                                        ≈ {getCurrencySymbol(currency)} {(parseFloat(income) * 4).toFixed(2)} / {t('frequency.month')}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -598,8 +630,98 @@ export default function Onboarding({ onComplete }) {
                     </div>
                 )}
 
-                {/* Step 6: Fixed Expenses */}
+                {/* Step 6: Loans */}
                 {step === 6 && (
+                    <div className="bg-surface-container backdrop-blur-xl rounded-2xl border border-outline p-10 space-y-8">
+                        <div className="space-y-3 px-2">
+                            <h2 className="text-2xl font-bold text-main">{t('onboarding.loansTitle')}</h2>
+                            <p className="text-secondary leading-relaxed">
+                                {t('onboarding.loansDesc')}
+                            </p>
+                        </div>
+
+                        <div className="flex justify-center py-6">
+                            <div className={`p-6 rounded-full transition-all ${enableLoans ? 'bg-primary/10 scale-110' : 'bg-surface border border-outline'}`}>
+                                <HandCoins className={`w-16 h-16 ${enableLoans ? 'text-primary' : 'text-secondary'}`} />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4">
+                            <button
+                                onClick={() => setEnableLoans(true)}
+                                className={`p-4 rounded-xl border text-left transition-all flex items-center gap-4 ${enableLoans
+                                    ? 'bg-primary/10 border-primary shadow-lg shadow-primary/10'
+                                    : 'bg-surface border-outline hover:border-primary/50'
+                                    }`}
+                            >
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${enableLoans ? 'border-primary bg-primary' : 'border-secondary'}`}>
+                                    {enableLoans && <Check className="w-4 h-4 text-white" />}
+                                </div>
+                                <span className={`font-medium ${enableLoans ? 'text-primary' : 'text-secondary'}`}>{t('onboarding.enableLoans')}</span>
+                            </button>
+
+                            <button
+                                onClick={() => setEnableLoans(false)}
+                                className={`p-4 rounded-xl border text-left transition-all flex items-center gap-4 ${!enableLoans
+                                    ? 'bg-surface-container-high border-secondary text-main'
+                                    : 'bg-surface border-outline hover:border-secondary'
+                                    }`}
+                            >
+                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${!enableLoans ? 'border-secondary bg-secondary' : 'border-secondary'}`}>
+                                    {!enableLoans && <Check className="w-4 h-4 text-white" />}
+                                </div>
+                                <span className={`font-medium ${!enableLoans ? 'text-main' : 'text-secondary'}`}>{t('onboarding.disableLoans')}</span>
+                            </button>
+                        </div>
+
+                        {enableLoans && (
+                            <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                <label className="text-sm font-medium text-secondary">{t('loans.defaultInterestType')}</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        onClick={() => setDefaultInterestType('simple')}
+                                        className={`p-3 rounded-xl border text-center transition-all ${defaultInterestType === 'simple'
+                                            ? 'bg-primary/20 border-primary text-main'
+                                            : 'bg-surface border-outline text-secondary hover:border-outline'
+                                            }`}
+                                    >
+                                        <div className="font-bold">{t('loans.simple')}</div>
+                                    </button>
+                                    <button
+                                        onClick={() => setDefaultInterestType('effective_annual')}
+                                        className={`p-3 rounded-xl border text-center transition-all ${defaultInterestType === 'effective_annual'
+                                            ? 'bg-primary/20 border-primary text-main'
+                                            : 'bg-surface border-outline text-secondary hover:border-outline'
+                                            }`}
+                                    >
+                                        <div className="font-bold">{t('loans.effectiveAnnual')}</div>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex gap-4 pt-2">
+                            <button
+                                type="button"
+                                onClick={() => setStep(5)}
+                                className="flex-1 bg-surface-container hover:bg-surface-container-high text-main py-3 px-6 rounded-xl font-medium transition-colors"
+                            >
+                                {t('common.back')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setStep(7)}
+                                className="flex-1 bg-primary hover:bg-primary-container text-main py-3 px-6 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                            >
+                                {t('common.next')}
+                                <ArrowRight className="h-5 w-5" />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Step 7: Fixed Expenses */}
+                {step === 7 && (
                     <div className="bg-surface-container backdrop-blur-xl rounded-2xl border border-outline p-10 space-y-8">
                         <div className="space-y-3 px-2">
                             <h2 className="text-2xl font-bold text-main">{t('onboarding.steps.fixedExpenses')}</h2>
@@ -711,7 +833,7 @@ export default function Onboarding({ onComplete }) {
                         <div className="flex gap-4 pt-2">
                             <button
                                 type="button"
-                                onClick={() => setStep(5)}
+                                onClick={() => setStep(6)}
                                 disabled={loading}
                                 className="flex-1 bg-surface-container hover:bg-surface-container-high text-main py-3 px-6 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >

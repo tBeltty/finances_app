@@ -1,22 +1,22 @@
-# Finances App v1.3
+# tBelt Finances v1.4
 
 A modern, comprehensive web application for personal and shared financial management, built with React, Node.js, and PostgreSQL.
 
-![Version](https://img.shields.io/badge/version-1.3.0-blue)
+![Version](https://img.shields.io/badge/version-1.4.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-## ✨ What's New in v1.3
+## ✨ What's New in v1.4
 
-### 🎨 Complete Theming System
-- **3 Unique Themes:** Cosmic Slate (default), Takito (warm orange), Cookie (cool blue)
-- **Light/Dark Modes:** Each theme fully supports both modes
-- **Themed Backgrounds:** Each theme has its distinctive tinted background
-- **Semantic Colors:** Success/error/warning colors adapt to each theme
-- **Glassmorphism UI:** Modern glass-effect design across all components
+### 💰 Loans Module
+- **Track Loans:** Manage money you lend or borrow with detailed records
+- **Payment Schedules:** Automatic installment calculation
+- **Effective Annual Interest Rate:** Professional EA calculation with amortization formula
+- **Simple & Compound Interest:** Choose your preferred interest type
 
-### 🌐 Internationalization (i18n)
-- **Full Localization:** Complete Spanish and English translations
-- **Dynamic Currency Formatting:** Locale-aware number and currency display
+### 🚀 Enhanced Onboarding
+- **Income Frequency:** Set if you receive income monthly, biweekly, or weekly
+- **Loan Preferences:** Pre-configure default interest type for new loans
+- **Localized App Title:** tBelt Finances (EN) / tBelt Finanzas (ES)
 
 ## Key Features
 
@@ -24,6 +24,7 @@ A modern, comprehensive web application for personal and shared financial manage
 - **Expenses:** Detailed tracking of fixed and variable expenses
 - **Categories:** Flexible categorization with custom colors and templates
 - **Savings:** Dedicated widget for savings goals and expense payments
+- **Loans:** Track debts and credits with interest calculations
 - **Multi-currency:** Native support for USD, EUR, COP, MXN, ARS, HNL
 
 ### 📊 Dashboard & Analytics
@@ -36,6 +37,11 @@ A modern, comprehensive web application for personal and shared financial manage
 - **Shared Spaces:** Create multiple "Households" (Personal, Home, Business)
 - **Collaboration:** Invite family members or partners via invite codes
 - **Roles:** Permission management (Owner, Member)
+
+### 🎨 Theming System
+- **3 Unique Themes:** Cosmic Slate, Takito (warm orange), Cookie (cool blue)
+- **Light/Dark Modes:** Each theme fully supports both modes
+- **Glassmorphism UI:** Modern glass-effect design across all components
 
 ### 🔒 Security & Technology
 - **Robust Authentication:** JWT with secure sessions
@@ -123,6 +129,7 @@ FRONTEND_URL=http://localhost:5173
 
 | Version | Release | Highlights |
 |---------|---------|------------|
+| v1.4.0 | Dec 2024 | Loans module, Effective Annual Interest, Enhanced Onboarding |
 | v1.3.0 | Dec 2024 | Complete theming system, semantic colors, glassmorphism |
 | v1.2.0 | Nov 2024 | Full i18n support, Spanish/English translations |
 | v1.1.0 | Nov 2024 | Monorepo refactor, client/server separation |

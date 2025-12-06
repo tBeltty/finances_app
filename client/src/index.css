@@ -89,6 +89,10 @@
     color: rgb(var(--primary)) !important;
 }
 
+.text-on-primary {
+    color: rgb(var(--on-primary)) !important;
+}
+
 .text-main {
     color: rgb(var(--on-surface)) !important;
 }
@@ -197,9 +201,11 @@
     /* Slate-700 */
     --on-surface: 226 232 240;
     --on-surface-variant: 148 163 184;
-    --primary: 165 180 252;
-    --on-primary: 49 46 129;
-    --primary-container: 49 46 129;
+    --primary: 99 102 241;
+    /* Indigo-500 */
+    --on-primary: 255 255 255;
+    --primary-container: 55 48 163;
+    /* Indigo-800 */
     --on-primary-container: 224 231 255;
     --outline: 51 65 85;
     /* Semantic colors - Cosmic Dark */
@@ -440,6 +446,7 @@ input[type=range]::-moz-range-thumb {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

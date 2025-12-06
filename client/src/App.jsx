@@ -11,12 +11,53 @@ import Dashboard from './views/Dashboard/Dashboard';
 import Onboarding from './views/Onboarding/Onboarding';
 import ThemeDebug from './components/ThemeDebug';
 import BackupNotification from './components/BackupNotification/BackupNotification';
+import Loans from './views/Loans/Loans';
+
+import WhatsNewModal from './components/WhatsNew/WhatsNewModal';
+import SettingsModal from './components/Settings/SettingsModal';
+import useFinances from './hooks/useFinances';
+import { useUI } from './context/UIContext';
+
+import { useTranslation } from 'react-i18next';
 
 import { APP_VERSION } from './config';
 
 function App() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const { settingsOpen, closeSettings } = useUI();
+  const [showWhatsNew, setShowWhatsNew] = React.useState(false);
+  const { t } = useTranslation();
+
+  // Update document title based on language
+  React.useEffect(() => {
+    document.title = t('app.title');
+  }, [t]);
+
+  // Use finances hook at App level to provide data to SettingsModal
+  const finances = useFinances();
+  const {
+    categories,
+    handleAddCategory,
+    handleDeleteCategory,
+    handleEditCategory,
+    addTemplateCategories,
+    household,
+    updateHouseholdSettings
+  } = finances;
+
+  React.useEffect(() => {
+    // Check for version update to show What's New
+    const lastSeenVersion = localStorage.getItem('lastSeenVersion');
+    if (user && lastSeenVersion !== APP_VERSION) {
+      setShowWhatsNew(true);
+    }
+  }, [user]);
+
+  const handleCloseWhatsNew = () => {
+    setShowWhatsNew(false);
+    localStorage.setItem('lastSeenVersion', APP_VERSION);
+  };
 
   React.useEffect(() => {
     const checkVersion = async () => {
@@ -72,10 +113,31 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/loans" element={<Loans />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
       <BackupNotification />
+      <WhatsNewModal
+        isOpen={showWhatsNew}
+        onClose={handleCloseWhatsNew}
+        version={APP_VERSION}
+      />
+      {user && (
+        <SettingsModal
+          isOpen={settingsOpen}
+          onClose={closeSettings}
+          categories={categories}
+          handleAddCategory={handleAddCategory}
+          handleDeleteCategory={handleDeleteCategory}
+          handleEditCategory={handleEditCategory}
+          handleAddTemplateCategories={addTemplateCategories}
+          user={user}
+          refreshUser={refreshUser}
+          household={household}
+          updateHouseholdSettings={updateHouseholdSettings}
+        />
+      )}
     </div>
   );
 }

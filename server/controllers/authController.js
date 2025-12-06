@@ -295,7 +295,7 @@ exports.disable2FA = async (req, res) => {
 exports.getMe = async (req, res) => {
     try {
         const user = await User.findByPk(req.user.id, {
-            attributes: ['id', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'currency', 'language', 'theme', 'mode'],
+            attributes: ['id', 'username', 'email', 'emailVerified', 'isTwoFactorEnabled', 'hasCompletedOnboarding', 'monthlyIncome', 'incomeFrequency', 'currency', 'language', 'theme', 'mode', 'logo', 'defaultInterestType'],
             include: [{
                 model: Household,
                 through: { attributes: ['role', 'isDefault'] }
@@ -312,11 +312,12 @@ exports.getMe = async (req, res) => {
 
 exports.updateIncome = async (req, res) => {
     try {
-        const { income } = req.body;
+        const { income, frequency } = req.body;
         const user = await User.findByPk(req.user.id);
-        user.monthlyIncome = parseFloat(income) || 0;
+        if (income !== undefined) user.monthlyIncome = parseFloat(income) || 0;
+        if (frequency) user.incomeFrequency = frequency;
         await user.save();
-        res.json({ success: true, income: user.monthlyIncome });
+        res.json({ success: true, income: user.monthlyIncome, frequency: user.incomeFrequency });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -366,6 +367,18 @@ exports.completeOnboarding = async (req, res) => {
         user.hasCompletedOnboarding = true;
         await user.save();
         res.json({ success: true, message: 'Onboarding completado' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.updateLoanSettings = async (req, res) => {
+    try {
+        const { defaultInterestType } = req.body;
+        const user = await User.findByPk(req.user.id);
+        if (defaultInterestType) user.defaultInterestType = defaultInterestType;
+        await user.save();
+        res.json({ success: true, defaultInterestType: user.defaultInterestType });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

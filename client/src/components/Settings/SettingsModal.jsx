@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Shield, List, Plus, Trash2, Edit2, Check, RefreshCw, Users, Copy, LogIn, Languages, Palette, Moon, Sun } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
+import { useUI } from '../../context/UIContext';
 import CustomSelect from '../Inputs/CustomSelect';
 import { APP_VERSION } from '../../config';
 
@@ -20,6 +21,7 @@ export default function SettingsModal({
 }) {
     const { t, i18n } = useTranslation();
     const { theme, setTheme, mode, setMode, logo, setLogo } = useTheme();
+    const { showLoans, setShowLoans } = useUI();
     const [activeTab, setActiveTab] = useState('general');
     const [newCategory, setNewCategory] = useState('');
     const [editingId, setEditingId] = useState(null);
@@ -494,6 +496,26 @@ export default function SettingsModal({
                                 </div>
                             </div>
 
+
+                            {/* Features Section */}
+                            <div className="pt-8 border-t border-border">
+                                <h3 className="text-sm font-bold text-secondary uppercase mb-4">{t('settings.features')}</h3>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between bg-main border border-border rounded-xl p-4">
+                                        <div>
+                                            <h4 className="text-main font-medium">{t('settings.loansFeature')}</h4>
+                                            <p className="text-xs text-secondary mt-1">{t('settings.loansFeatureDesc')}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setShowLoans(!showLoans)}
+                                            className={`relative w-12 h-6 rounded-full transition-colors ${showLoans ? 'bg-primary' : 'bg-surface-container-high'}`}
+                                        >
+                                            <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${showLoans ? 'translate-x-6' : 'translate-x-0'}`} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Auto Savings Section */}
                             <div className="pt-8 border-t border-border">
                                 <h3 className="text-sm font-bold text-secondary uppercase mb-4">{t('settings.autoSavings')}</h3>
@@ -623,7 +645,7 @@ export default function SettingsModal({
                             </div>
 
                             <div className="space-y-4 pt-4 border-t border-border">
-                                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Mascota</h3>
+                                <h3 className="text-sm font-bold text-secondary uppercase tracking-wider">Logo</h3>
                                 <p className="text-xs text-secondary">El logo se verá en tu inicio y en el icono de la app después de instalar</p>
                                 <div className="grid grid-cols-3 gap-4">
                                     {[
@@ -966,6 +988,6 @@ export default function SettingsModal({
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { LogOut, Menu, X, Wallet, Settings, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useUI } from '../../context/UIContext';
@@ -8,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 export default function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { logout, user } = useAuth();
-    const { openSettings } = useUI();
+    const { openSettings, showLoans } = useUI();
     const { t } = useTranslation();
     const { logo } = useTheme();
 
@@ -29,11 +30,27 @@ export default function Navbar() {
                             <img src={getLogo()} alt="Logo" className="w-full h-full object-cover" />
                         </div>
                         <span className="text-xl font-bold text-primary">
-                            tBelt Finanzas
+                            {t('app.title')}
                         </span>
                     </div>
 
                     <div className="hidden md:flex items-center gap-6">
+                        <div className="flex items-center gap-1 mr-4 bg-surface-container rounded-xl p-1 border border-outline">
+                            <NavLink
+                                to="/"
+                                className={({ isActive }) => `px-4 py-2 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-primary-container text-on-primary-container shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                            >
+                                {t('nav.expenses')}
+                            </NavLink>
+                            {showLoans && (
+                                <NavLink
+                                    to="/loans"
+                                    className={({ isActive }) => `px-4 py-2 rounded-lg text-sm font-medium transition-all ${isActive ? 'bg-primary-container text-on-primary-container shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                                >
+                                    {t('nav.loans')}
+                                </NavLink>
+                            )}
+                        </div>
                         <div className="text-secondary text-sm">
                             {t('nav.hello')} <span className="text-main font-medium">{user?.username}</span>
                         </div>
@@ -78,6 +95,24 @@ export default function Navbar() {
                         </div>
                     </div>
                     <div className="p-1.5 space-y-0.5">
+                        <NavLink
+                            to="/"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={({ isActive }) => `w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium flex items-center gap-3 transition-all ${isActive ? 'bg-primary-container text-on-primary-container' : 'text-secondary hover:text-main hover:bg-surface-container-high'}`}
+                        >
+                            <Wallet className="w-4 h-4" />
+                            {t('nav.expenses')}
+                        </NavLink>
+                        {showLoans && (
+                            <NavLink
+                                to="/loans"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={({ isActive }) => `w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium flex items-center gap-3 transition-all ${isActive ? 'bg-primary-container text-on-primary-container' : 'text-secondary hover:text-main hover:bg-surface-container-high'}`}
+                            >
+                                <div className="w-4 h-4 flex items-center justify-center font-bold">$</div>
+                                {t('nav.loans')}
+                            </NavLink>
+                        )}
                         <button
                             onClick={() => { openSettings(); setMobileMenuOpen(false); }}
                             className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium text-secondary hover:text-main hover:bg-surface-container-high flex items-center gap-3 transition-all group"

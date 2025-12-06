@@ -1,5 +1,7 @@
 const { Expense, Category } = require('../models/Finance');
 const Savings = require('../models/Savings');
+const Income = require('../models/Income');
+const { Loan, LoanPayment } = require('../models/Loan');
 const { Parser } = require('json2csv');
 
 exports.getExpenses = async (req, res) => {
@@ -283,6 +285,289 @@ exports.exportExpenses = async (req, res) => {
         res.header('Content-Type', 'text/csv');
         res.attachment(`expenses-${month}.csv`);
         return res.send(csv);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// ============ INCOME FUNCTIONS ============
+
+exports.getIncomes = async (req, res) => {
+    try {
+        const { month } = req.query; // Format: "MM-YYYY"
+        const [mm, yyyy] = month.split('-');
+        const startDate = `${yyyy}-${mm}-01`;
+        const endDate = new Date(yyyy, parseInt(mm), 0).toISOString().split('T')[0];
+
+        const incomes = await Income.findAll({
+            where: {
+                householdId: req.householdId,
+                date: {
+                    [require('sequelize').Op.between]: [startDate, endDate]
+                }
+            },
+            order: [['date', 'DESC']]
+        });
+        res.json(incomes);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.createIncome = async (req, res) => {
+    try {
+        const { description, amount, date, type, category } = req.body;
+        const income = await Income.create({
+            householdId: req.householdId,
+            description,
+            amount,
+            date: date || new Date(),
+            type: type || 'extra',
+            category
+        });
+        res.status(201).json(income);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.updateIncome = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const income = await Income.findOne({
+            where: { id, householdId: req.householdId }
+        });
+        if (!income) return res.status(404).json({ message: 'Income not found' });
+
+        const { description, amount, date, category } = req.body;
+        if (description) income.description = description;
+        if (amount) income.amount = amount;
+        if (date) income.date = date;
+        if (category) income.category = category;
+
+        await income.save();
+        res.json(income);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.deleteIncome = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const income = await Income.findOne({
+            where: { id, householdId: req.householdId }
+        });
+        if (!income) return res.status(404).json({ message: 'Income not found' });
+
+        await income.destroy();
+        res.json({ message: 'Income deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// ============ LOAN FUNCTIONS ============
+
+exports.getLoans = async (req, res) => {
+    try {
+        const { type } = req.query; // 'lent' or 'borrowed' or undefined for all
+        const where = { householdId: req.householdId };
+        if (type) where.type = type;
+
+        const loans = await Loan.findAll({
+            where,
+            include: [{ model: LoanPayment, as: 'payments' }],
+            order: [['createdAt', 'DESC']]
+        });
+        res.json(loans);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.createLoan = async (req, res) => {
+    try {
+        const { personName, type, amount, date, dueDate, notes, installments, interestRate, paymentFrequency } = req.body;
+        const loan = await Loan.create({
+            householdId: req.householdId,
+            personName,
+            type, // 'lent' or 'borrowed'
+            amount,
+            date: date || new Date(),
+            dueDate,
+            notes,
+            installments: installments || 1,
+            interestRate: interestRate || 0,
+            interestType: req.body.interestType || 'simple',
+            paymentFrequency: paymentFrequency || 'monthly'
+        });
+        res.status(201).json(loan);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.updateLoan = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const loan = await Loan.findOne({
+            where: { id, householdId: req.householdId }
+        });
+        if (!loan) return res.status(404).json({ message: 'Loan not found' });
+
+        const { personName, amount, dueDate, notes, status, installments, interestRate, paymentFrequency } = req.body;
+        if (personName) loan.personName = personName;
+        if (amount) loan.amount = amount;
+        if (dueDate !== undefined) loan.dueDate = dueDate;
+        if (notes !== undefined) loan.notes = notes;
+        if (status) loan.status = status;
+        if (installments) loan.installments = installments;
+        if (interestRate !== undefined) loan.interestRate = interestRate;
+        if (req.body.interestType) loan.interestType = req.body.interestType;
+        if (paymentFrequency) loan.paymentFrequency = paymentFrequency;
+
+        await loan.save();
+        res.json(loan);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.deleteLoan = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const loan = await Loan.findOne({
+            where: { id, householdId: req.householdId }
+        });
+        if (!loan) return res.status(404).json({ message: 'Loan not found' });
+
+        // Delete payments first
+        await LoanPayment.destroy({ where: { loanId: id } });
+        await loan.destroy();
+        res.json({ message: 'Loan deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.addLoanPayment = async (req, res) => {
+    try {
+        const { id } = req.params; // loan id
+        const { amount, date, notes, destination } = req.body; // destination: 'income', 'savings', 'none'
+
+        // Verify loan belongs to household
+        const loan = await Loan.findOne({
+            where: { id, householdId: req.householdId }
+        });
+        if (!loan) return res.status(404).json({ message: 'Loan not found' });
+
+        const payment = await LoanPayment.create({
+            loanId: id,
+            amount,
+            date: date || new Date(),
+            notes
+        });
+
+        // Handle Destination Logic (Only for 'lent' loans usually, but logic holds for any money coming in)
+        if (loan.type === 'lent') {
+            if (destination === 'income') {
+                await Income.create({
+                    householdId: req.householdId,
+                    description: `Pago de préstamo: ${loan.personName}`,
+                    amount: amount,
+                    date: date || new Date(),
+                    type: 'extra',
+                    category: 'Préstamo'
+                });
+            } else if (destination === 'savings') {
+                let savings = await Savings.findOne({ where: { householdId: req.householdId } });
+                if (!savings) {
+                    savings = await Savings.create({ householdId: req.householdId, balance: 0 });
+                }
+                savings.balance += parseFloat(amount);
+                savings.lastUpdated = new Date();
+                await savings.save();
+            }
+        } else if (loan.type === 'borrowed') {
+            // Handle Source Logic for paying back a loan
+            const { source } = req.body; // 'savings', 'expense', 'none'
+
+            if (source === 'expense') {
+                // Find or create 'Deudas' category
+                let category = await Category.findOne({
+                    where: {
+                        householdId: req.householdId,
+                        name: 'Deudas'
+                    }
+                });
+
+                if (!category) {
+                    category = await Category.create({
+                        id: `cat_${Date.now()}`,
+                        name: 'Deudas',
+                        color: '#ef4444', // Red color
+                        userId: req.user.id,
+                        householdId: req.householdId
+                    });
+                }
+
+                await Expense.create({
+                    name: `Pago de préstamo: ${loan.personName}`,
+                    amount: amount,
+                    type: 'Variable',
+                    categoryId: category.id,
+                    month: new Date(date || new Date()).toISOString().slice(0, 7), // YYYY-MM
+                    date: date || new Date(),
+                    userId: req.user.id,
+                    householdId: req.householdId,
+                    paid: amount
+                });
+            } else if (source === 'savings') {
+                let savings = await Savings.findOne({ where: { householdId: req.householdId } });
+                if (savings) {
+                    savings.balance -= parseFloat(amount);
+                    savings.lastUpdated = new Date();
+                    await savings.save();
+                }
+            }
+        }
+
+        // Check if fully paid
+        const allPayments = await LoanPayment.findAll({ where: { loanId: id } });
+        const totalPaid = allPayments.reduce((sum, p) => sum + parseFloat(p.amount), 0);
+
+        // Calculate total with interest for accurate status
+        const principal = parseFloat(loan.amount);
+        const rate = parseFloat(loan.interestRate || 0);
+        let totalToPay = 0;
+
+        if (loan.interestType === 'effective_annual' && loan.installments > 1) {
+            // Effective Annual Rate calculation
+            // Convert Annual Rate to Monthly Rate: r = (1 + EA)^(1/12) - 1
+            const annualRateDecimal = rate / 100;
+            const monthlyRate = Math.pow(1 + annualRateDecimal, 1 / 12) - 1;
+
+            // PMT Formula: P * (r * (1 + r)^n) / ((1 + r)^n - 1)
+            const pmt = principal * (monthlyRate * Math.pow(1 + monthlyRate, loan.installments)) / (Math.pow(1 + monthlyRate, loan.installments) - 1);
+
+            totalToPay = pmt * loan.installments;
+        } else {
+            // Simple Interest: Principal + (Principal * Rate%)
+            const interest = principal * (rate / 100);
+            totalToPay = principal + interest;
+        }
+
+        if (totalPaid >= totalToPay - 0.01) { // Small epsilon for float comparison
+            loan.status = 'paid';
+            await loan.save();
+        } else if (loan.status === 'paid' && totalPaid < totalToPay) {
+            // Re-open if payment was deleted or amount changed (though this is addPayment, good to be safe)
+            loan.status = 'active';
+            await loan.save();
+        }
+
+        res.status(201).json(payment);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -75,6 +75,14 @@ const User = sequelize.define('User', {
     logo: {
         type: DataTypes.STRING,
         defaultValue: 'cosmic'
+    },
+    incomeFrequency: {
+        type: DataTypes.ENUM('monthly', 'biweekly', 'weekly'),
+        defaultValue: 'monthly'
+    },
+    defaultInterestType: {
+        type: DataTypes.ENUM('simple', 'effective_annual'),
+        defaultValue: 'simple'
     }
 }, {
     timestamps: true,
